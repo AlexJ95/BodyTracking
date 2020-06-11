@@ -781,16 +781,17 @@ namespace {
 		
 		if (renderRoom) {
 			loadLivingRoomShader();
-			livingRoom = new LivingRoom("sherlock_living_room/sherlock_living_room.ogex", "sherlock_living_room/", structure_living_room, 1);
+			//livingRoom = new LivingRoom("sherlock_living_room/sherlock_living_room.ogex", "sherlock_living_room/", structure_living_room, 1);
+			livingRoom = new LivingRoom("train/train9.ogex", "train/", structure_living_room, 1);
 			Kore::Quaternion livingRoomRot = Kore::Quaternion(0, 0, 0, 1);
 			livingRoomRot.rotate(Kore::Quaternion(vec3(1, 0, 0), -Kore::pi / 2.0));
 			livingRoomRot.rotate(Kore::Quaternion(vec3(0, 0, 1), Kore::pi / 2.0));
-			livingRoom->M = mat4::Translation(0, 0, 0) * livingRoomRot.matrix().Transpose();
+			livingRoom->M = mat4::Translation(0, -3, 0) * livingRoomRot.matrix().Transpose();
 			
-			mat4 mirrorMatrix = mat4::Identity();
-			mirrorMatrix.Set(2, 2, -1);
-			livingRoomRot.rotate(Kore::Quaternion(vec3(0, 0, 1), Kore::pi));
-			livingRoom->Mmirror = mirrorMatrix * mat4::Translation(mirrorOver.x(), mirrorOver.y(), mirrorOver.z()) * livingRoomRot.matrix().Transpose();
+			//mat4 mirrorMatrix = mat4::Identity();
+			//mirrorMatrix.Set(2, 2, -1);
+			//livingRoomRot.rotate(Kore::Quaternion(vec3(0, 0, 1), Kore::pi));
+			//livingRoom->Mmirror = mirrorMatrix * mat4::Translation(mirrorOver.x(), mirrorOver.y(), mirrorOver.z()) * livingRoomRot.matrix().Transpose();
 		}
 		
 		logger = new Logger();
