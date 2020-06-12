@@ -10,7 +10,7 @@ class Logger {
 	
 private:
 	// Input and output file to for raw data
-	std::fstream logDataReader;
+	std::fstream logDataReader[2];
 	std::ofstream logdataWriter;
 	
 	// Output file to save data for hmm
