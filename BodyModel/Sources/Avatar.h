@@ -5,7 +5,7 @@
 
 class Avatar : public MeshObject {
 	
-private:
+protected:
 	InverseKinematics* invKin;
 	float currentHeight;
 	

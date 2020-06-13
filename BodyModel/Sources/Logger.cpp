@@ -143,19 +143,19 @@ void Logger::saveEvaluationData(Avatar *avatar) {
 	evaluationDataOutputFile.flush();
 }
 
-bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::vec3* rawPos, Kore::Quaternion* rawRot, float& scale) {
+bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::vec3* rawPos, Kore::Quaternion* rawRot, float& scale, int readerChannel) {
 	string tag;
 	float posX, posY, posZ;
 	float rotX, rotY, rotZ, rotW;
 	
-	if(!logDataReader.is_open()) {
+	if(!logDataReader[readerChannel].is_open()) {
 		
 		if (ifstream(filename)) {
-			logDataReader.open(filename);
+			logDataReader[readerChannel].open(filename);
 			log(Kore::Info, "Read data from %s", filename);
 			
 			// Skip header
-			logDataReader >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag;
+			logDataReader[readerChannel] >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag;
 		} else {
 			log(Kore::Info, "Could not find file %s", filename);
 		}
@@ -163,13 +163,13 @@ bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::v
 	
 	// Read lines
 	for (int i = 0; i < numOfEndEffectors; ++i) {
-		logDataReader >> tag >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> rotW >> scale;
+		logDataReader[readerChannel] >> tag >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> rotW >> scale;
 		
 		rawPos[i] = Kore::vec3(posX, posY, posZ);
 		rawRot[i] = Kore::Quaternion(rotX, rotY, rotZ, rotW);
 		
-		if (logDataReader.eof()) {
-			logDataReader.close();
+		if (logDataReader[readerChannel].eof()) {
+			logDataReader[readerChannel].close();
 			return false;
 		}
 	}

@@ -126,7 +126,7 @@ namespace {
 		Kore::Quaternion rot(0, 0, 0, 1);
 		rot.rotate(Kore::Quaternion(vec3(0, 1, 0), Kore::pi));
 		mat4 zMirror = mat4::Identity();
-		zMirror.Set(2, 2 , -1);
+		zMirror.Set(2, 2, -1);
 		Kore::mat4 M = zMirror * mat4::Translation(mirrorOver.x(), mirrorOver.y(), mirrorOver.z()) * rot.matrix().Transpose();
 		
 		return M;
@@ -539,7 +539,7 @@ namespace {
 		Kore::vec3 desPosition[numOfEndEffectors];
 		Kore::Quaternion desRotation[numOfEndEffectors];
 		if (currentFile < numFiles) {
-			bool dataAvailable = logger->readData(numOfEndEffectors, files[currentFile], desPosition, desRotation, scaleFactor);
+			bool dataAvailable = logger->readData(numOfEndEffectors, files[currentFile], desPosition, desRotation, scaleFactor, 0);
 			
 			for (int i = 0; i < numOfEndEffectors; ++i) {
 				endEffector[i]->setDesPosition(desPosition[i]);
