@@ -237,10 +237,11 @@ namespace {
 		avatar->animate(tex);
 		
 		// Mirror the avatar
-		mat4 initTransMirror = getMirrorMatrix() * initTrans;
+		//mat4 initTransMirror = getMirrorMatrix() * initTrans;
 		
-		Graphics4::setMatrix(mLocation, initTransMirror);
-		avatar->animate(tex);
+		//Graphics4::setMatrix(mLocation, initTransMirror);
+		//avatar->animate(tex);
+		
 	}
 	
 	Kore::mat4 getProjectionMatrix() {
