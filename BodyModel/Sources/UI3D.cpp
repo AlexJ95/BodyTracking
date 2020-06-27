@@ -49,6 +49,8 @@ void UI3D::drawUI()
 
 	////////////////////////////////////////////////////////////
 	//here we create 3DUI with ImGUI
+
+	///////First Window//////////////////
 	ImGui::Begin("Test");
 
 	ImGui::Text("This is an example Text.");
@@ -56,10 +58,26 @@ void UI3D::drawUI()
 		counter += 1;
 	std::string clickCount = "Click Count " + std::to_string(counter);
 	ImGui::Text(clickCount.c_str());
-
+	ImGui::Checkbox("Another Window", &show_another_window);
 	ImGui::End();
-	//Creating End
+	///////First Window End///////////////
+
+	///////second Window//////////////////
+
+
+	///////Second Window End//////////////
+	if (show_another_window)
+	{
+		ImGui::Begin("Another Window", &show_another_window);
+		ImGui::Text("Hello from another Window");
+		if (ImGui::Button("Close Me"))
+			show_another_window = false;
+		ImGui::End();
+	}
+
 	////////////////////////////////////////////////////////////
+
+
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
