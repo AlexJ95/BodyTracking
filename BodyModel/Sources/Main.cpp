@@ -80,7 +80,7 @@ namespace {
 	ConstantLocation lightPosLocation_living_room;
 	ConstantLocation lightCount_living_room;
 	
-	//Window Pointer
+	//Pointers for the UI and mainwindow needed for the UI initialisation
 	Window* window;
 	UI3D *ui3D;
 
@@ -450,10 +450,13 @@ namespace {
 		
 		// Move position of camera based on WASD keys
 		float cameraMoveSpeed = 4.f;
+
+		
 		if (S) cameraPos -= camForward * (float)deltaT * cameraMoveSpeed;
 		if (W) cameraPos += camForward * (float)deltaT * cameraMoveSpeed;
 		if (A) cameraPos += camRight * (float)deltaT * cameraMoveSpeed;
 		if (D) cameraPos -= camRight * (float)deltaT * cameraMoveSpeed;
+		
 		
 		Graphics4::begin();
 		Graphics4::clear(Graphics4::ClearColorFlag | Graphics4::ClearDepthFlag, Graphics1::Color::Black, 1.0f, 0);
@@ -677,6 +680,8 @@ namespace {
 		
 		q2.rotate(q1);
 		mat4 mat = q2.matrix();
+
+		if(!ui3D->lockBackground())
 		camForward = mat * camForward;
 	}
 	

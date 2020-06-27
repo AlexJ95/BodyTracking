@@ -19,9 +19,12 @@ private:
 	bool show_demo_window = true;
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		
+	
+	//UI3D inkrementieren
+	int counter=0;
 public:
 	UI3D(Kore::Window* window);
 	~UI3D();
-	void drawUI();	
+	void drawUI();
+	bool lockBackground();
 };
