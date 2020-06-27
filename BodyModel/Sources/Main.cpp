@@ -18,6 +18,9 @@
 #include "LivingRoom.h"
 #include "Logger.h"
 
+//Include for the UI
+#include "UI3D.h"
+
 #include <algorithm> // std::sort
 
 #ifdef KORE_STEAMVR
@@ -77,6 +80,10 @@ namespace {
 	ConstantLocation lightPosLocation_living_room;
 	ConstantLocation lightCount_living_room;
 	
+	//Window Pointer
+	Window* window;
+	UI3D *ui3D;
+
 	// Keyboard controls
 	bool rotate = false;
 	bool W, A, S, D = false;
@@ -223,6 +230,7 @@ namespace {
 		avatar->animate(tex);
 	}
 	
+
 	Kore::mat4 getProjectionMatrix() {
 		mat4 P = mat4::Perspective(45, (float)width / (float)height, 0.01f, 1000);
 		P.Set(0, 0, -P.get(0, 0));
@@ -600,7 +608,7 @@ namespace {
 		
 		if (renderRoom) renderLivingRoom(V, P);
 #endif
-
+		ui3D->drawUI();
 		Graphics4::end();
 		Graphics4::swapBuffers();
 	}
@@ -810,13 +818,22 @@ namespace {
 		VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
 #endif
 	}
+
 }
 
+
+
 int kore(int argc, char** argv) {
-	System::init("BodyTracking", width, height);
 	
+	window = System::init("BodyTracking", width, height);
+
 	init();
-	
+
+	//UI initialisation
+	ui3D = new UI3D(window);
+	System::setShutdownCallback(UIshutDown);
+
+
 	System::setCallback(update);
 	
 	startTime = System::time();
