@@ -92,11 +92,8 @@ namespace {
 	Avatar* avatar;
 	LivingRoom* train;
 	LivingRoom* floor;
-	LivingRoom* floor2;
-	LivingRoom* floor3;
-	LivingRoom* floor4;
-	LivingRoom* floor5;
-	LivingRoom* floor6;
+	int offsetZ = 26;
+	float offsetX = -0.175f;
 	LivingRoom* houseSmall;
 	LivingRoom* houseMiddle;
 	LivingRoom* houseBig;
@@ -213,19 +210,16 @@ namespace {
 		Graphics4::setMatrix(vLocation_living_room, V);
 		Graphics4::setMatrix(pLocation_living_room, P);
 		train->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
-		//train->render(tex_living_room, ConstantLocation(0,0,0), mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
-
-		floor->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
-
-		floor2->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
-
-		floor3->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
-
-		floor4->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
-
-		floor5->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+		
+		for (int x = 0; x < 80; x++) {
+			floor->M = mat4::Translation(5.5 + offsetX * x, -3.75, -819 + offsetZ * x) * livingRoomRot.matrix().Transpose();
+			floor->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+		}
+		
+		
 
 		houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+		
 	}
 	
 	void renderAvatar(mat4 V, mat4 P) {
@@ -802,45 +796,21 @@ namespace {
 		
 		loadLivingRoomShader();
 		train = new LivingRoom("train/train9.ogex", "train/", structure_living_room, 1);
-		Kore::Quaternion livingRoomRot = Kore::Quaternion(0, 0, 0, 1);
+		livingRoomRot = Kore::Quaternion(0, 0, 0, 1);
 		livingRoomRot.rotate(Kore::Quaternion(vec3(1, 0, 0), -Kore::pi / 2.0));
-		livingRoomRot.rotate(Kore::Quaternion(vec3(0, 0, 1), Kore::pi / 2.0));
-		train->M = mat4::RotationY(-0.005) * mat4::Translation(-0.5, -3, 0) * livingRoomRot.matrix().Transpose();	
+		livingRoomRot.rotate(Kore::Quaternion(vec3(0, 0, 1), Kore::pi / 2.0));	
+		train->M = mat4::RotationY(-0.0075) * mat4::Translation(0, -3, 0) * livingRoomRot.matrix().Transpose();
 		train->setLights(lightCount_living_room, lightPosLocation_living_room);
 
 		floor = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
-		floor->M = mat4::Translation(0, -3.75, -78) * livingRoomRot.matrix().Transpose();
+		//floor->M = mat4::Translation(0, -3.75, -78) * livingRoomRot.matrix().Transpose();
 		//floor->M = mat4::Translation(0.175, -3.75, -26) * livingRoomRot.matrix().Transpose();
 		//floor->M = mat4::Translation(0, -3.75, 0) * livingRoomRot.matrix().Transpose();
-		floor->setLights(lightCount_living_room, lightPosLocation_living_room);
+		//floor->setLights(lightCount_living_room, lightPosLocation_living_room);
 		
-
-		//floor2 = floor.;
-		//floor2->M = mat4::Translation(-0.35, -4.75, -52) * livingRoomRot.matrix().Transpose();
-		floor2 = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
-		floor2->M = mat4::Translation(-0.175, -3.75, -52) * livingRoomRot.matrix().Transpose();
-		floor2->setLights(lightCount_living_room, lightPosLocation_living_room);
-
-		//floor3 = floor2;
-		//floor3->M = mat4::Translation(-0.35, -4.75, -26) * livingRoomRot.matrix().Transpose();
-		floor3 = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
-		floor3->M = mat4::Translation(-0.35, -3.75, -26) * livingRoomRot.matrix().Transpose();
-		floor3->setLights(lightCount_living_room, lightPosLocation_living_room);
-
-		floor4 = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
-		floor4->M = mat4::Translation(-0.525, -3.75, 0) * livingRoomRot.matrix().Transpose();
-		floor4->setLights(lightCount_living_room, lightPosLocation_living_room);
-
-		floor5 = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
-		floor5->M = mat4::Translation(-0.7, -3.75, 26) * livingRoomRot.matrix().Transpose();
-		floor5->setLights(lightCount_living_room, lightPosLocation_living_room);
 
 		houseSmall = new LivingRoom("house/haus.ogex", "house/", structure_living_room, 1);
 		houseSmall->M = mat4::Translation(17, -3.75, 0) * livingRoomRot.matrix().Transpose();
-		//houseSmall->setLights(lightCount_living_room, lightPosLocation_living_room);
-		//floor6 = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
-		//floor6->M = mat4::Translation(-0.875, -3.75, 52) * livingRoomRot.matrix().Transpose();
-		//floor6->setLights(lightCount_living_room, lightPosLocation_living_room);
 		
 		logger = new Logger();
 		
