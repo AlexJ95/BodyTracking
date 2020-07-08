@@ -89,15 +89,34 @@ namespace {
 	
 	// Null terminated array of MeshObject pointers (Vive Controller and Tracker)
 	MeshObject* viveObjects[] = { nullptr, nullptr, nullptr };
+	//3D Objects
 	Avatar* avatar;
 	LivingRoom* train;
 	LivingRoom* floor;
-	int offsetZ = 26;
-	float offsetX = -0.175f;
+	//List to track the position of all floortiles
+	mat4 floorCoords[80];
+	//Offsets needed to make the tiles loop seamlessly
+	int offsetZfloor = 26;
+	float offsetXfloor = -0.175f;
+	//House objects
 	LivingRoom* houseSmall;
 	LivingRoom* houseMiddle;
-	LivingRoom* houseBig;
+	LivingRoom* houseML;
+	LivingRoom* houseLarge;
+	//Lists to track the position of all house objects on the left and on the right
+	mat4 houseCoordsL[110];
+	mat4 houseCoordsR[110];
+	//Lists to track the kind house a certain object is supposed to be
+	//Contains 0,1,2 or 3 for: SmallHouse, MiddleHouse, MLHouse and LargeHouse
+	int houseElementListL[110];
+	int houseElementListR[110];
+	//Offsets for the house loops
+	int offsetZhouse = 16;
+	float offsetXhouse = -0.115f;
+
 	LivingRoom* helicopter;
+
+	LivingRoom* skybox;
 	
 	// Variables to mirror the room and the avatar
 	vec3 mirrorOver(6.057f, 0.0f, 0.04f);
@@ -211,14 +230,74 @@ namespace {
 		Graphics4::setMatrix(pLocation_living_room, P);
 		train->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
 		
+		//Render the floor consisting of 80 tiles aligned seamlessly
 		for (int x = 0; x < 80; x++) {
-			floor->M = mat4::Translation(5.5 + offsetX * x, -3.75, -819 + offsetZ * x) * livingRoomRot.matrix().Transpose();
+			//Push all tiles forward
+			floorCoords[x] = floorCoords[x] * mat4::Translation(offsetZfloor * 0.05, offsetXfloor * 0.05, 0);
+			//If the tile is at the "end" port it to the start
+			if (floorCoords[x].data[14] <= -819) {
+				floorCoords[x] = mat4::Translation(5.5 + offsetXfloor * 79, -3.75, -819 + offsetZfloor * 79) * livingRoomRot.matrix().Transpose();
+			}
+			floor->M = floorCoords[x];
 			floor->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
 		}
-		
-		
 
-		houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+		//Render the houses/objects consisting of 110 houses on each side
+		for (int x = 0; x < 110; x++) {
+			//Push all houses/objects forward
+			houseCoordsL[x] = houseCoordsL[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
+			houseCoordsR[x] = houseCoordsR[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
+			//If the object is at the "end" port it to the start and reassign a random kind of house to the object
+			if (houseCoordsL[x].data[14] <= -819) {
+				houseCoordsL[x] = mat4::Translation(22 + offsetXhouse * 109, -2.9, -819 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+				houseElementListL[x] = rand() % 4;
+			}
+			if (houseCoordsR[x].data[14] <= -819) {
+				houseCoordsR[x] = mat4::Translation(-9 + offsetXhouse * 109, -2.9, -819 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+				houseElementListR[x] = rand() % 4;
+			}
+
+			switch (houseElementListL[x]) {
+			case 0:
+				houseSmall->M = houseCoordsL[x];
+				houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 1:
+				houseMiddle->M = houseCoordsL[x];
+				houseMiddle->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 2:
+				houseML->M = houseCoordsL[x];
+				houseML->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 3:
+				houseLarge->M = houseCoordsL[x];
+				houseLarge->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			}
+
+			switch (houseElementListR[x]) {
+			case 0:
+				houseSmall->M = houseCoordsR[x];
+				houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 1:
+				houseMiddle->M = houseCoordsR[x];
+				houseMiddle->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 2:
+				houseML->M = houseCoordsR[x];
+				houseML->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 3:
+				houseLarge->M = houseCoordsR[x];
+				houseLarge->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			}
+
+		}
+		
+		skybox->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
 		
 	}
 	
@@ -803,14 +882,32 @@ namespace {
 		train->setLights(lightCount_living_room, lightPosLocation_living_room);
 
 		floor = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
-		//floor->M = mat4::Translation(0, -3.75, -78) * livingRoomRot.matrix().Transpose();
-		//floor->M = mat4::Translation(0.175, -3.75, -26) * livingRoomRot.matrix().Transpose();
-		//floor->M = mat4::Translation(0, -3.75, 0) * livingRoomRot.matrix().Transpose();
-		//floor->setLights(lightCount_living_room, lightPosLocation_living_room);
 		
+		for (int x = 0; x < 80; x++) {
+			floorCoords[x] = mat4::Translation(5.5 + offsetXfloor * x, -3.75, -819 + offsetZfloor * x) * livingRoomRot.matrix().Transpose();
+		}
 
-		houseSmall = new LivingRoom("house/haus.ogex", "house/", structure_living_room, 1);
-		houseSmall->M = mat4::Translation(17, -3.75, 0) * livingRoomRot.matrix().Transpose();
+		houseSmall = new LivingRoom("houseS/haus.ogex", "houseS/", structure_living_room, 1);
+
+		houseMiddle = new LivingRoom("houseM/hausM.ogex", "houseM/", structure_living_room, 1);
+
+		houseML = new LivingRoom("houseML/hausML.ogex", "houseML/", structure_living_room, 1);
+
+		houseLarge = new LivingRoom("houseL/hausL.ogex", "houseL/", structure_living_room, 1);
+		//Not functioning yet :(
+		skybox = new LivingRoom("skybox/skybox2.ogex", "skybox/", structure_living_room, 1);
+
+		skybox->M = mat4::Translation(0, 0, -3.9) * livingRoomRot.matrix().Transpose();
+		//skybox->setLights(lightCount_living_room, lightPosLocation_living_room);
+
+		for (int x = 0; x < 110; x++) {
+			//Fill the list with the position coordinates for all houses
+			houseCoordsL[x] = mat4::Translation(22 + offsetXhouse * x, -2.9, -819 + offsetZhouse * x) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+			houseCoordsR[x] = mat4::Translation(-9 + offsetXhouse * x, -2.9, -819 + offsetZhouse * x) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+			//Fill list with numbers between 0-3 for the 4 different kinds of houses
+			houseElementListL[x] = rand() % 4;
+			houseElementListR[x] = rand() % 4;
+		}
 		
 		logger = new Logger();
 		
