@@ -611,6 +611,7 @@ namespace {
 		
 		if (renderRoom) renderLivingRoom(V, P);
 #endif
+		ui3D->setViewProj(V, P);
 		ui3D->drawUI();
 		Graphics4::end();
 		Graphics4::swapBuffers();
@@ -835,7 +836,7 @@ int kore(int argc, char** argv) {
 	init();
 
 	//UI initialisation
-	ui3D = new UI3D(window);
+	ui3D = new UI3D(window,true);
 	System::setShutdownCallback(UIshutDown);
 
 
