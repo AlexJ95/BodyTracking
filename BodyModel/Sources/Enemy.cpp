@@ -53,7 +53,34 @@ void Enemy::approach()
 //this method incorporates the actual decision making
 void Enemy::plan()
 {
+	// Read line
+	float scaleFactor;
+	Kore::vec3 desPosition[numOfEndEffectors];
+	Kore::Quaternion desRotation[numOfEndEffectors];
+	if (currentFile < numFiles) {
+		bool dataAvailable = logger->readData(numOfEndEffectors, files[currentFile], desPosition, desRotation, scaleFactor, 0);
 
+		for (int i = 0; i < numOfEndEffectors; ++i) {
+			endEffector[i]->setDesPosition(desPosition[i]);
+			endEffector[i]->setDesRotation(desRotation[i]);
+		}
+
+		if (!calibratedAvatar) {
+			avatar->resetPositionAndRotation();
+			avatar->setScale(scaleFactor);
+			calibrate();
+			calibratedAvatar = true;
+		}
+
+		for (int i = 0; i < numOfEndEffectors; ++i) {
+			executeMovement(i);
+		}
+
+		if (!dataAvailable) {
+			currentFile++;
+			calibratedAvatar = false;
+		}
+	}
 }
 
 

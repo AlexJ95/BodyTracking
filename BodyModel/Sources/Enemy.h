@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Avatar.h"
+#include "Renderer.h"
 
-class Enemy : public Avatar
+class Enemy : public Renderer::HumanoidEntity
 {
 protected:
 	//the different states of the AI state machine

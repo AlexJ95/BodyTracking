@@ -27,4 +27,11 @@ namespace {
 	int evalMaxIk = 5;
 	int evalStepsInit = evalSteps;
 	
+	const int width = 1024;
+	const int height = 768;
+
+	const bool renderRoom = true;
+	const bool renderTrackerAndController = true;
+	const bool renderAxisForEndEffector = false;
+	const int numOfEndEffectors = 8;
 }
