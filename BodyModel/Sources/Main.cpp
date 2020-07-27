@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <iostream>
 
 #include <Kore/IO/FileReader.h>
 #include <Kore/Graphics4/PipelineState.h>
@@ -28,6 +29,7 @@
 
 using namespace Kore;
 using namespace Kore::Graphics4;
+using namespace std;
 
 namespace {
 	const int width = 1024;
@@ -44,6 +46,8 @@ namespace {
 	
 	double startTime;
 	double lastTime;
+	float cameraMoveSpeed = 10.f;
+	int trainSpeed = 100;
 	
 	// Audio cues
 	Sound* startRecordingSound;
@@ -59,6 +63,7 @@ namespace {
 	ConstantLocation pLocation;
 	ConstantLocation vLocation;
 	ConstantLocation mLocation;
+	Kore::Quaternion livingRoomRot;
 	
 	// Living room shader
 	VertexStructure structure_living_room;
@@ -105,11 +110,19 @@ namespace {
 	LivingRoom* houseLarge;
 	//Lists to track the position of all house objects on the left and on the right
 	mat4 houseCoordsL[110];
+	mat4 houseCoordsL2[110];
+	mat4 houseCoordsL3[110];
 	mat4 houseCoordsR[110];
+	mat4 houseCoordsR2[110];
+	mat4 houseCoordsR3[110];
 	//Lists to track the kind house a certain object is supposed to be
 	//Contains 0,1,2 or 3 for: SmallHouse, MiddleHouse, MLHouse and LargeHouse
 	int houseElementListL[110];
+	int houseElementListL2[110];
+	int houseElementListL3[110];
 	int houseElementListR[110];
+	int houseElementListR2[110];
+	int houseElementListR3[110];
 	//Offsets for the house loops
 	int offsetZhouse = 16;
 	float offsetXhouse = -0.115f;
@@ -223,17 +236,18 @@ namespace {
 		}
 	}
 	
-	void renderLivingRoom(mat4 V, mat4 P) {
+	void renderLivingRoom(mat4 V, mat4 P, float deltaTime) {
 		Graphics4::setPipeline(pipeline_living_room);
 		
 		Graphics4::setMatrix(vLocation_living_room, V);
 		Graphics4::setMatrix(pLocation_living_room, P);
+		train->setLights(lightCount_living_room, lightPosLocation_living_room);
 		train->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
 		
 		//Render the floor consisting of 80 tiles aligned seamlessly
 		for (int x = 0; x < 80; x++) {
 			//Push all tiles forward
-			floorCoords[x] = floorCoords[x] * mat4::Translation(offsetZfloor * 0.05, offsetXfloor * 0.05, 0);
+			floorCoords[x] = floorCoords[x] * mat4::Translation(offsetZfloor * 0.05 * deltaTime * trainSpeed, offsetXfloor * 0.05 * deltaTime * trainSpeed, 0);
 			//If the tile is at the "end" port it to the start
 			if (floorCoords[x].data[14] <= -819) {
 				floorCoords[x] = mat4::Translation(5.5 + offsetXfloor * 79, -3.75, -819 + offsetZfloor * 79) * livingRoomRot.matrix().Transpose();
@@ -245,16 +259,38 @@ namespace {
 		//Render the houses/objects consisting of 110 houses on each side
 		for (int x = 0; x < 110; x++) {
 			//Push all houses/objects forward
-			houseCoordsL[x] = houseCoordsL[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
-			houseCoordsR[x] = houseCoordsR[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
+			houseCoordsL[x] = houseCoordsL[x] * mat4::Translation(offsetXfloor * 0.15 * deltaTime * trainSpeed, -offsetZfloor * 0.05 * deltaTime * trainSpeed, 0);
+			//houseCoordsL[x] = houseCoordsL[x] * mat4::Translation(offsetXfloor * deltaTime * trainSpeed, -offsetZfloor * deltaTime * trainSpeed, 0);
+			houseCoordsL2[x] = houseCoordsL2[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
+			houseCoordsL3[x] = houseCoordsL3[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
+			houseCoordsR[x] = houseCoordsR[x] * mat4::Translation(offsetXfloor * 0.15 * deltaTime * trainSpeed, -offsetZfloor * 0.05 * deltaTime * trainSpeed, 0);
+			//houseCoordsR[x] = houseCoordsR[x] * mat4::Translation(offsetXfloor * deltaTime * trainSpeed, -offsetZfloor * deltaTime * trainSpeed, 0);
+			houseCoordsR2[x] = houseCoordsR2[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
+			houseCoordsR3[x] = houseCoordsR3[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
 			//If the object is at the "end" port it to the start and reassign a random kind of house to the object
 			if (houseCoordsL[x].data[14] <= -819) {
 				houseCoordsL[x] = mat4::Translation(22 + offsetXhouse * 109, -2.9, -819 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
 				houseElementListL[x] = rand() % 4;
 			}
+			if (houseCoordsL2[x].data[14] <= -810) {
+				houseCoordsL2[x] = mat4::Translation(34 + offsetXhouse * 109, -2.9, -810 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+				houseElementListL2[x] = rand() % 4;
+			}
+			if (houseCoordsL2[x].data[14] <= -823) {
+				houseCoordsL2[x] = mat4::Translation(46 + offsetXhouse * 109, -2.9, -823 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+				houseElementListL3[x] = rand() % 4;
+			}
 			if (houseCoordsR[x].data[14] <= -819) {
 				houseCoordsR[x] = mat4::Translation(-9 + offsetXhouse * 109, -2.9, -819 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
 				houseElementListR[x] = rand() % 4;
+			}
+			if (houseCoordsR2[x].data[14] <= -813) {
+				houseCoordsR2[x] = mat4::Translation(-21 + offsetXhouse * 109, -2.9, -813 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+				houseElementListR2[x] = rand() % 4;
+			}
+			if (houseCoordsR3[x].data[14] <= -825) {
+				houseCoordsR3[x] = mat4::Translation(-33 + offsetXhouse * 109, -2.9, -825 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+				houseElementListR3[x] = rand() % 4;
 			}
 
 			switch (houseElementListL[x]) {
@@ -276,6 +312,44 @@ namespace {
 				break;
 			}
 
+			switch (houseElementListL2[x]) {
+			case 0:
+				houseSmall->M = houseCoordsL2[x];
+				houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 1:
+				houseMiddle->M = houseCoordsL2[x];
+				houseMiddle->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 2:
+				houseML->M = houseCoordsL2[x];
+				houseML->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 3:
+				houseLarge->M = houseCoordsL2[x];
+				houseLarge->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			}
+
+			switch (houseElementListL3[x]) {
+			case 0:
+				houseSmall->M = houseCoordsL3[x];
+				houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 1:
+				houseMiddle->M = houseCoordsL3[x];
+				houseMiddle->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 2:
+				houseML->M = houseCoordsL3[x];
+				houseML->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 3:
+				houseLarge->M = houseCoordsL3[x];
+				houseLarge->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			}
+
 			switch (houseElementListR[x]) {
 			case 0:
 				houseSmall->M = houseCoordsR[x];
@@ -291,6 +365,44 @@ namespace {
 				break;
 			case 3:
 				houseLarge->M = houseCoordsR[x];
+				houseLarge->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			}
+
+			switch (houseElementListR2[x]) {
+			case 0:
+				houseSmall->M = houseCoordsR2[x];
+				houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 1:
+				houseMiddle->M = houseCoordsR2[x];
+				houseMiddle->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 2:
+				houseML->M = houseCoordsR2[x];
+				houseML->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 3:
+				houseLarge->M = houseCoordsR2[x];
+				houseLarge->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			}
+
+			switch (houseElementListR3[x]) {
+			case 0:
+				houseSmall->M = houseCoordsR3[x];
+				houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 1:
+				houseMiddle->M = houseCoordsR3[x];
+				houseMiddle->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 2:
+				houseML->M = houseCoordsR3[x];
+				houseML->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+				break;
+			case 3:
+				houseLarge->M = houseCoordsR3[x];
 				houseLarge->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
 				break;
 			}
@@ -535,7 +647,6 @@ namespace {
 		lastTime = t;
 		
 		// Move position of camera based on WASD keys
-		float cameraMoveSpeed = 4.f;
 		if (S) cameraPos -= camForward * (float)deltaT * cameraMoveSpeed;
 		if (W) cameraPos += camForward * (float)deltaT * cameraMoveSpeed;
 		if (A) cameraPos += camRight * (float)deltaT * cameraMoveSpeed;
@@ -692,7 +803,7 @@ namespace {
 		
 		if (renderAxisForEndEffector) renderCSForEndEffector();
 		
-		if (renderRoom) renderLivingRoom(V, P);
+		if (renderRoom) renderLivingRoom(V, P, (float)deltaT);
 #endif
 
 		Graphics4::end();
@@ -879,7 +990,6 @@ namespace {
 		livingRoomRot.rotate(Kore::Quaternion(vec3(1, 0, 0), -Kore::pi / 2.0));
 		livingRoomRot.rotate(Kore::Quaternion(vec3(0, 0, 1), Kore::pi / 2.0));	
 		train->M = mat4::RotationY(-0.0075) * mat4::Translation(0, -3, 0) * livingRoomRot.matrix().Transpose();
-		train->setLights(lightCount_living_room, lightPosLocation_living_room);
 
 		floor = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
 		
@@ -894,8 +1004,8 @@ namespace {
 		houseML = new LivingRoom("houseML/hausML.ogex", "houseML/", structure_living_room, 1);
 
 		houseLarge = new LivingRoom("houseL/hausL.ogex", "houseL/", structure_living_room, 1);
-		//Not functioning yet :(
-		skybox = new LivingRoom("skybox/skybox2.ogex", "skybox/", structure_living_room, 1);
+		
+		skybox = new LivingRoom("skybox/skybox.ogex", "skybox/", structure_living_room, 1);
 
 		skybox->M = mat4::Translation(0, 0, -3.9) * livingRoomRot.matrix().Transpose();
 		//skybox->setLights(lightCount_living_room, lightPosLocation_living_room);
@@ -903,10 +1013,18 @@ namespace {
 		for (int x = 0; x < 110; x++) {
 			//Fill the list with the position coordinates for all houses
 			houseCoordsL[x] = mat4::Translation(22 + offsetXhouse * x, -2.9, -819 + offsetZhouse * x) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+			houseCoordsL2[x] = mat4::Translation(34 + offsetXhouse * x, -2.9, -810 + offsetZhouse * x) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+			houseCoordsL3[x] = mat4::Translation(46 + offsetXhouse * x, -2.9, -823 + offsetZhouse * x) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
 			houseCoordsR[x] = mat4::Translation(-9 + offsetXhouse * x, -2.9, -819 + offsetZhouse * x) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+			houseCoordsR2[x] = mat4::Translation(-21 + offsetXhouse * x, -2.9, -813 + offsetZhouse * x) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+			houseCoordsR3[x] = mat4::Translation(-33 + offsetXhouse * x, -2.9, -825 + offsetZhouse * x) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
 			//Fill list with numbers between 0-3 for the 4 different kinds of houses
 			houseElementListL[x] = rand() % 4;
+			houseElementListL2[x] = rand() % 4;
+			houseElementListL3[x] = rand() % 4;
 			houseElementListR[x] = rand() % 4;
+			houseElementListR2[x] = rand() % 4;
+			houseElementListR3[x] = rand() % 4;
 		}
 		
 		logger = new Logger();

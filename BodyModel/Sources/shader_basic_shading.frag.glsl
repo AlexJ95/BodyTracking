@@ -49,7 +49,7 @@ vec3 applyLight(vec4 lightPosition) {
 	}
 	
 	// Ambient
-	const float amb = 0.3;
+	const float amb = 0.7;
 	vec3 ambient = vec3(amb, amb, amb) * vec3(diffuseCol);
 	
 	// Diffuse
