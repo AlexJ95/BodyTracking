@@ -48,6 +48,7 @@ namespace {
 	double lastTime;
 	float cameraMoveSpeed = 10.f;
 	int trainSpeed = 100;
+	int backgroundSpeed = 50;
 	
 	// Audio cues
 	Sound* startRecordingSound;
@@ -96,8 +97,10 @@ namespace {
 	MeshObject* viveObjects[] = { nullptr, nullptr, nullptr };
 	//3D Objects
 	Avatar* avatar;
-	LivingRoom* train;
+	LivingRoom* trainFront;
+	LivingRoom* trainMiddle;
 	LivingRoom* floor;
+	int firstFloorIndex = 0;
 	//List to track the position of all floortiles
 	mat4 floorCoords[80];
 	//Offsets needed to make the tiles loop seamlessly
@@ -241,15 +244,17 @@ namespace {
 		
 		Graphics4::setMatrix(vLocation_living_room, V);
 		Graphics4::setMatrix(pLocation_living_room, P);
-		train->setLights(lightCount_living_room, lightPosLocation_living_room);
-		train->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+		trainFront->setLights(lightCount_living_room, lightPosLocation_living_room);
+		trainFront->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+		trainMiddle->setLights(lightCount_living_room, lightPosLocation_living_room);
+		trainMiddle->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
 		
 		//Render the floor consisting of 80 tiles aligned seamlessly
 		for (int x = 0; x < 80; x++) {
 			//Push all tiles forward
 			floorCoords[x] = floorCoords[x] * mat4::Translation(offsetZfloor * 0.05 * deltaTime * trainSpeed, offsetXfloor * 0.05 * deltaTime * trainSpeed, 0);
 			//If the tile is at the "end" port it to the start
-			if (floorCoords[x].data[14] <= -819) {
+			if (floorCoords[x].data[14] <= -840) {
 				floorCoords[x] = mat4::Translation(5.5 + offsetXfloor * 79, -3.75, -819 + offsetZfloor * 79) * livingRoomRot.matrix().Transpose();
 			}
 			floor->M = floorCoords[x];
@@ -260,13 +265,11 @@ namespace {
 		for (int x = 0; x < 110; x++) {
 			//Push all houses/objects forward
 			houseCoordsL[x] = houseCoordsL[x] * mat4::Translation(offsetXfloor * 0.15 * deltaTime * trainSpeed, -offsetZfloor * 0.05 * deltaTime * trainSpeed, 0);
-			//houseCoordsL[x] = houseCoordsL[x] * mat4::Translation(offsetXfloor * deltaTime * trainSpeed, -offsetZfloor * deltaTime * trainSpeed, 0);
-			houseCoordsL2[x] = houseCoordsL2[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
-			houseCoordsL3[x] = houseCoordsL3[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
+			houseCoordsL2[x] = houseCoordsL2[x] * mat4::Translation(offsetXfloor * 0.15 * deltaTime * backgroundSpeed, -offsetZfloor * 0.05, 0);
+			houseCoordsL3[x] = houseCoordsL3[x] * mat4::Translation(offsetXfloor * 0.15 * deltaTime * backgroundSpeed, -offsetZfloor * 0.05, 0);
 			houseCoordsR[x] = houseCoordsR[x] * mat4::Translation(offsetXfloor * 0.15 * deltaTime * trainSpeed, -offsetZfloor * 0.05 * deltaTime * trainSpeed, 0);
-			//houseCoordsR[x] = houseCoordsR[x] * mat4::Translation(offsetXfloor * deltaTime * trainSpeed, -offsetZfloor * deltaTime * trainSpeed, 0);
-			houseCoordsR2[x] = houseCoordsR2[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
-			houseCoordsR3[x] = houseCoordsR3[x] * mat4::Translation(offsetXfloor * 0.15, -offsetZfloor * 0.05, 0);
+			houseCoordsR2[x] = houseCoordsR2[x] * mat4::Translation(offsetXfloor * 0.15 * deltaTime * backgroundSpeed, -offsetZfloor * 0.05, 0);
+			houseCoordsR3[x] = houseCoordsR3[x] * mat4::Translation(offsetXfloor * 0.15 * deltaTime * backgroundSpeed, -offsetZfloor * 0.05, 0);
 			//If the object is at the "end" port it to the start and reassign a random kind of house to the object
 			if (houseCoordsL[x].data[14] <= -819) {
 				houseCoordsL[x] = mat4::Translation(22 + offsetXhouse * 109, -2.9, -819 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
@@ -276,8 +279,8 @@ namespace {
 				houseCoordsL2[x] = mat4::Translation(34 + offsetXhouse * 109, -2.9, -810 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
 				houseElementListL2[x] = rand() % 4;
 			}
-			if (houseCoordsL2[x].data[14] <= -823) {
-				houseCoordsL2[x] = mat4::Translation(46 + offsetXhouse * 109, -2.9, -823 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
+			if (houseCoordsL3[x].data[14] <= -823) {
+				houseCoordsL3[x] = mat4::Translation(46 + offsetXhouse * 109, -2.9, -823 + offsetZhouse * 109) * livingRoomRot.matrix().Transpose() * mat4::RotationZ(1.585);
 				houseElementListL3[x] = rand() % 4;
 			}
 			if (houseCoordsR[x].data[14] <= -819) {
@@ -410,7 +413,7 @@ namespace {
 		}
 		
 		skybox->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
-		
+
 	}
 	
 	void renderAvatar(mat4 V, mat4 P) {
@@ -985,11 +988,15 @@ namespace {
 		}
 		
 		loadLivingRoomShader();
-		train = new LivingRoom("train/train9.ogex", "train/", structure_living_room, 1);
+		//train = new LivingRoom("train/train9.ogex", "train/", structure_living_room, 1);
+		trainFront = new LivingRoom("train/trainFront.ogex", "train/", structure_living_room, 1);
 		livingRoomRot = Kore::Quaternion(0, 0, 0, 1);
 		livingRoomRot.rotate(Kore::Quaternion(vec3(1, 0, 0), -Kore::pi / 2.0));
 		livingRoomRot.rotate(Kore::Quaternion(vec3(0, 0, 1), Kore::pi / 2.0));	
-		train->M = mat4::RotationY(-0.0075) * mat4::Translation(0, -3, 0) * livingRoomRot.matrix().Transpose();
+		trainFront->M = mat4::RotationY(-0.0075) * mat4::Translation(0, -3, 0) * livingRoomRot.matrix().Transpose();
+
+		trainMiddle = new LivingRoom("train/trainMiddle.ogex", "train/", structure_living_room, 1);
+		trainMiddle->M = mat4::RotationY(-0.0075) * mat4::Translation(0, -3, -16.85) * livingRoomRot.matrix().Transpose();
 
 		floor = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
 		
