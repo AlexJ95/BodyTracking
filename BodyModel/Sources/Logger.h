@@ -1,10 +1,19 @@
 #pragma once
 
-#include "Avatar.h"
-
 #include <Kore/Math/Quaternion.h>
 
+#include <Kore/Log.h>
+
+#include <iostream>
+#include <string>
+#include <ctime>
+
 #include <fstream>
+
+#include "pch.h"
+
+#include "Animator.h"
+#include "AnimatedEntity.h"
 
 class Logger {
 	
@@ -30,7 +39,7 @@ public:
 	void saveData(const char* tag, Kore::vec3 rawPos, Kore::Quaternion rawRot, float scale);
 	
 	void startEvaluationLogger(const char* filename, int ikMode, float lambda, float errorMaxPos, float errorMaxRot, int maxSteps);
-	void saveEvaluationData(Avatar *avatar);
+	void saveEvaluationData(AnimatedEntity* entity, Animator* animator);
 	void endEvaluationLogger();
 	
 	// HMM

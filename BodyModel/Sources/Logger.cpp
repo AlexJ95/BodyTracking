@@ -1,11 +1,4 @@
-#include "pch.h"
 #include "Logger.h"
-
-#include <Kore/Log.h>
-
-#include <iostream>
-#include <string>
-#include <ctime>
 
 namespace {
 	bool initHmmAnalysisData = false;
@@ -15,7 +8,7 @@ Logger::Logger() {
 }
 
 Logger::~Logger() {
-	logDataReader.close();
+	for (int i = 0; i < (end(logDataReader) - begin(logDataReader)); i++) logDataReader[i].close();
 	logdataWriter.close();
 	hmmWriter.close();
 	hmmAnalysisWriter.close();
@@ -121,12 +114,12 @@ void Logger::endEvaluationLogger() {
 	log(Kore::Info, "Stop eval-logging!");
 }
 
-void Logger::saveEvaluationData(Avatar *avatar) {
-	float* iterations = avatar->getIterations();
-	float* errorPos = avatar->getErrorPos();
-	float* errorRot = avatar->getErrorRot();
-	float* time = avatar->getTime();
-	float* timeIteration = avatar->getTimeIteration();
+void Logger::saveEvaluationData(AnimatedEntity* entity, Animator *animator) {
+	float* iterations = animator->getIterations(entity);
+	float* errorPos = animator->getErrorPos(entity);
+	float* errorRot = animator->getErrorRot(entity);
+	float* time = animator->getTime(entity);
+	float* timeIteration = animator->getTimeIteration(entity);
 	
 	// Save datas
 	for (int i = 0; i < 3; ++i) {
@@ -139,7 +132,7 @@ void Logger::saveEvaluationData(Avatar *avatar) {
 		evaluationDataOutputFile << *(time + i) << ";";
 		evaluationDataOutputFile << *(timeIteration + i) << ";";
 	}
-	evaluationDataOutputFile << avatar->getReached() << ";" << avatar->getStucked() << "\n";
+	evaluationDataOutputFile << animator->getReached(entity) << ";" << animator->getStucked(entity) << "\n";
 	evaluationDataOutputFile.flush();
 }
 

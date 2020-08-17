@@ -2,7 +2,7 @@
 #include "Settings.h"
 #include "Logger.h"
 
-const int numOfEndEffectors = 8;
+/*const int numOfEndEffectors = 8;
 Kore::vec3 desPosition[numOfEndEffectors];
 Kore::Quaternion desRotation[numOfEndEffectors];
 Logger* logger;
@@ -122,3 +122,4 @@ void initTransAndRot() {
 	initTrans = Kore::mat4::Translation(initPos.x(), initPos.y(), initPos.z()) * initRot.matrix().Transpose();
 	initTransInv = initTrans.Invert();
 }
+*/

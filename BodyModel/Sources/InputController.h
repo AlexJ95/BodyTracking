@@ -1,3 +1,4 @@
+#pragma once
 
 #include <Kore/Input/Keyboard.h>
 #include <Kore/Input/Mouse.h>
@@ -7,7 +8,6 @@
 
 #include "CustomMath.h"
 
-using namespace std;
 using namespace Kore;
 
 class InputController
@@ -19,14 +19,14 @@ class InputController
 	vec3 cameraPos;
 	// Keyboard controls
 	bool rotate = false;
-	bool W, A, S, D = false;
+	bool W = false, A = false, S = false, D = false;
 
-	map<KeyCode, void()> *callbacks;
+	std::map<KeyCode, void()> *callbacks;
 
 	CustomMath* math;
 
 public:
-	InputController(map<KeyCode, void()> callbacks[]);
+	InputController(std::map<KeyCode, void()> callbacks[]);
 
 	void keyDown(KeyCode code); //manages some keyboard keys
 

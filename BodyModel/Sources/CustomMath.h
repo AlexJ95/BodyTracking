@@ -1,7 +1,9 @@
+#pragma once
 
 #include <Kore/Math/Quaternion.h>
 
 #include "Settings.h"
+#include "pch.h"
 
 using namespace Kore;
 

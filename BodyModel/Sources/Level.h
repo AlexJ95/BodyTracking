@@ -1,45 +1,44 @@
+#pragma once
 
 #include "Renderer.h"
 #include "Animator.h"
-#include "Logger.h"
 #include "InputController.h"
 #include "AudioManager.h"
 #include "Calibrator.h"
+#include "LevelObject.h"
+#include "AnimatedEntity.h"
 
-#pragma once
 class Level
 {
 public:
-	struct LevelObject
+	struct ALevelObject
 	{
-		Renderer::LevelObject* render;
-		LevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
+		//Relatively empty and redundant at the moment, however this space is supposed to hold all potential components for levelObject like new hazard or maybe collectible components
+		LevelObject* render;
+		ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
 	};
 
-	struct HumanoidEntity
+	struct AnAnimatedEntity
 	{
-		EndEffector** endEffector;
-		Renderer::HumanoidEntity* entity;
-		Animator* animator;
-
-		HumanoidEntity(); // empty default constructor
-		HumanoidEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
-		void initEndeffectors();
+		AnimatedEntity* entity;
+		AnAnimatedEntity(); // empty default constructor
+		AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
 	};
 
-	struct Avatar : public HumanoidEntity
+	struct TheAvatar : public AnAnimatedEntity
 	{
 		bool calibratedAvatar;
-		Calibrator* calibrator;
-		Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, bool renderTrackerAndController, bool renderAxisForEndEffector, float scale);
+		TheAvatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, bool renderTrackerAndController, bool renderAxisForEndEffector);
 	};
 
 	Renderer* renderer;
-	std::vector<LevelObject> environment;
-	std::vector<HumanoidEntity> enemies;
-	Avatar* avatar;
+	std::vector<ALevelObject> environment;
+	std::vector<AnAnimatedEntity> enemies;
+	TheAvatar* avatar;
 	InputController* input;
 	AudioManager* audio;
+	Calibrator* calibrator;
+	Animator* animator;
 
 	virtual void update(double deltaT);
 

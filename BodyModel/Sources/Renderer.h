@@ -1,3 +1,4 @@
+#pragma once
 
 #include <Kore/Graphics4/PipelineState.h>
 #include <Kore/Graphics1/Color.h>
@@ -8,9 +9,9 @@
 #include "Settings.h"
 #include "MeshObject.h"
 #include "CustomMath.h"
-#include "InverseKinematics.h"
-#include "RotationUtility.h"
 #include "Animator.h"
+#include "LevelObject.h"
+#include "AnimatedEntity.h"
 
 using namespace Kore;
 using namespace Kore::Graphics4;
@@ -48,69 +49,38 @@ public:
 		PipelineState* pipeline;
 	};
 
-	
-	struct LevelObject : public MeshObject {
-	private:
-		CustomMath* math;
+	void render(LevelObject object, bool mirror);
+	void setLights(LevelObject object, Kore::Graphics4::ConstantLocation lightCountLocation, Kore::Graphics4::ConstantLocation);
 
-		static const int maxLightCount = 10;
-		Kore::vec4 lightPositions[maxLightCount];
-		float scale;
+	void animate(AnimatedEntity entity);
 
-	public:
-		//EnvironmentGraphics* graphics;
-		LevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale = 1.0f);
-		void LevelObject::render(EnvironmentGraphics* graphics, bool mirror);
-		void LevelObject::setLights(Kore::Graphics4::ConstantLocation lightCountLocation, Kore::Graphics4::ConstantLocation);
-	};
-	
+	void animate(Avatar avatar);
 
-	struct HumanoidEntity : public MeshObject {
-	protected:
-		CustomMath* math;
-		Animator* animator;
-	public:
-		EndEffector** endEffector;
-		HumanoidEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Animator* anim);
+	void renderAllVRDevices(Avatar avatar); //renders all VR devices
+	void renderControllerAndTracker(Avatar avatar, int tracker, Kore::vec3 desPosition, Kore::Quaternion desRotation); //renders VR Stuff, calls method below, is a subroutine
+	void renderVRDevice(Avatar avatar, int index, Kore::mat4 M); //renders VR stuff, is a subroutine
 
-		void animate(EntityGraphics* graphics);
-	};
+	void renderCSForEndEffector(Avatar avatar); //renders stuff, not sure what though
 
-	struct Avatar : public HumanoidEntity {
-		// Null terminated array of MeshObject pointers (Vive Controller and Tracker)
-		std::vector<MeshObject*> viveObjects;
-		bool renderTrackerAndControllers;
-		bool renderAxisForEndEffectors;
-		bool* calibratedAvatar;
+	CustomMath* math;
+	Animator* animator;
 
-		Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Animator* anim, bool renderTrackerAndController, bool renderAxisForEndEffector);
-		void animate(EntityGraphics* graphics);
+	//LevelObject variables
+	static const int maxLightCount = 10;
+	Kore::vec4 lightPositions[maxLightCount];
 
-		void renderAllVRDevices(EntityGraphics* graphics); //renders all VR devices
-		void renderControllerAndTracker(int tracker, Kore::vec3 desPosition, Kore::Quaternion desRotation, EntityGraphics* graphics); //renders VR Stuff, calls method below, is a subroutine
-		void renderVRDevice(int index, Kore::mat4 M, EntityGraphics* graphics); //renders VR stuff, is a subroutine
-
-		void renderCSForEndEffector(EntityGraphics* graphics); //renders stuff, not sure what though
-	};
-
-
-
-	EnvironmentGraphics environmentGraphics;
-
-	EntityGraphics entityGraphics;
+	EnvironmentGraphics *environmentGraphics;
+	EntityGraphics *entityGraphics;
 
 	std::vector<LevelObject> levelObjects;
+	std::vector<AnimatedEntity> animatedEntities;
 
-	std::vector<HumanoidEntity> humanoidEntities;
-
-	Renderer(std::vector<LevelObject> objects, std::vector<HumanoidEntity> entities);
+	void init(std::vector<LevelObject> objects, std::vector<AnimatedEntity> entities, Animator* anim);
 
 	void loadEnvironmentShader(String vertexShaderFile, String fragmentShaderFile);
-
 	void loadEntityShader(String vertexShaderFile, String fragmentShaderFile);
 
 	void renderEnvironment(); //as the name implies
-
 	void renderEntities(); //as the name implies
 
 	void update(float deltaT);

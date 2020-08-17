@@ -4,8 +4,6 @@
 // Variables to mirror the room and the avatar
 vec3 mirrorOver(6.057f, 0.0f, 0.04f);
 
-
-
 CustomMath* CustomMath::getInstance()
 {
 	if (!instance)

@@ -1,9 +1,11 @@
+#pragma once
 
 #include <Kore/Math/Quaternion.h>
 
 #include "Settings.h"
 #include "Animator.h"
 #include "CustomMath.h"
+#include "AnimatedEntity.h"
 
 using namespace Kore;
 
@@ -13,18 +15,16 @@ class Calibrator
 	bool controllerButtonsInitialized = false;
 	float currentUserHeight;
 	bool firstPersonMonitor = false;
-#else
-	int loop = 0;
 #endif
+
 	bool calibratedAvatar = false;
 
 	CustomMath* math;
 
-	Animator* animator;
 public:
-	Calibrator(Animator* animator);
+	Calibrator();
 
-	void calibrate(); //initially calibrates the avatar
+	void calibrate(Avatar* avatar, Animator* animator); //initially calibrates the avatar
 
 	void setSize(); //adjust avatar size to player
 

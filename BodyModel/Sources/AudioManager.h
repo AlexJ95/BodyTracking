@@ -1,3 +1,4 @@
+#pragma once
 
 #include <Kore/Audio2/Audio.h>
 #include <Kore/Audio1/Audio.h>
@@ -5,6 +6,8 @@
 #include <Kore/Audio1/SoundStream.h>
 #include <string>
 #include <map>
+
+#include "pch.h"
 
 using namespace Kore;
 using namespace std;

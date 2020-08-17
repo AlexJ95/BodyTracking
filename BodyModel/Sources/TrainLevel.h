@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Level.h"
+
 class TrainLevel :
     public Level
 {

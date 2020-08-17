@@ -1,6 +1,6 @@
 #include "InputController.h"
 
-InputController::InputController(map<KeyCode, void ()> callbackArray[]) {
+InputController::InputController(std::map<KeyCode, void ()> callbackArray[]) {
 	camUp = vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	camForward = vec4(0.0f, 0.0f, 1.0f, 0.0f);
 	camRight = vec4(1.0f, 0.0f, 0.0f, 0.0f);
@@ -8,12 +8,12 @@ InputController::InputController(map<KeyCode, void ()> callbackArray[]) {
 	cameraPos = vec3(0, 0, 0);
 
 	callbacks = callbackArray;
-	math->getInstance();
+	math = math->getInstance();
 }
 
 void InputController::keyDown(KeyCode code)
 {
-	if (callbacks->find(code) != callbacks->end()) callbacks->at(code)();
+	//if (callbacks->find(code) != callbacks->end()) callbacks->at(code)();
 
 	switch (code) {
 	case Kore::KeyW:

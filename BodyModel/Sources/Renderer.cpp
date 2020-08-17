@@ -1,98 +1,100 @@
 
 #include "Renderer.h"
 
-Renderer::Renderer(std::vector<LevelObject> objects, std::vector<HumanoidEntity> entities) {
+void Renderer::init(std::vector<LevelObject> objects, std::vector<AnimatedEntity> entities, Animator* anim) {
+	math = math->getInstance();
 	levelObjects = objects;
-	humanoidEntities = entities;
+	animatedEntities = entities;
+	animator = anim;
 }
 
 void Renderer::loadEnvironmentShader(String vertexShaderFile, String fragmentShaderFile)
 {
 	FileReader vs(vertexShaderFile);
 	FileReader fs(fragmentShaderFile);
-	environmentGraphics.vertexShader = new Shader(vs.readAll(), vs.size(), VertexShader);
-	environmentGraphics.fragmentShader = new Shader(fs.readAll(), fs.size(), FragmentShader);
+	environmentGraphics->vertexShader = new Shader(vs.readAll(), vs.size(), VertexShader);
+	environmentGraphics->fragmentShader = new Shader(fs.readAll(), fs.size(), FragmentShader);
 
-	environmentGraphics.structure.add("pos", Float3VertexData);
-	environmentGraphics.structure.add("tex", Float2VertexData);
-	environmentGraphics.structure.add("nor", Float3VertexData);
+	environmentGraphics->structure.add("pos", Float3VertexData);
+	environmentGraphics->structure.add("tex", Float2VertexData);
+	environmentGraphics->structure.add("nor", Float3VertexData);
 
-	environmentGraphics.pipeline = new PipelineState();
-	environmentGraphics.pipeline->inputLayout[0] = &environmentGraphics.structure;
-	environmentGraphics.pipeline->inputLayout[1] = nullptr;
-	environmentGraphics.pipeline->vertexShader = environmentGraphics.vertexShader;
-	environmentGraphics.pipeline->fragmentShader = environmentGraphics.fragmentShader;
-	environmentGraphics.pipeline->depthMode = ZCompareLess;
-	environmentGraphics.pipeline->depthWrite = true;
-	environmentGraphics.pipeline->blendSource = Graphics4::SourceAlpha;
-	environmentGraphics.pipeline->blendDestination = Graphics4::InverseSourceAlpha;
-	environmentGraphics.pipeline->alphaBlendSource = Graphics4::SourceAlpha;
-	environmentGraphics.pipeline->alphaBlendDestination = Graphics4::InverseSourceAlpha;
-	environmentGraphics.pipeline->compile();
+	environmentGraphics->pipeline = new PipelineState();
+	environmentGraphics->pipeline->inputLayout[0] = &environmentGraphics->structure;
+	environmentGraphics->pipeline->inputLayout[1] = nullptr;
+	environmentGraphics->pipeline->vertexShader = environmentGraphics->vertexShader;
+	environmentGraphics->pipeline->fragmentShader = environmentGraphics->fragmentShader;
+	environmentGraphics->pipeline->depthMode = ZCompareLess;
+	environmentGraphics->pipeline->depthWrite = true;
+	environmentGraphics->pipeline->blendSource = Graphics4::SourceAlpha;
+	environmentGraphics->pipeline->blendDestination = Graphics4::InverseSourceAlpha;
+	environmentGraphics->pipeline->alphaBlendSource = Graphics4::SourceAlpha;
+	environmentGraphics->pipeline->alphaBlendDestination = Graphics4::InverseSourceAlpha;
+	environmentGraphics->pipeline->compile();
 
-	environmentGraphics.tex = environmentGraphics.pipeline->getTextureUnit("tex");
-	Graphics4::setTextureAddressing(environmentGraphics.tex, Graphics4::U, Repeat);
-	Graphics4::setTextureAddressing(environmentGraphics.tex, Graphics4::V, Repeat);
+	environmentGraphics->tex = environmentGraphics->pipeline->getTextureUnit("tex");
+	Graphics4::setTextureAddressing(environmentGraphics->tex, Graphics4::U, Repeat);
+	Graphics4::setTextureAddressing(environmentGraphics->tex, Graphics4::V, Repeat);
 
-	environmentGraphics.pLocation = environmentGraphics.pipeline->getConstantLocation("P");
-	environmentGraphics.vLocation = environmentGraphics.pipeline->getConstantLocation("V");
-	environmentGraphics.mLocation = environmentGraphics.pipeline->getConstantLocation("M");
-	environmentGraphics.mLocationInverse = environmentGraphics.pipeline->getConstantLocation("MInverse");
-	environmentGraphics.diffuse = environmentGraphics.pipeline->getConstantLocation("diffuseCol");
-	environmentGraphics.specular = environmentGraphics.pipeline->getConstantLocation("specularCol");
-	environmentGraphics.specularPower = environmentGraphics.pipeline->getConstantLocation("specularPow");
-	environmentGraphics.lightPosLocation = environmentGraphics.pipeline->getConstantLocation("lightPos");
-	environmentGraphics.lightCount = environmentGraphics.pipeline->getConstantLocation("numLights");
+	environmentGraphics->pLocation = environmentGraphics->pipeline->getConstantLocation("P");
+	environmentGraphics->vLocation = environmentGraphics->pipeline->getConstantLocation("V");
+	environmentGraphics->mLocation = environmentGraphics->pipeline->getConstantLocation("M");
+	environmentGraphics->mLocationInverse = environmentGraphics->pipeline->getConstantLocation("MInverse");
+	environmentGraphics->diffuse = environmentGraphics->pipeline->getConstantLocation("diffuseCol");
+	environmentGraphics->specular = environmentGraphics->pipeline->getConstantLocation("specularCol");
+	environmentGraphics->specularPower = environmentGraphics->pipeline->getConstantLocation("specularPow");
+	environmentGraphics->lightPosLocation = environmentGraphics->pipeline->getConstantLocation("lightPos");
+	environmentGraphics->lightCount = environmentGraphics->pipeline->getConstantLocation("numLights");
 }
 
 void Renderer::loadEntityShader(String vertexShaderFile, String fragmentShaderFile)
 {
 	FileReader vs(vertexShaderFile);
 	FileReader fs(fragmentShaderFile);
-	entityGraphics.vertexShader = new Shader(vs.readAll(), vs.size(), VertexShader);
-	entityGraphics.fragmentShader = new Shader(fs.readAll(), fs.size(), FragmentShader);
+	entityGraphics->vertexShader = new Shader(vs.readAll(), vs.size(), VertexShader);
+	entityGraphics->fragmentShader = new Shader(fs.readAll(), fs.size(), FragmentShader);
 
 	// This defines the structure of your Vertex Buffer
-	entityGraphics.structure.add("pos", Float3VertexData);
-	entityGraphics.structure.add("tex", Float2VertexData);
-	entityGraphics.structure.add("nor", Float3VertexData);
+	entityGraphics->structure.add("pos", Float3VertexData);
+	entityGraphics->structure.add("tex", Float2VertexData);
+	entityGraphics->structure.add("nor", Float3VertexData);
 
-	entityGraphics.pipeline = new PipelineState();
-	entityGraphics.pipeline = new PipelineState();
-	entityGraphics.pipeline->inputLayout[0] = &entityGraphics.structure;
-	entityGraphics.pipeline->inputLayout[1] = nullptr;
-	entityGraphics.pipeline->vertexShader = entityGraphics.vertexShader;
-	entityGraphics.pipeline->fragmentShader = entityGraphics.fragmentShader;
-	entityGraphics.pipeline->depthMode = ZCompareLess;
-	entityGraphics.pipeline->depthWrite = true;
-	entityGraphics.pipeline->blendSource = Graphics4::SourceAlpha;
-	entityGraphics.pipeline->blendDestination = Graphics4::InverseSourceAlpha;
-	entityGraphics.pipeline->alphaBlendSource = Graphics4::SourceAlpha;
-	entityGraphics.pipeline->alphaBlendDestination = Graphics4::InverseSourceAlpha;
-	entityGraphics.pipeline->compile();
+	entityGraphics->pipeline = new PipelineState();
+	entityGraphics->pipeline = new PipelineState();
+	entityGraphics->pipeline->inputLayout[0] = &entityGraphics->structure;
+	entityGraphics->pipeline->inputLayout[1] = nullptr;
+	entityGraphics->pipeline->vertexShader = entityGraphics->vertexShader;
+	entityGraphics->pipeline->fragmentShader = entityGraphics->fragmentShader;
+	entityGraphics->pipeline->depthMode = ZCompareLess;
+	entityGraphics->pipeline->depthWrite = true;
+	entityGraphics->pipeline->blendSource = Graphics4::SourceAlpha;
+	entityGraphics->pipeline->blendDestination = Graphics4::InverseSourceAlpha;
+	entityGraphics->pipeline->alphaBlendSource = Graphics4::SourceAlpha;
+	entityGraphics->pipeline->alphaBlendDestination = Graphics4::InverseSourceAlpha;
+	entityGraphics->pipeline->compile();
 
-	entityGraphics.tex = entityGraphics.pipeline->getTextureUnit("tex");
-	Graphics4::setTextureAddressing(entityGraphics.tex, Graphics4::U, Repeat);
-	Graphics4::setTextureAddressing(entityGraphics.tex, Graphics4::V, Repeat);
+	entityGraphics->tex = entityGraphics->pipeline->getTextureUnit("tex");
+	Graphics4::setTextureAddressing(entityGraphics->tex, Graphics4::U, Repeat);
+	Graphics4::setTextureAddressing(entityGraphics->tex, Graphics4::V, Repeat);
 
-	entityGraphics.pLocation = entityGraphics.pipeline->getConstantLocation("P");
-	entityGraphics.vLocation = entityGraphics.pipeline->getConstantLocation("V");
-	entityGraphics.mLocation = entityGraphics.pipeline->getConstantLocation("M");
+	entityGraphics->pLocation = entityGraphics->pipeline->getConstantLocation("P");
+	entityGraphics->vLocation = entityGraphics->pipeline->getConstantLocation("V");
+	entityGraphics->mLocation = entityGraphics->pipeline->getConstantLocation("M");
 }
 
 void Renderer::renderEnvironment() {
-	for (LevelObject object : levelObjects) object.render(&environmentGraphics, false);
+	for (LevelObject object : levelObjects) render(object, false);
 }
 
 void Renderer::renderEntities() {
-	for (HumanoidEntity entity : humanoidEntities) entity.animate(&entityGraphics);
+	for (AnimatedEntity entity : animatedEntities) animate(entity);
 }
 
 void Renderer::update(float deltaT)
 {
 	Graphics4::begin();
 	Graphics4::clear(Graphics4::ClearColorFlag | Graphics4::ClearDepthFlag, Graphics1::Color::Black, 1.0f, 0);
-	Graphics4::setPipeline(entityGraphics.pipeline);
+	Graphics4::setPipeline(entityGraphics->pipeline);
 
 #ifdef KORE_STEAMVR
 	VrInterface::begin();
@@ -162,52 +164,52 @@ void Renderer::update(float deltaT)
 	Graphics4::swapBuffers();
 }
 
-Renderer::LevelObject::LevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale) : MeshObject(meshFile, textureFile, structure, scale) { math->getInstance(); }
 
-void Renderer::LevelObject::render(EnvironmentGraphics* graphics, bool mirror)
+//Subroutines for LevelObjects
+void Renderer::render(LevelObject object, bool mirror)
 {
-	Graphics4::setPipeline(graphics->pipeline);
+	Graphics4::setPipeline(environmentGraphics->pipeline);
 
-	Graphics4::setMatrix(graphics->vLocation, math->getViewMatrix());
-	Graphics4::setMatrix(graphics->pLocation, math->getProjectionMatrix());
-	for (int i = 0; i < meshesCount; ++i) {
-		Geometry* geometry = geometries[i];
+	Graphics4::setMatrix(environmentGraphics->vLocation, math->getViewMatrix());
+	Graphics4::setMatrix(environmentGraphics->pLocation, math->getProjectionMatrix());
+	for (int i = 0; i < object.meshesCount; ++i) {
+		Geometry* geometry = object.geometries[i];
 		mat4 modelMatrix = mat4::Identity();
-		if (!mirror) modelMatrix = M * geometry->transform;
-		else modelMatrix = Mmirror * geometry->transform;
+		if (!mirror) modelMatrix = object.M * geometry->transform;
+		else modelMatrix = object.Mmirror * geometry->transform;
 		mat4 modelMatrixInverse = modelMatrix.Invert();
 
-		Graphics4::setMatrix(graphics->mLocation, modelMatrix);
-		Graphics4::setMatrix(graphics->mLocationInverse, modelMatrixInverse);
+		Graphics4::setMatrix(environmentGraphics->mLocation, modelMatrix);
+		Graphics4::setMatrix(environmentGraphics->mLocationInverse, modelMatrixInverse);
 
 		unsigned int materialIndex = geometry->materialIndex;
-		Material* material = findMaterialWithIndex(materialIndex);
+		Material* material = object.findMaterialWithIndex(materialIndex);
 		if (material != nullptr) {
-			Graphics4::setFloat3(graphics->diffuse, material->diffuse);
-			Graphics4::setFloat3(graphics->specular, material->specular);
-			Graphics4::setFloat(graphics->specularPower, material->specular_power);
+			Graphics4::setFloat3(environmentGraphics->diffuse, material->diffuse);
+			Graphics4::setFloat3(environmentGraphics->specular, material->specular);
+			Graphics4::setFloat(environmentGraphics->specularPower, material->specular_power);
 		}
 		else {
-			Graphics4::setFloat3(graphics->diffuse, vec3(1.0, 1.0, 1.0));
-			Graphics4::setFloat3(graphics->specular, vec3(1.0, 1.0, 1.0));
-			Graphics4::setFloat(graphics->specularPower, 1.0);
+			Graphics4::setFloat3(environmentGraphics->diffuse, vec3(1.0, 1.0, 1.0));
+			Graphics4::setFloat3(environmentGraphics->specular, vec3(1.0, 1.0, 1.0));
+			Graphics4::setFloat(environmentGraphics->specularPower, 1.0);
 		}
 
-		Texture* image = images[i];
-		if (image != nullptr) Graphics4::setTexture(graphics->tex, image);
+		Texture* image = object.images[i];
+		if (image != nullptr) Graphics4::setTexture(environmentGraphics->tex, image);
 
-		Graphics4::setVertexBuffer(*vertexBuffers[i]);
-		Graphics4::setIndexBuffer(*indexBuffers[i]);
+		Graphics4::setVertexBuffer(*object.vertexBuffers[i]);
+		Graphics4::setIndexBuffer(*object.indexBuffers[i]);
 		Graphics4::drawIndexedVertices();
 	}
 }
 
-void Renderer::LevelObject::setLights(Kore::Graphics4::ConstantLocation lightCountLocation, Kore::Graphics4::ConstantLocation lightPosLocation)
+void Renderer::setLights(LevelObject object, Kore::Graphics4::ConstantLocation lightCountLocation, Kore::Graphics4::ConstantLocation lightPosLocation)
 {
-	const int lightCount = (int)lights.size();
+	const int lightCount = (int)object.lights.size();
 	for (int i = 0; i < lightCount; ++i) {
-		Light* light = lights[i];
-		lightPositions[i] = M * light->position;
+		Light* light = object.lights[i];
+		lightPositions[i] = object.M * light->position;
 
 		if (light->type == 0) {
 			lightPositions[i].w() = 0;
@@ -221,29 +223,24 @@ void Renderer::LevelObject::setLights(Kore::Graphics4::ConstantLocation lightCou
 	Graphics4::setFloats(lightPosLocation, (float*)lightPositions, lightCount * 4);
 }
 
-Renderer::HumanoidEntity::HumanoidEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Animator* anim) : MeshObject(meshFile, textureFile, structure, scale)
-{
-	math->getInstance();
-	animator = anim;
-}
+// Subroutine(s) for AnimatedEntities
+void Renderer::animate(AnimatedEntity entity) {
+	Graphics4::setPipeline(entityGraphics->pipeline);
 
-void Renderer::HumanoidEntity::animate(EntityGraphics* graphics) {
-	Graphics4::setPipeline(graphics->pipeline);
-
-	Graphics4::setMatrix(graphics->vLocation, math->getViewMatrix());
-	Graphics4::setMatrix(graphics->pLocation, math->getProjectionMatrix());
-	Graphics4::setMatrix(graphics->mLocation, math->initTrans);
+	Graphics4::setMatrix(entityGraphics->vLocation, math->getViewMatrix());
+	Graphics4::setMatrix(entityGraphics->pLocation, math->getProjectionMatrix());
+	Graphics4::setMatrix(entityGraphics->mLocation, math->initTrans);
 
 	// Update bones
-	for (int i = 0; i < bones.size(); ++i) animator->invKin->initializeBone(bones[i]);
+	for (int i = 0; i < entity.bones.size(); ++i) entity.invKin->initializeBone(entity.bones[i]);
 
-	for (int j = 0; j < meshesCount; ++j) {
+	for (int j = 0; j < entity.meshesCount; ++j) {
 		int currentBoneIndex = 0;	// Iterate over BoneCountArray
 
-		Mesh* mesh = meshes[j];
+		Mesh* mesh = entity.meshes[j];
 
 		// Mesh Vertex Buffer
-		float* vertices = vertexBuffers[j]->lock();
+		float* vertices = entity.vertexBuffers[j]->lock();
 		for (int i = 0; i < mesh->numVertices; ++i) {
 			vec4 startPos(0, 0, 0, 1);
 			vec4 startNormal(0, 0, 0, 1);
@@ -257,7 +254,7 @@ void Renderer::HumanoidEntity::animate(EntityGraphics* graphics) {
 				vec4 norVec(mesh->normals[i * 3 + 0], mesh->normals[i * 3 + 1], mesh->normals[i * 3 + 2], 1);
 
 				int index = mesh->boneIndices[currentBoneIndex] + 2;
-				BoneNode* bone = animator->getBoneWithIndex(index);
+				BoneNode* bone = animator->getBoneWithIndex(&entity, index);
 				float boneWeight = mesh->boneWeight[currentBoneIndex];
 				totalJointsWeight += boneWeight;
 
@@ -268,9 +265,9 @@ void Renderer::HumanoidEntity::animate(EntityGraphics* graphics) {
 			}
 
 			// position
-			vertices[i * 8 + 0] = startPos.x() * scale;
-			vertices[i * 8 + 1] = startPos.y() * scale;
-			vertices[i * 8 + 2] = startPos.z() * scale;
+			vertices[i * 8 + 0] = startPos.x() * entity.scale;
+			vertices[i * 8 + 1] = startPos.y() * entity.scale;
+			vertices[i * 8 + 2] = startPos.z() * entity.scale;
 			// texCoord
 			vertices[i * 8 + 3] = mesh->texcoord[i * 2 + 0];
 			vertices[i * 8 + 4] = 1.0f - mesh->texcoord[i * 2 + 1];
@@ -281,41 +278,28 @@ void Renderer::HumanoidEntity::animate(EntityGraphics* graphics) {
 
 			//log(Info, "%f %f %f %f %f %f %f %f", vertices[i * 8 + 0], vertices[i * 8 + 1], vertices[i * 8 + 2], vertices[i * 8 + 3], vertices[i * 8 + 4], vertices[i * 8 + 5], vertices[i * 8 + 6], vertices[i * 8 + 7]);
 		}
-		vertexBuffers[j]->unlock();
+		entity.vertexBuffers[j]->unlock();
 
-		Texture* image = images[j];
+		Texture* image = entity.images[j];
 
-		Graphics4::setTexture(graphics->tex, image);
-		Graphics4::setVertexBuffer(*vertexBuffers[j]);
-		Graphics4::setIndexBuffer(*indexBuffers[j]);
+		Graphics4::setTexture(entityGraphics->tex, image);
+		Graphics4::setVertexBuffer(*entity.vertexBuffers[j]);
+		Graphics4::setIndexBuffer(*entity.indexBuffers[j]);
 		Graphics4::drawIndexedVertices();
 	}
 }
 
-Renderer::Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Animator* anim, bool renderTrackerAndController, bool renderAxisForEndEffector)
-	: HumanoidEntity(meshFile, textureFile, structure, scale, anim) {
-	renderTrackerAndControllers = renderTrackerAndController;
-	renderAxisForEndEffectors = renderAxisForEndEffector;
-	if (renderTrackerAndController) {
-		viveObjects.emplace_back(new MeshObject("vivemodels/vivetracker.ogex", "vivemodels/", structure, 1));
-		viveObjects.emplace_back(new MeshObject("vivemodels/vivecontroller.ogex", "vivemodels/", structure, 1));
-	}
-
-	if (renderTrackerAndController || renderAxisForEndEffector) {
-		viveObjects.emplace_back(new MeshObject("vivemodels/axis.ogex", "vivemodels/", structure, 1));
-	}
-}
-
-void Renderer::Avatar::animate(EntityGraphics* graphics)
+//Subroutines specifically for the Avatar
+void Renderer::animate(Avatar avatar)
 {
-	HumanoidEntity::animate(graphics);
-	if (renderTrackerAndController) renderAllVRDevices(graphics);
+	animate((AnimatedEntity) avatar);
+	if (renderTrackerAndController) renderAllVRDevices(avatar);
 
-	if (renderAxisForEndEffector) renderCSForEndEffector(graphics);
+	if (renderAxisForEndEffector) renderCSForEndEffector(avatar);
 }
 
-void Renderer::Avatar::renderAllVRDevices(EntityGraphics* graphics) {
-	Graphics4::setPipeline(graphics->pipeline);
+void Renderer::renderAllVRDevices(Avatar avatar) {
+	Graphics4::setPipeline(entityGraphics->pipeline);
 
 #ifdef KORE_STEAMVR
 	VrPoseState controller;
@@ -335,20 +319,20 @@ void Renderer::Avatar::renderAllVRDevices(EntityGraphics* graphics) {
 	}
 #else
 	for (int i = 0; i < numOfEndEffectors; ++i) {
-		Kore::vec3 desPosition = endEffector[i]->getDesPosition();
-		Kore::Quaternion desRotation = endEffector[i]->getDesRotation();
+		Kore::vec3 desPosition = avatar.endEffector[i]->getDesPosition();
+		Kore::Quaternion desRotation = avatar.endEffector[i]->getDesRotation();
 
 		if (i == hip || i == leftForeArm || i == rightForeArm || i == leftFoot || i == rightFoot) {
-			renderControllerAndTracker(true, desPosition, desRotation, graphics);
+			renderControllerAndTracker(avatar, true, desPosition, desRotation);
 		}
 		else if (i == rightHand || i == leftHand) {
-			renderControllerAndTracker(false, desPosition, desRotation, graphics);
+			renderControllerAndTracker(avatar, false, desPosition, desRotation);
 		}
 	}
 #endif
 }
 
-void Renderer::Avatar::renderControllerAndTracker(int tracker, Kore::vec3 desPosition, Kore::Quaternion desRotation, EntityGraphics* graphics) {
+void Renderer::renderControllerAndTracker(Avatar avatar, int tracker, Kore::vec3 desPosition, Kore::Quaternion desRotation) {
 	// World Transformation Matrix
 	Kore::mat4 W = mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * desRotation.matrix().Transpose();
 
@@ -357,39 +341,39 @@ void Renderer::Avatar::renderControllerAndTracker(int tracker, Kore::vec3 desPos
 
 	if (tracker) {
 		// Render a tracker for both feet and back
-		renderVRDevice(0, W, graphics);
+		renderVRDevice(avatar, 0, W);
 		//renderVRDevice(0, M);
 	}
 	else {
 		// Render a controller for both hands
-		renderVRDevice(1, W, graphics);
+		renderVRDevice(avatar, 1, W);
 		//renderVRDevice(1, M);
 	}
 
 	// Render a local coordinate system only if the avatar is not calibrated
-	if (!calibratedAvatar) {
-		renderVRDevice(2, W, graphics);
+	if (!avatar.calibratedAvatar) {
+		renderVRDevice(avatar, 2, W);
 		//renderVRDevice(2, M);
 	}
 }
 
-void Renderer::Avatar::renderVRDevice(int index, Kore::mat4 M, EntityGraphics* graphics) {
-	Graphics4::setMatrix(graphics->mLocation, M);
-	viveObjects.at(index)->render(graphics->tex);
+void Renderer::renderVRDevice(Avatar avatar, int index, Kore::mat4 M) {
+	Graphics4::setMatrix(entityGraphics->mLocation, M);
+	avatar.viveObjects.at(index)->render(entityGraphics->tex);
 }
 
-void Renderer::Avatar::renderCSForEndEffector(EntityGraphics* graphics) {
-	Graphics4::setPipeline(graphics->pipeline);
+void Renderer::renderCSForEndEffector(Avatar avatar) {
+	Graphics4::setPipeline(entityGraphics->pipeline);
 
 	for (int i = 0; i < numOfEndEffectors; ++i) {
-		BoneNode* bone = animator->getBoneWithIndex(endEffector[i]->getBoneIndex());
+		BoneNode* bone = animator->getBoneWithIndex(&((AnimatedEntity) avatar), avatar.endEffector[i]->getBoneIndex());
 
 		vec3 endEffectorPos = bone->getPosition();
 		endEffectorPos = math->initTrans * vec4(endEffectorPos.x(), endEffectorPos.y(), endEffectorPos.z(), 1);
 		Kore::Quaternion endEffectorRot = math->initRot.rotated(bone->getOrientation());
 
 		Kore::mat4 M = mat4::Translation(endEffectorPos.x(), endEffectorPos.y(), endEffectorPos.z()) * endEffectorRot.matrix().Transpose();
-		Graphics4::setMatrix(graphics->mLocation, M);
-		viveObjects[2]->render(graphics->tex);
+		Graphics4::setMatrix(entityGraphics->mLocation, M);
+		avatar.viveObjects[2]->render(entityGraphics->tex);
 	}
 }
