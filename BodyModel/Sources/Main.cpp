@@ -7,7 +7,7 @@
 #include <Kore/Log.h>
 
 #include "Settings.h"
-#include "Level.h"
+#include "Level.h" //implicitly imported with trainlevel, but still in here for redundancy in case someone wants to extend this project and for abstraction
 #include "Logger.h"
 #include "InputController.h"
 #include "AudioManager.h"
@@ -20,22 +20,14 @@
 #include <Kore/Input/Gamepad.h>
 #endif
 
-using namespace Kore;
-
 namespace {
 	InputController* inputController;
-	
+	AudioManager* audio;
 	Logger* logger;
+	Level* currentLevel;
 	
 	double startTime;
 	double lastTime;
-	
-	// Audio cues
-	Sound* startRecordingSound;
-	Sound* stopRecordingSound;
-
-	AudioManager* audio;
-	Level* currentLevel;
 	
 #ifdef KORE_STEAMVR
 	bool controllerButtonsInitialized = false;
@@ -59,7 +51,7 @@ namespace {
 
 
 	void update() {
-		float t = (float)(System::time() - startTime);
+		float t = (float)(Kore::System::time() - startTime);
 		double deltaT = t - lastTime;
 		lastTime = t;
 		
@@ -82,8 +74,8 @@ namespace {
 
 		// Sound initiation
 		audio = new AudioManager({
-				{"startRecordingSound", new Sound("sound/start.wav")},
-				{"stopRecordingSound", new Sound("sound/stop.wav")}
+				{"startRecordingSound", new Kore::Sound("sound/start.wav")},
+				{"stopRecordingSound", new Kore::Sound("sound/stop.wav")}
 			});
 
 #ifdef KORE_STEAMVR
@@ -93,14 +85,14 @@ namespace {
 }
 
 int kore(int argc, char** argv) {
-	System::init("BodyTracking", width, height);
+	Kore::System::init("BodyTracking", width, height);
 
 	init();
 
-	System::setCallback(update);
-	startTime = System::time();
+	Kore::System::setCallback(update);
+	startTime = Kore::System::time();
 
-	System::start();
+	Kore::System::start();
 	
 	return 0;
 }

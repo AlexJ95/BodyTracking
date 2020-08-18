@@ -13,15 +13,15 @@ void Calibrator::calibrate(Avatar* avatar, Animator* animator) {
 		Kore::Quaternion desRotation = avatar->endEffector[i]->getDesRotation();
 
 		// Transform desired position/rotation to the character local coordinate system
-		desPosition = math->initTransInv * vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+		desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
 		desRotation = math->initRotInv.rotated(desRotation);
 
 		// Get actual position/rotation of the character skeleton
 		BoneNode* bone = animator->getBoneWithIndex(avatar, avatar->endEffector[i]->getBoneIndex());
-		vec3 targetPos = bone->getPosition();
+		Kore::vec3 targetPos = bone->getPosition();
 		Kore::Quaternion targetRot = bone->getOrientation();
 
-		avatar->endEffector[i]->setOffsetPosition((mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * targetRot.matrix().Transpose()).Invert() * mat4::Translation(targetPos.x(), targetPos.y(), targetPos.z()) * vec4(0, 0, 0, 1));
+		avatar->endEffector[i]->setOffsetPosition((Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * targetRot.matrix().Transpose()).Invert() * Kore::mat4::Translation(targetPos.x(), targetPos.y(), targetPos.z()) * Kore::vec4(0, 0, 0, 1));
 		avatar->endEffector[i]->setOffsetRotation((desRotation.invert()).rotated(targetRot));
 	}
 }

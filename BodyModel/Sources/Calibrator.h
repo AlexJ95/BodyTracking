@@ -7,8 +7,6 @@
 #include "CustomMath.h"
 #include "AnimatedEntity.h"
 
-using namespace Kore;
-
 class Calibrator
 {
 #ifdef KORE_STEAMVR
@@ -28,7 +26,7 @@ public:
 
 	void setSize(); //adjust avatar size to player
 
-	void initEndEffector(int efID, int deviceID, vec3 pos, Kore::Quaternion rot);
+	void initEndEffector(int efID, int deviceID, Kore::vec3 pos, Kore::Quaternion rot);
 
 	void assignControllerAndTracker();
 

@@ -1,17 +1,17 @@
 #include "InputController.h"
 
-InputController::InputController(std::map<KeyCode, void ()> callbackArray[]) {
-	camUp = vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	camForward = vec4(0.0f, 0.0f, 1.0f, 0.0f);
-	camRight = vec4(1.0f, 0.0f, 0.0f, 0.0f);
+InputController::InputController(std::map<Kore::KeyCode, void ()> callbackArray[]) {
+	camUp = Kore::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	camForward = Kore::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+	camRight = Kore::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 
-	cameraPos = vec3(0, 0, 0);
+	cameraPos = Kore::vec3(0, 0, 0);
 
 	callbacks = callbackArray;
 	math = math->getInstance();
 }
 
-void InputController::keyDown(KeyCode code)
+void InputController::keyDown(Kore::KeyCode code)
 {
 	//if (callbacks->find(code) != callbacks->end()) callbacks->at(code)();
 
@@ -51,7 +51,7 @@ void InputController::keyDown(KeyCode code)
 	}
 }
 
-void InputController::keyUp(KeyCode code)
+void InputController::keyUp(Kore::KeyCode code)
 {
 	switch (code) {
 	case Kore::KeyW:
@@ -73,14 +73,14 @@ void InputController::keyUp(KeyCode code)
 
 void InputController::mouseMove(int windowId, int x, int y, int movementX, int movementY)
 {
-	Kore::Quaternion q1(vec3(0.0f, 1.0f, 0.0f), 0.01f * movementX);
+	Kore::Quaternion q1(Kore::vec3(0.0f, 1.0f, 0.0f), 0.01f * movementX);
 	Kore::Quaternion q2(camRight, 0.01f * -movementY);
 
 	camUp = q2.matrix() * camUp;
 	camRight = q1.matrix() * camRight;
 
 	q2.rotate(q1);
-	mat4 mat = q2.matrix();
+	Kore::mat4 mat = q2.matrix();
 	camForward = mat * camForward;
 }
 
@@ -108,13 +108,13 @@ void InputController::init() {
 	math->initTransAndRot();
 
 	// Set camera initial position and orientation
-	cameraPos = vec3(2.6, 1.8, 0.0);
-	Kore::Quaternion q1(vec3(0.0f, 1.0f, 0.0f), Kore::pi / 2.0f);
-	Kore::Quaternion q2(vec3(1.0f, 0.0f, 0.0f), -Kore::pi / 8.0f);
+	cameraPos = Kore::vec3(2.6, 1.8, 0.0);
+	Kore::Quaternion q1(Kore::vec3(0.0f, 1.0f, 0.0f), Kore::pi / 2.0f);
+	Kore::Quaternion q2(Kore::vec3(1.0f, 0.0f, 0.0f), -Kore::pi / 8.0f);
 	camUp = q2.matrix() * camUp;
 	camRight = q1.matrix() * camRight;
 	q2.rotate(q1);
-	mat4 mat = q2.matrix();
+	Kore::mat4 mat = q2.matrix();
 	camForward = mat * camForward;
 
 	//TODO: fix this pls

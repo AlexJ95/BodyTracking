@@ -17,13 +17,13 @@ void TrainLevel::Init() {
 	
 	ALevelObject* train = new ALevelObject("train/train9.ogex", "train/", environmentSructure, 1);
 	Kore::Quaternion rotation = Kore::Quaternion(0, 0, 0, 1);
-	rotation.rotate(Kore::Quaternion(vec3(1, 0, 0), -Kore::pi / 2.0));
-	rotation.rotate(Kore::Quaternion(vec3(0, 0, 1), Kore::pi / 2.0));
-	train->render->M = mat4::RotationY(-0.0075) * mat4::Translation(0, -3, 0) * rotation.matrix().Transpose();
+	rotation.rotate(Kore::Quaternion(Kore::vec3(1, 0, 0), -Kore::pi / 2.0));
+	rotation.rotate(Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi / 2.0));
+	train->render->M = Kore::mat4::RotationY(-0.0075) * Kore::mat4::Translation(0, -3, 0) * rotation.matrix().Transpose();
 	renderer->setLights(*(train->render), lightCount, lightPosLocation);
 	
 	ALevelObject* houseSmall = new ALevelObject("house/haus.ogex", "house/", environmentSructure, 1);
-	houseSmall->render->M = mat4::Translation(17, -3.75, 0) * rotation.matrix().Transpose();
+	houseSmall->render->M = Kore::mat4::Translation(17, -3.75, 0) * rotation.matrix().Transpose();
 
 	/*
 	train->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);

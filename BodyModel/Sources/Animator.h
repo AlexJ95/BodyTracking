@@ -8,8 +8,6 @@
 #include "AnimatedEntity.h"
 //#include "Logger.h"
 
-using namespace Kore;
-
 class Animator
 {
 	CustomMath* math;

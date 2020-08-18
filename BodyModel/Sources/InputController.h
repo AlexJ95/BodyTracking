@@ -8,29 +8,27 @@
 
 #include "CustomMath.h"
 
-using namespace Kore;
-
 class InputController
 {
-	vec4 camUp;
-	vec4 camForward;
-	vec4 camRight;
+	Kore::vec4 camUp;
+	Kore::vec4 camForward;
+	Kore::vec4 camRight;
 
-	vec3 cameraPos;
+	Kore::vec3 cameraPos;
 	// Keyboard controls
 	bool rotate = false;
 	bool W = false, A = false, S = false, D = false;
 
-	std::map<KeyCode, void()> *callbacks;
+	std::map<Kore::KeyCode, void()> *callbacks;
 
 	CustomMath* math;
 
 public:
-	InputController(std::map<KeyCode, void()> callbacks[]);
+	InputController(std::map<Kore::KeyCode, void()> callbacks[]);
 
-	void keyDown(KeyCode code); //manages some keyboard keys
+	void keyDown(Kore::KeyCode code); //manages some keyboard keys
 
-	void keyUp(KeyCode code); //similar to keyDown, but as the name implies
+	void keyUp(Kore::KeyCode code); //similar to keyDown, but as the name implies
 
 	void mouseMove(int windowId, int x, int y, int movementX, int movementY); //mousecontrols for the camera
 

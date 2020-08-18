@@ -8,10 +8,10 @@ void Level::update(double deltaT)
 
 void Level::init()
 {
-	std::vector<LevelObject> objects;
-	for (ALevelObject object : environment) objects.emplace_back(object.render);
-	std::vector<AnimatedEntity> entities;
-	for (AnAnimatedEntity entity : enemies) entities.emplace_back(entity.entity);
+	std::vector<LevelObject*> objects;
+	for (ALevelObject* object : environment) objects.emplace_back(object->render);
+	std::vector<AnimatedEntity*> entities;
+	for (AnAnimatedEntity* entity : enemies) entities.emplace_back(entity->entity);
 	entities.emplace_back(avatar->entity);
 	renderer->init(objects, entities, animator);
 	input->init();

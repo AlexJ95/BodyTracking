@@ -14,14 +14,14 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 
 	if (typeid(entity) != typeid(Avatar) || &static_cast<Avatar*>(entity)->calibratedAvatar) {
 		// Transform desired position/rotation to the character local coordinate system
-		desPosition = math->initTransInv * vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+		desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
 		desRotation = math->initRotInv.rotated(desRotation);
 
 		// Add offset
 		Kore::Quaternion offsetRotation = entity->endEffector[endEffectorID]->getOffsetRotation();
-		vec3 offsetPosition = entity->endEffector[endEffectorID]->getOffsetPosition();
+		Kore::vec3 offsetPosition = entity->endEffector[endEffectorID]->getOffsetPosition();
 		Kore::Quaternion finalRot = desRotation.rotated(offsetRotation);
-		vec3 finalPos = mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * finalRot.matrix().Transpose() * mat4::Translation(offsetPosition.x(), offsetPosition.y(), offsetPosition.z()) * vec4(0, 0, 0, 1);
+		Kore::vec3 finalPos = Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * finalRot.matrix().Transpose() * Kore::mat4::Translation(offsetPosition.x(), offsetPosition.y(), offsetPosition.z()) * Kore::vec4(0, 0, 0, 1);
 
 		if (endEffectorID == hip) {
 			setFixedPositionAndOrientation(entity, entity->endEffector[endEffectorID]->getBoneIndex(), finalPos, finalRot);
@@ -44,7 +44,7 @@ void Animator::setDesiredPositionAndOrientation(AnimatedEntity* entity, int bone
 void Animator::setFixedPositionAndOrientation(AnimatedEntity* entity, int boneIndex, Kore::vec3 desPosition, Kore::Quaternion desRotation) {
 	BoneNode* bone = getBoneWithIndex(entity, boneIndex);
 
-	bone->transform = mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z());
+	bone->transform = Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z());
 	bone->rotation = desRotation;
 	bone->rotation.normalize();
 	bone->local = bone->transform * bone->rotation.matrix().Transpose();

@@ -13,7 +13,6 @@
 #include "LevelObject.h"
 #include "AnimatedEntity.h"
 
-using namespace Kore;
 using namespace Kore::Graphics4;
 
 class Renderer
@@ -49,18 +48,18 @@ public:
 		PipelineState* pipeline;
 	};
 
-	void render(LevelObject object, bool mirror);
+	void render(LevelObject* object, bool mirror);
 	void setLights(LevelObject object, Kore::Graphics4::ConstantLocation lightCountLocation, Kore::Graphics4::ConstantLocation);
 
-	void animate(AnimatedEntity entity);
+	void animate(AnimatedEntity* entity);
 
-	void animate(Avatar avatar);
+	void animate(Avatar* avatar);
 
-	void renderAllVRDevices(Avatar avatar); //renders all VR devices
-	void renderControllerAndTracker(Avatar avatar, int tracker, Kore::vec3 desPosition, Kore::Quaternion desRotation); //renders VR Stuff, calls method below, is a subroutine
-	void renderVRDevice(Avatar avatar, int index, Kore::mat4 M); //renders VR stuff, is a subroutine
+	void renderAllVRDevices(Avatar* avatar); //renders all VR devices
+	void renderControllerAndTracker(Avatar* avatar, int tracker, Kore::vec3 desPosition, Kore::Quaternion desRotation); //renders VR Stuff, calls method below, is a subroutine
+	void renderVRDevice(Avatar* avatar, int index, Kore::mat4 M); //renders VR stuff, is a subroutine
 
-	void renderCSForEndEffector(Avatar avatar); //renders stuff, not sure what though
+	void renderCSForEndEffector(Avatar* avatar); //renders stuff, not sure what though
 
 	CustomMath* math;
 	Animator* animator;
@@ -72,10 +71,10 @@ public:
 	EnvironmentGraphics *environmentGraphics;
 	EntityGraphics *entityGraphics;
 
-	std::vector<LevelObject> levelObjects;
-	std::vector<AnimatedEntity> animatedEntities;
+	std::vector<LevelObject*> levelObjects;
+	std::vector<AnimatedEntity*> animatedEntities;
 
-	void init(std::vector<LevelObject> objects, std::vector<AnimatedEntity> entities, Animator* anim);
+	void init(std::vector<LevelObject*> objects, std::vector<AnimatedEntity*> entities, Animator* anim);
 
 	void loadEnvironmentShader(String vertexShaderFile, String fragmentShaderFile);
 	void loadEntityShader(String vertexShaderFile, String fragmentShaderFile);

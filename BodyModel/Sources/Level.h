@@ -21,7 +21,7 @@ public:
 	struct AnAnimatedEntity
 	{
 		AnimatedEntity* entity;
-		AnAnimatedEntity(); // empty default constructor
+		AnAnimatedEntity() {}; // empty default constructor
 		AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
 	};
 
@@ -32,8 +32,8 @@ public:
 	};
 
 	Renderer* renderer;
-	std::vector<ALevelObject> environment;
-	std::vector<AnAnimatedEntity> enemies;
+	std::vector<ALevelObject*> environment;
+	std::vector<AnAnimatedEntity*> enemies;
 	TheAvatar* avatar;
 	InputController* input;
 	AudioManager* audio;
