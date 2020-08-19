@@ -1,30 +1,32 @@
 #pragma once
 
+#include "CustomMath.h"
+
 #include <Kore/Input/Keyboard.h>
 #include <Kore/Input/Mouse.h>
-#include <Kore/Graphics4/PipelineState.h>
 #include <Kore/Math/Quaternion.h>
-#include <map>
 
-#include "CustomMath.h"
+#include <map>
 
 class InputController
 {
-	Kore::vec4 camUp;
-	Kore::vec4 camForward;
-	Kore::vec4 camRight;
+	static InputController* instance;
+	
 
-	Kore::vec3 cameraPos;
 	// Keyboard controls
 	bool rotate = false;
 	bool W = false, A = false, S = false, D = false;
 
-	std::map<Kore::KeyCode, void()> *callbacks;
+	std::map<Kore::KeyCode, void(*)()> callbacks;
 
 	CustomMath* math;
 
 public:
-	InputController(std::map<Kore::KeyCode, void()> callbacks[]);
+	static InputController* getInstanceAndAppend(); // Get the singleton instance
+	static InputController* getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackArray); // Get the singleton instance
+	
+	InputController();
+	InputController(std::map<Kore::KeyCode, void(*)()> callbacks);
 
 	void keyDown(Kore::KeyCode code); //manages some keyboard keys
 
@@ -39,4 +41,3 @@ public:
 	void update(float deltaT);
 	void init();
 };
-

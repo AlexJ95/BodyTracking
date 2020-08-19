@@ -1,19 +1,18 @@
 #pragma once
 
-#include <Kore/Math/Quaternion.h>
 
+#include "pch.h"
+#include "Animator.h"
+#include "AnimatedEntity.h"
+
+
+#include <Kore/Math/Quaternion.h>
 #include <Kore/Log.h>
 
 #include <iostream>
 #include <string>
 #include <ctime>
-
 #include <fstream>
-
-#include "pch.h"
-
-#include "Animator.h"
-#include "AnimatedEntity.h"
 
 class Logger {
 	

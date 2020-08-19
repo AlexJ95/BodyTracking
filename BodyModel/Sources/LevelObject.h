@@ -1,8 +1,9 @@
 #pragma once
 
+#include "pch.h"
+
 #include "Settings.h"
 #include "MeshObject.h"
-#include "Animator.h"
 
 class LevelObject : public MeshObject
 {

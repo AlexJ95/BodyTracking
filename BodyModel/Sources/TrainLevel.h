@@ -5,7 +5,12 @@
 class TrainLevel :
     public Level
 {
-    virtual void Update(double deltaT);
+public:
+    void update(double deltaT);
 
-    virtual void Init();
+    void init();
+
+    void controlsSetup();
+    void audioSetup();
+    void graphicsSetup();
 };

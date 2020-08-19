@@ -1,18 +1,17 @@
 #pragma once
 
-#include <Kore/Math/Quaternion.h>
-
 #include "Settings.h"
 #include "Animator.h"
 #include "CustomMath.h"
 #include "AnimatedEntity.h"
+
+#include <Kore/Math/Quaternion.h>
 
 class Calibrator
 {
 #ifdef KORE_STEAMVR
 	bool controllerButtonsInitialized = false;
 	float currentUserHeight;
-	bool firstPersonMonitor = false;
 #endif
 
 	bool calibratedAvatar = false;

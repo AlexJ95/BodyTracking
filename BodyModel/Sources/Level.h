@@ -28,6 +28,7 @@ public:
 	struct TheAvatar : public AnAnimatedEntity
 	{
 		bool calibratedAvatar;
+		Avatar* entity;
 		TheAvatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, bool renderTrackerAndController, bool renderAxisForEndEffector);
 	};
 
@@ -39,6 +40,8 @@ public:
 	AudioManager* audio;
 	Calibrator* calibrator;
 	Animator* animator;
+
+	Level();
 
 	virtual void update(double deltaT);
 

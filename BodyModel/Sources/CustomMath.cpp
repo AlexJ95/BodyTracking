@@ -9,8 +9,13 @@ CustomMath* CustomMath::instance;
 CustomMath* CustomMath::getInstance()
 {
 	if (!instance)
-		instance = new CustomMath;
+		instance = new CustomMath();
 	return instance;
+}
+
+CustomMath::CustomMath() {
+	cameraPos = Kore::vec3(0, 0, 0);
+	camForward = Kore::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 }
 
 Kore::mat4 CustomMath::getMirrorMatrix() {
@@ -51,4 +56,14 @@ void CustomMath::initTransAndRot() {
 	Kore::vec3 initPos = Kore::vec4(0, 0, 0, 1);
 	initTrans = Kore::mat4::Translation(initPos.x(), initPos.y(), initPos.z()) * initRot.matrix().Transpose();
 	initTransInv = initTrans.Invert();
+
+	// Set camera initial position and orientation
+	cameraPos = Kore::vec3(2.6, 1.8, 0.0);
+	Kore::Quaternion q1(Kore::vec3(0.0f, 1.0f, 0.0f), Kore::pi / 2.0f);
+	Kore::Quaternion q2(Kore::vec3(1.0f, 0.0f, 0.0f), -Kore::pi / 8.0f);
+	camUp = q2.matrix() * camUp;
+	camRight = q1.matrix() * camRight;
+	q2.rotate(q1);
+	Kore::mat4 mat = q2.matrix();
+	camForward = mat * camForward;
 }

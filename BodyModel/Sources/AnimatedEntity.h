@@ -1,9 +1,10 @@
 #pragma once
 
+#include "pch.h"
+
 #include "Settings.h"
-#include "MeshObject.h"
-#include "CustomMath.h"
 #include "InverseKinematics.h"
+#include "MeshObject.h"
 
 class AnimatedEntity : public MeshObject
 {

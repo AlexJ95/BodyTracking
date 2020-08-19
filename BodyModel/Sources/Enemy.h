@@ -1,10 +1,10 @@
 #pragma once
 
-#include "AnimatedEntity.h"
-#include "Renderer.h"
+//#include "Renderer.h"
 
-class Enemy : public AnimatedEntity
+class Enemy //: public AnimatedEntity
 {
+	/*
 protected:
 	//the different states of the AI state machine
 	enum AIStates {Attacking, Approaching, Defending, Planning};
@@ -25,5 +25,5 @@ public:
 	//params will change according to the needs of the decisionmaking
 	//act shouldn't carry the logic of the state machine which represents the decision making of the AI
 	//act simply calls the method representing the current state of the state machine
-	void act();
+	void act();*/
 };

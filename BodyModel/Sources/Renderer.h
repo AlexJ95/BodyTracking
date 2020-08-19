@@ -1,17 +1,14 @@
 #pragma once
 
-#include <Kore/Graphics4/PipelineState.h>
-#include <Kore/Graphics1/Color.h>
-#include <Kore/System.h>
-#include <Kore/Log.h>
-#include <Kore/IO/FileReader.h>
-
 #include "Settings.h"
-#include "MeshObject.h"
 #include "CustomMath.h"
 #include "Animator.h"
 #include "LevelObject.h"
 #include "AnimatedEntity.h"
+
+#include <Kore/IO/FileReader.h>
+#include <Kore/Graphics4/PipelineState.h>
+#include <Kore/Graphics1/Color.h>
 
 using namespace Kore::Graphics4;
 
@@ -73,8 +70,11 @@ public:
 
 	std::vector<LevelObject*> levelObjects;
 	std::vector<AnimatedEntity*> animatedEntities;
+	Avatar* avatar;
 
-	void init(std::vector<LevelObject*> objects, std::vector<AnimatedEntity*> entities, Animator* anim);
+	Renderer();
+
+	void init(std::vector<LevelObject*> objects, std::vector<AnimatedEntity*> entities, Avatar* avatar, Animator* anim);
 
 	void loadEnvironmentShader(String vertexShaderFile, String fragmentShaderFile);
 	void loadEntityShader(String vertexShaderFile, String fragmentShaderFile);

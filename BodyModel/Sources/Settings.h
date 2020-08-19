@@ -34,4 +34,6 @@ namespace {
 	const bool renderTrackerAndController = true;
 	const bool renderAxisForEndEffector = false;
 	const int numOfEndEffectors = 8;
+
+	bool firstPersonMonitor = false;
 }

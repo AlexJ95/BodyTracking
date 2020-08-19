@@ -1,10 +1,18 @@
 
 #include "Renderer.h"
 
-void Renderer::init(std::vector<LevelObject*> objects, std::vector<AnimatedEntity*> entities, Animator* anim) {
+Renderer::Renderer()
+{
+	environmentGraphics = new EnvironmentGraphics;
+	entityGraphics = new EntityGraphics;
 	math = math->getInstance();
+}
+
+void Renderer::init(std::vector<LevelObject*> objects, std::vector<AnimatedEntity*> entities, Avatar* theAvatar, Animator* anim)
+{
 	levelObjects = objects;
 	animatedEntities = entities;
+	avatar = theAvatar;
 	animator = anim;
 }
 
@@ -88,6 +96,7 @@ void Renderer::renderEnvironment() {
 
 void Renderer::renderEntities() {
 	for (AnimatedEntity* entity : animatedEntities) animate(entity);
+	animate(avatar);
 }
 
 void Renderer::update(float deltaT)
@@ -294,7 +303,6 @@ void Renderer::animate(Avatar* avatar)
 {
 	animate((AnimatedEntity*) avatar);
 	if (renderTrackerAndController) renderAllVRDevices(avatar);
-
 	if (renderAxisForEndEffector) renderCSForEndEffector(avatar);
 }
 

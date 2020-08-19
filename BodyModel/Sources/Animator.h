@@ -1,12 +1,13 @@
 #pragma once
 
-#include <Kore/Math/Quaternion.h>
-#include <typeinfo>
-
 #include "Settings.h"
 #include "CustomMath.h"
 #include "AnimatedEntity.h"
 //#include "Logger.h"
+
+#include <Kore/Math/Quaternion.h>
+
+#include <typeinfo>
 
 class Animator
 {
