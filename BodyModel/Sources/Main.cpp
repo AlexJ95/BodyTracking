@@ -40,26 +40,6 @@ namespace {
 			logger->endLogger();
 		}
 	}
-
-	void keyDown(Kore::KeyCode code) {
-		inputController->keyDown(code);
-	}
-
-	void keyUp(Kore::KeyCode code) {
-		inputController->keyUp(code);
-	}
-
-	void mouseMove(int windowId, int x, int y, int movementX, int movementY) {
-		inputController->mouseMove(windowId, x, y, movementX, movementY);
-	}
-
-	void mousePress(int windowId, int button, int x, int y) {
-		inputController->mousePress(windowId, button, x, y);
-	}
-
-	void mouseRelease(int windowId, int button, int x, int y) {
-		inputController->mouseRelease(windowId, button, x, y);
-	}
 	
 	void init() {
 		logger = new Logger;
@@ -68,7 +48,6 @@ namespace {
 				{Kore::KeyCode::KeyL, record},
 				{Kore::KeyCode::KeyQ, Kore::System::stop}
 			});
-		
 
 		// Sound initiation
 		audio = audio->getInstanceAndAppend({
@@ -79,12 +58,6 @@ namespace {
 		currentLevel = new TrainLevel();
 		currentLevel->init();
 
-		Kore::Keyboard::the()->KeyDown = keyDown;
-		Kore::Keyboard::the()->KeyUp = keyUp;
-		Kore::Mouse::the()->Move = mouseMove;
-		Kore::Mouse::the()->Press = mousePress;
-		Kore::Mouse::the()->Release = mouseRelease;
-		
 #ifdef KORE_STEAMVR
 		VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
 #endif

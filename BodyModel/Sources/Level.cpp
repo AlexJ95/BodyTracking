@@ -1,19 +1,18 @@
 #include "Level.h"
 
-Level::Level() {
+Level::Level()
+{
 	renderer = new Renderer();
 	animator = new Animator();
 }
 
 void Level::update(double deltaT)
 {
-	input->update(deltaT);
 	renderer->update(deltaT);
 }
 
 void Level::init()
 {
-	input->init();
 	std::vector<LevelObject*> objects;
 	for (ALevelObject* object : environment) objects.emplace_back(object->render);
 	std::vector<AnimatedEntity*> entities;
@@ -21,7 +20,8 @@ void Level::init()
 	renderer->init(objects, entities, avatar->entity, animator);
 }
 
-Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale) {
+Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale)
+{
 	render = new LevelObject(meshFile, textureFile, structure, scale);
 }
 

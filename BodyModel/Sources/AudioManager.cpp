@@ -3,6 +3,13 @@
 
 AudioManager* AudioManager::instance;
 
+AudioManager* AudioManager::getInstance()
+{
+	if (!instance)
+		instance = new AudioManager();
+	return instance;
+}
+
 AudioManager* AudioManager::getInstanceAndAppend(std::map<std::string, Kore::Sound*> sounds)
 {
 	if (!instance)
@@ -11,10 +18,14 @@ AudioManager* AudioManager::getInstanceAndAppend(std::map<std::string, Kore::Sou
 	return instance;
 }
 
-AudioManager::AudioManager(std::map<std::string, Kore::Sound*> sounds)
+AudioManager::AudioManager()
 {
 	Kore::Audio1::init();
 	Kore::Audio2::init();
+}
+
+AudioManager::AudioManager(std::map<std::string, Kore::Sound*> sounds) : AudioManager()
+{
 	soundLibrary = sounds;
 }
 

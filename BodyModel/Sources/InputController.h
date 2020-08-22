@@ -11,19 +11,21 @@
 class InputController
 {
 	static InputController* instance;
-	
-
-	// Keyboard controls
-	bool rotate = false;
-	bool W = false, A = false, S = false, D = false;
-
-	std::map<Kore::KeyCode, void(*)()> callbacks;
 
 	CustomMath* math;
 
+	std::map<Kore::KeyCode, void(*)()> callbacks;
+
+	bool initialized = false;
+
+	// Keyboard and Mouse controls
+	bool rotate = false;
+	bool W = false, A = false, S = false, D = false;
+	float cameraMoveSpeed = 4.f;
+	
 public:
-	static InputController* getInstanceAndAppend(); // Get the singleton instance
-	static InputController* getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackArray); // Get the singleton instance
+	static InputController* getInstance(); // Get the singleton instance
+	static InputController* getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbacks); // Get the singleton instance and add new key-controls
 	
 	InputController();
 	InputController(std::map<Kore::KeyCode, void(*)()> callbacks);
@@ -38,6 +40,7 @@ public:
 
 	void mouseRelease(int windowId, int button, int x, int y); //just like mousepress but sets rotate to false
 
-	void update(float deltaT);
 	void init();
+
+	void update(float deltaT);
 };

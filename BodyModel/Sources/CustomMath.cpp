@@ -14,8 +14,10 @@ CustomMath* CustomMath::getInstance()
 }
 
 CustomMath::CustomMath() {
-	cameraPos = Kore::vec3(0, 0, 0);
+	camUp = Kore::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	camForward = Kore::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+	camRight = Kore::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+	cameraPos = Kore::vec3(0, 0, 0);
 }
 
 Kore::mat4 CustomMath::getMirrorMatrix() {
@@ -44,6 +46,19 @@ void CustomMath::setSetViewMatrixCoefficients(Kore::vec3 cameraPosition, Kore::v
 {
 	cameraPos = cameraPosition;
 	camForward = camForwardRef;
+}
+
+void CustomMath::rotateCamera(int movementX, int movementY)
+{
+	Kore::Quaternion q1(Kore::vec3(0.0f, 1.0f, 0.0f), 0.01f * movementX);
+	Kore::Quaternion q2(camRight, 0.01f * -movementY);
+
+	camUp = q2.matrix() * camUp;
+	camRight = q1.matrix() * camRight;
+
+	q2.rotate(q1);
+	Kore::mat4 mat = q2.matrix();
+	camForward = mat * camForward;
 }
 
 void CustomMath::initTransAndRot() {
