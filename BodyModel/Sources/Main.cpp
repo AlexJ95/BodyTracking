@@ -68,8 +68,8 @@ namespace {
 		double deltaT = t - lastTime;
 		lastTime = t;
 
-		currentLevel->update(deltaT);
 		inputController->update(deltaT);
+		currentLevel->update(deltaT);
 	}
 }
 
