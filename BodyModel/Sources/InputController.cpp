@@ -9,10 +9,13 @@ InputController* InputController::getInstanceAndAppend()
 	return instance;
 }
 
-InputController* InputController::getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackArray)
+InputController* InputController::getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackArray, UI3D* ui)
 {
 	if (!instance)
+	{
 		instance = new InputController(callbackArray);
+		instance->ui = ui;
+	}
 	else instance->callbacks.insert(callbackArray.begin(), callbackArray.end());
 	return instance;
 }
@@ -93,6 +96,7 @@ void InputController::mouseMove(int windowId, int x, int y, int movementX, int m
 
 	q2.rotate(q1);
 	Kore::mat4 mat = q2.matrix();
+	if(!ui->lockBackground())
 	math->camForward = mat * math->camForward;
 }
 

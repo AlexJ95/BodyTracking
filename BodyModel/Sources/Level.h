@@ -7,6 +7,8 @@
 #include "Calibrator.h"
 #include "LevelObject.h"
 #include "AnimatedEntity.h"
+#include "UI3D.h"
+
 
 class Level
 {
@@ -46,5 +48,6 @@ public:
 	virtual void update(double deltaT);
 
 	virtual void init();
+	virtual void setUI(UI3D* ui);
 };
 

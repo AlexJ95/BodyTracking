@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include "InputController.h"
 #include "AudioManager.h"
+#include "UI3D.h"
 
 #include "TrainLevel.h"
 
@@ -25,6 +26,8 @@ namespace {
 	AudioManager* audio;
 	Logger* logger;
 	Level* currentLevel;
+	UI3D* ui;
+	Kore::Window* window;
 	
 	double startTime;
 	double lastTime;
@@ -67,7 +70,7 @@ namespace {
 		inputController = inputController->getInstanceAndAppend({
 				{Kore::KeyCode::KeyL, record},
 				{Kore::KeyCode::KeyQ, Kore::System::stop}
-			});
+			},ui);
 		
 
 		// Sound initiation
@@ -78,6 +81,7 @@ namespace {
 
 		currentLevel = new TrainLevel();
 		currentLevel->init();
+		currentLevel->setUI(ui);
 
 		Kore::Keyboard::the()->KeyDown = keyDown;
 		Kore::Keyboard::the()->KeyUp = keyUp;
@@ -101,10 +105,10 @@ namespace {
 }
 
 int kore(int argc, char** argv) {
-	Kore::System::init("BodyTracking", width, height);
-
+	window = Kore::System::init("BodyTracking", width, height);
+	ui = new UI3D(window);
 	init();
-
+	Kore::System::setShutdownCallback(UIshutDown);
 	Kore::System::setCallback(update);
 	startTime = Kore::System::time();
 

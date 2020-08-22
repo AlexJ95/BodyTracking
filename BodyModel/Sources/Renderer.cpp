@@ -18,6 +18,7 @@ void Renderer::init(std::vector<LevelObject*> objects, std::vector<AnimatedEntit
 
 void Renderer::loadEnvironmentShader(String vertexShaderFile, String fragmentShaderFile)
 {
+	
 	Kore::FileReader vs(vertexShaderFile);
 	Kore::FileReader fs(fragmentShaderFile);
 	environmentGraphics->vertexShader = new Shader(vs.readAll(), vs.size(), VertexShader);
@@ -168,7 +169,7 @@ void Renderer::update(float deltaT)
 #endif
 	renderEnvironment();
 	renderEntities();
-
+	ui->drawUI();
 	Kore::Graphics4::end();
 	Kore::Graphics4::swapBuffers();
 }

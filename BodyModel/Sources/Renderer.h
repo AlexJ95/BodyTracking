@@ -9,6 +9,7 @@
 #include <Kore/IO/FileReader.h>
 #include <Kore/Graphics4/PipelineState.h>
 #include <Kore/Graphics1/Color.h>
+#include "UI3D.h"
 
 using namespace Kore::Graphics4;
 
@@ -71,7 +72,7 @@ public:
 	std::vector<LevelObject*> levelObjects;
 	std::vector<AnimatedEntity*> animatedEntities;
 	Avatar* avatar;
-
+	UI3D* ui;
 	Renderer();
 
 	void init(std::vector<LevelObject*> objects, std::vector<AnimatedEntity*> entities, Avatar* avatar, Animator* anim);

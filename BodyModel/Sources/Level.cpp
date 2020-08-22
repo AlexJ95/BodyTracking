@@ -21,6 +21,11 @@ void Level::init()
 	renderer->init(objects, entities, avatar->entity, animator);
 }
 
+void Level::setUI(UI3D* ui)
+{
+	renderer->ui = ui;
+}
+
 Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale) {
 	render = new LevelObject(meshFile, textureFile, structure, scale);
 }

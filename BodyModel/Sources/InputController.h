@@ -5,13 +5,14 @@
 #include <Kore/Input/Keyboard.h>
 #include <Kore/Input/Mouse.h>
 #include <Kore/Math/Quaternion.h>
+#include "UI3D.h"
 
 #include <map>
 
 class InputController
 {
 	static InputController* instance;
-	
+	UI3D* ui;
 
 	// Keyboard controls
 	bool rotate = false;
@@ -23,7 +24,7 @@ class InputController
 
 public:
 	static InputController* getInstanceAndAppend(); // Get the singleton instance
-	static InputController* getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackArray); // Get the singleton instance
+	static InputController* getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackArray,UI3D *ui); // Get the singleton instance
 	
 	InputController();
 	InputController(std::map<Kore::KeyCode, void(*)()> callbacks);
