@@ -131,7 +131,7 @@ void initBindings()
 
 void InputController::init()
 {
-	if (!initialized) return;
+	if (initialized) return;
 	initBindings();
 	math->initTransAndRot();
 }
