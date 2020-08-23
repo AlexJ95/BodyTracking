@@ -113,7 +113,7 @@ void Logger::endEvaluationLogger() {
 	
 	log(Kore::Info, "Stop eval-logging!");
 }
-
+/*
 void Logger::saveEvaluationData(AnimatedEntity* entity, Animator *animator) {
 	float* iterations = animator->getIterations(entity);
 	float* errorPos = animator->getErrorPos(entity);
@@ -134,7 +134,7 @@ void Logger::saveEvaluationData(AnimatedEntity* entity, Animator *animator) {
 	}
 	evaluationDataOutputFile << animator->getReached(entity) << ";" << animator->getStucked(entity) << "\n";
 	evaluationDataOutputFile.flush();
-}
+}*/
 
 bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::vec3* rawPos, Kore::Quaternion* rawRot, float& scale, int readerChannel) {
 	string tag;

@@ -3,7 +3,7 @@
 #include "Settings.h"
 #include "CustomMath.h"
 #include "AnimatedEntity.h"
-//#include "Logger.h"
+#include "Logger.h"
 
 #include <Kore/Math/Quaternion.h>
 
@@ -13,10 +13,12 @@ class Animator
 {
 	CustomMath* math;
 
-	//Logger* logger;
+	Logger* logger;
 
 public :
 	Animator();
+
+	bool executeAnimation(AnimatedEntity* entity, const char* filename, int readerChannel);
 
 	void executeMovement(AnimatedEntity* entity, int endEffectorID); //moves a singular endeffector to desired attitude
 	

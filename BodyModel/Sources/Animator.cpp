@@ -4,6 +4,33 @@ Animator::Animator() {
 	math = math->getInstance();
 }
 
+bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, int readerChannel)
+{
+	float scaleFactor;
+	Kore::vec3 desPosition[numOfEndEffectors];
+	Kore::Quaternion desRotation[numOfEndEffectors];
+	bool inAnimation = logger->readData(numOfEndEffectors, files[currentFile], desPosition, desRotation, scaleFactor, readerChannel);
+
+	for (int i = 0; i < numOfEndEffectors; ++i) {
+		entity->endEffector[i]->setDesPosition(desPosition[i]);
+		entity->endEffector[i]->setDesRotation(desRotation[i]);
+	}
+
+	/*
+	if (!calibratedAvatar) {
+		avatar->resetPositionAndRotation();
+		avatar->setScale(scaleFactor);
+		calibrate();
+		calibratedAvatar = true;
+	}
+	*/
+
+	for (int i = 0; i < numOfEndEffectors; ++i) {
+		executeMovement(entity, i);
+	}
+	return inAnimation;
+}
+
 void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 {
 	Kore::vec3 desPosition = entity->endEffector[endEffectorID]->getDesPosition();

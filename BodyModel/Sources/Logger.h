@@ -2,9 +2,8 @@
 
 
 #include "pch.h"
-#include "Animator.h"
-#include "AnimatedEntity.h"
-
+//#include "Animator.h"
+#include "Jacobian.h"
 
 #include <Kore/Math/Quaternion.h>
 #include <Kore/Log.h>
@@ -38,7 +37,7 @@ public:
 	void saveData(const char* tag, Kore::vec3 rawPos, Kore::Quaternion rawRot, float scale);
 	
 	void startEvaluationLogger(const char* filename, int ikMode, float lambda, float errorMaxPos, float errorMaxRot, int maxSteps);
-	void saveEvaluationData(AnimatedEntity* entity, Animator* animator);
+	//void saveEvaluationData(AnimatedEntity* entity, Animator* animator);
 	void endEvaluationLogger();
 	
 	// HMM

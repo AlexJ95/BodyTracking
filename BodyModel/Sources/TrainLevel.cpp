@@ -15,7 +15,7 @@ void TrainLevel::init() {
 
 void TrainLevel::controlsSetup()
 {
-	input = input->getInstanceAndAppend();
+	input = input->getInstance();
 }
 
 void TrainLevel::audioSetup()

@@ -32,6 +32,11 @@ public:
 		TheAvatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, bool renderTrackerAndController, bool renderAxisForEndEffector);
 	};
 
+	struct NonPlayerCharacter : public AnAnimatedEntity
+	{
+		NonPlayerCharacter(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
+	};
+
 	Renderer* renderer;
 	std::vector<ALevelObject*> environment;
 	std::vector<AnAnimatedEntity*> enemies;
