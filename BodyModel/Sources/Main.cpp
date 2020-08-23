@@ -106,6 +106,17 @@ namespace {
 	//Offsets needed to make the tiles loop seamlessly
 	int offsetZfloor = 26;
 	float offsetXfloor = -0.175f;
+	
+	LivingRoom* tunnel;
+	bool renderTunnel = false;
+	float offsetZTunnel = -15.85f;
+	float offsetXTunnel = -0.12f;
+	int tunnelSize;
+	int const tunnelLong = 100;
+	int const tunnelMedium = 50;
+	int const tunnelShort = 5;
+	Kore::mat4 currentTunnelPos;
+	
 	//House objects
 	LivingRoom* houseSmall;
 	LivingRoom* houseMiddle;
@@ -412,6 +423,70 @@ namespace {
 
 		}
 		
+		//Render a tunnel which goes by 1 time when activated
+		if (renderTunnel) {
+			//currentTunnelPos = tunnel->M;
+			switch (tunnelSize) {
+			case tunnelShort:
+				for (int i = 1; i < tunnelShort; i++) {
+					//tunnel->M = currentTunnelPos * mat4::Translation(-offsetZTunnel * 0.082 * deltaTime * trainSpeed + i * -offsetZTunnel, offsetXTunnel * 0.082 * deltaTime * trainSpeed + i * offsetXTunnel, 0);
+					tunnel->M = currentTunnelPos * mat4::Translation((-offsetZTunnel * i) * 0.082 * deltaTime * trainSpeed, (offsetXTunnel * i) * 0.082 * deltaTime * trainSpeed, 0);
+					//tunnel->M = tunnel->M * mat4::Translation(-offsetZTunnel * 0.082 * deltaTime * trainSpeed, offsetXTunnel * 0.082 * deltaTime * trainSpeed, 0);
+					tunnel->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+					if (i == 1) {
+						currentTunnelPos = tunnel->M;
+					}
+				}
+
+				if (tunnel->M.data[14] <= -600) {
+					tunnel->M = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+					currentTunnelPos = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+					renderTunnel = false;
+				}
+				break;
+			case tunnelMedium:
+				for (int i = 1; i < tunnelMedium; i++) {
+					//tunnel->M = currentTunnelPos * mat4::Translation(-offsetZTunnel * 0.082 * deltaTime * trainSpeed + i * -offsetZTunnel, offsetXTunnel * 0.082 * deltaTime * trainSpeed + i * offsetXTunnel, 0);
+					tunnel->M = currentTunnelPos * mat4::Translation((-offsetZTunnel * i) * 0.082 * deltaTime * trainSpeed, (offsetXTunnel * i) * 0.082 * deltaTime * trainSpeed, 0);
+					tunnel->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+					if (i == 1) {
+						currentTunnelPos = tunnel->M;
+					}
+				}
+
+				if (tunnel->M.data[14] <= -600) {
+					tunnel->M = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+					currentTunnelPos = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+					renderTunnel = false;
+				}
+				break;
+
+			case tunnelLong:
+				
+				for (int i = 1; i <= tunnelLong; i++) {
+					//tunnel->M = tunnel->M * mat4::Translation(-offsetZTunnel * 0.082 * deltaTime * trainSpeed + i * -offsetZTunnel, offsetXTunnel * 0.082 * deltaTime * trainSpeed + i * offsetXTunnel, 0);
+					//tunnel->M = currentTunnelPos * mat4::Translation(-offsetZTunnel * 0.082 * deltaTime * trainSpeed * i, offsetXTunnel * 0.082 * deltaTime * trainSpeed * i, 0);
+					tunnel->M = currentTunnelPos * mat4::Translation((-offsetZTunnel * i) * 0.082 * deltaTime * trainSpeed, (offsetXTunnel * i) * 0.082 * deltaTime * trainSpeed, 0);
+					tunnel->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+					if (i == 1) {
+						currentTunnelPos = tunnel->M;
+					}
+				}
+
+				if (tunnel->M.data[14] <= -600) {
+					tunnel->M = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50)* livingRoomRot.matrix().Transpose();
+					currentTunnelPos = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+					renderTunnel = false;
+				}
+				break;
+			}
+			//tunnel->M = tunnel->M * mat4::Translation(-offsetZTunnel * 0.082 * deltaTime * trainSpeed, offsetXTunnel * 0.082 * deltaTime * trainSpeed, 0);
+			//tunnel->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
+			//if (tunnel->M.data[14] <= -500) {
+				//tunnel->M = mat4::Translation(-offsetXTunnel * -50, -5, -15.85 * -50) * livingRoomRot.matrix().Transpose();
+			//}
+
+		}
 		skybox->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
 
 	}
@@ -827,6 +902,21 @@ namespace {
 			case Kore::KeyD:
 				D = true;
 				break;
+			case Kore::Key1:
+				renderTunnel = true;
+				tunnelSize = tunnelShort;
+				//currentTunnelPos = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+				break;
+			case Kore::Key2:
+				renderTunnel = true;
+				tunnelSize = tunnelMedium;
+				//currentTunnelPos = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+				break;
+			case Kore::Key3:
+				renderTunnel = true;
+				tunnelSize = tunnelLong;
+				//currentTunnelPos = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+				break;
 			case Kore::KeyR:
 #ifdef KORE_STEAMVR
 				VrInterface::resetHmdPose();
@@ -998,6 +1088,10 @@ namespace {
 		trainMiddle = new LivingRoom("train/trainMiddle.ogex", "train/", structure_living_room, 1);
 		trainMiddle->M = mat4::RotationY(-0.0075) * mat4::Translation(0, -3, -16.85) * livingRoomRot.matrix().Transpose();
 
+		tunnel = new LivingRoom("tunnel/tunnelNew2.ogex", "tunnel/", structure_living_room, 1);
+		tunnel->M = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50) * livingRoomRot.matrix().Transpose();
+		currentTunnelPos = mat4::Translation(-offsetXTunnel * -50, -5, offsetZTunnel * -50)* livingRoomRot.matrix().Transpose();
+		
 		floor = new LivingRoom("floor/floor.ogex", "floor/", structure_living_room, 1);
 		
 		for (int x = 0; x < 80; x++) {
