@@ -34,3 +34,7 @@ Level::TheAvatar::TheAvatar(const char* meshFile, const char* textureFile, const
 {
 	entity = new Avatar(meshFile, textureFile, structure, scale, renderTrackerAndController, renderAxisForEndEffector);
 }
+
+Level::NonPlayerCharacter::NonPlayerCharacter(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale) : Level::AnAnimatedEntity(meshFile, textureFile, structure, scale)
+{
+}

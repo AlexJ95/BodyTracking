@@ -5,21 +5,24 @@
 
 class StateMachineAI
 {
+protected:
 	Animator* animator;
 	AnimatedEntity* entity;
+	Logger* logger;
 	bool inAnimation;
 
 public:
 	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference);
-	virtual ~StateMachineAI() = 0;
+	//virtual ~StateMachineAI() = 0;
 
 	//the different states of the AI state machine
 	enum class AIState;
 	AIState currentState;
-	typedef AIState (*action)(float deltaT, Kore::vec3 playerPosition);
-	std::map < AIState, AIState(StateMachineAI::*)(float deltaT, Kore::vec3 playerPosition) > stateToAction;
+	typedef AIState (StateMachineAI::*action)(float deltaT, Kore::vec3 playerPosition);
+	std::map <AIState, AIState(StateMachineAI::*)(float deltaT, Kore::vec3 playerPosition)> stateToAction;
+	std::map <string, const char*> animationLibrary;
 
-	void update(float deltaT);
+	void update(float deltaT, Kore::vec3 playerPosition);
 };
 
 class CyborgAI : public StateMachineAI
@@ -28,8 +31,8 @@ public:
 	enum class AIState { Attacking, Pursueing, Planning };
 	
 	AIState attacking(float deltaT, Kore::vec3 playerPosition);
-	//AIStates pursueing();
-	//AIStates planning();
+	AIState pursueing(float deltaT, Kore::vec3 playerPosition);
+	AIState planning(float deltaT, Kore::vec3 playerPosition);
 
 	//void update(float deltaT, Kore::vec3 playerPosition);
 

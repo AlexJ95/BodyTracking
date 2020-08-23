@@ -13,12 +13,10 @@ class Animator
 {
 	CustomMath* math;
 
-	Logger* logger;
-
 public :
 	Animator();
 
-	bool executeAnimation(AnimatedEntity* entity, const char* filename, int readerChannel);
+	bool executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger);
 
 	void executeMovement(AnimatedEntity* entity, int endEffectorID); //moves a singular endeffector to desired attitude
 	

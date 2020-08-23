@@ -4,12 +4,12 @@ Animator::Animator() {
 	math = math->getInstance();
 }
 
-bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, int readerChannel)
+bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
 {
 	float scaleFactor;
 	Kore::vec3 desPosition[numOfEndEffectors];
 	Kore::Quaternion desRotation[numOfEndEffectors];
-	bool inAnimation = logger->readData(numOfEndEffectors, files[currentFile], desPosition, desRotation, scaleFactor, readerChannel);
+	bool inAnimation = logger->readData(numOfEndEffectors, files[currentFile], desPosition, desRotation, scaleFactor);
 
 	for (int i = 0; i < numOfEndEffectors; ++i) {
 		entity->endEffector[i]->setDesPosition(desPosition[i]);

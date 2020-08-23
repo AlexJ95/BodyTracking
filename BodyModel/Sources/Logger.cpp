@@ -8,7 +8,7 @@ Logger::Logger() {
 }
 
 Logger::~Logger() {
-	for (int i = 0; i < (end(logDataReader) - begin(logDataReader)); i++) logDataReader[i].close();
+	logDataReader.close();
 	logdataWriter.close();
 	hmmWriter.close();
 	hmmAnalysisWriter.close();
@@ -136,19 +136,19 @@ void Logger::saveEvaluationData(AnimatedEntity* entity, Animator *animator) {
 	evaluationDataOutputFile.flush();
 }*/
 
-bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::vec3* rawPos, Kore::Quaternion* rawRot, float& scale, int readerChannel) {
+bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::vec3* rawPos, Kore::Quaternion* rawRot, float& scale) {
 	string tag;
 	float posX, posY, posZ;
 	float rotX, rotY, rotZ, rotW;
 	
-	if(!logDataReader[readerChannel].is_open()) {
+	if(!logDataReader.is_open()) {
 		
 		if (ifstream(filename)) {
-			logDataReader[readerChannel].open(filename);
+			logDataReader.open(filename);
 			log(Kore::Info, "Read data from %s", filename);
 			
 			// Skip header
-			logDataReader[readerChannel] >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag;
+			logDataReader >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag;
 		} else {
 			log(Kore::Info, "Could not find file %s", filename);
 		}
@@ -156,13 +156,13 @@ bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::v
 	
 	// Read lines
 	for (int i = 0; i < numOfEndEffectors; ++i) {
-		logDataReader[readerChannel] >> tag >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> rotW >> scale;
+		logDataReader >> tag >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> rotW >> scale;
 		
 		rawPos[i] = Kore::vec3(posX, posY, posZ);
 		rawRot[i] = Kore::Quaternion(rotX, rotY, rotZ, rotW);
 		
-		if (logDataReader[readerChannel].eof()) {
-			logDataReader[readerChannel].close();
+		if (logDataReader.eof()) {
+			logDataReader.close();
 			return false;
 		}
 	}

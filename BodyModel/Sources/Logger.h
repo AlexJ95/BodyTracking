@@ -3,7 +3,7 @@
 
 #include "pch.h"
 //#include "Animator.h"
-#include "Jacobian.h"
+#include "InverseKinematics.h"
 
 #include <Kore/Math/Quaternion.h>
 #include <Kore/Log.h>
@@ -17,7 +17,7 @@ class Logger {
 	
 private:
 	// Input and output file to for raw data
-	std::fstream logDataReader[2];
+	std::fstream logDataReader;
 	std::ofstream logdataWriter;
 	
 	// Output file to save data for hmm
@@ -46,5 +46,6 @@ public:
 	void saveHMMData(const char* tag, float lastTime, Kore::vec3 pos, Kore::Quaternion rot);
 	void analyseHMM(const char* filename, double probability, bool newLine);
 	
-	bool readData(const int numOfEndEffectors, const char* filename, Kore::vec3* rawPos, Kore::Quaternion* rawRot, float& scale, int readerChannel);
+	//Load animation
+	bool readData(const int numOfEndEffectors, const char* filename, Kore::vec3* rawPos, Kore::Quaternion* rawRot, float& scale);
 };
