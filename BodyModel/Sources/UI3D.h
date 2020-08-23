@@ -6,7 +6,7 @@
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_dx11.h"
 #include "ImGUI/imgui_impl_win32.h"
-
+#include "Form.h"
 
 void UIshutDown();
 
@@ -25,6 +25,6 @@ private:
 public:
 	UI3D(Kore::Window* window);
 	~UI3D();
-	void drawUI();
+	void drawUI(Form* form);
 	bool lockBackground();
 };

@@ -9,6 +9,7 @@ void Level::update(double deltaT)
 {
 	input->update(deltaT);
 	renderer->update(deltaT);
+	renderer->form = form;
 }
 
 void Level::init()

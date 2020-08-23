@@ -10,6 +10,7 @@
 #include <Kore/Graphics4/PipelineState.h>
 #include <Kore/Graphics1/Color.h>
 #include "UI3D.h"
+#include "Form.h"
 
 using namespace Kore::Graphics4;
 
@@ -61,7 +62,7 @@ public:
 
 	CustomMath* math;
 	Animator* animator;
-
+	Form* form = NULL;
 	//LevelObject variables
 	static const int maxLightCount = 10;
 	Kore::vec4 lightPositions[maxLightCount];

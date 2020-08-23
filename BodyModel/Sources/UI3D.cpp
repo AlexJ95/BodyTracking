@@ -40,40 +40,40 @@ void UI3D::initUI()
 }
 
 //https://www.youtube.com/watch?v=Btx_tujnyB4&list=PLcacUGyBsOIBlGyQQWzp6D1Xn6ZENx9Y2&index=35
-void UI3D::drawUI()
+void UI3D::drawUI(Form *form)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-
+	form->drawForm();
 	////////////////////////////////////////////////////////////
 	//here we create 3DUI with ImGUI
 
 	///////First Window//////////////////
-	ImGui::Begin("Test");
+	//ImGui::Begin("Test");
 
-	ImGui::Text("This is an example Text.");
-	if (ImGui::Button("Click me"))
-		counter += 1;
-	std::string clickCount = "Click Count " + std::to_string(counter);
-	ImGui::Text(clickCount.c_str());
-	ImGui::Checkbox("Another Window", &show_another_window);
-	ImGui::End();
-	///////First Window End///////////////
+	//ImGui::Text("This is an example Text.");
+	//if (ImGui::Button("Click me"))
+	//	counter += 1;
+	//std::string clickCount = "Click Count " + std::to_string(counter);
+	//ImGui::Text(clickCount.c_str());
+	//ImGui::Checkbox("Another Window", &show_another_window);
+	//ImGui::End();
+	/////////First Window End///////////////
 
-	///////second Window//////////////////
+	/////////second Window//////////////////
 
 
-	///////Second Window End//////////////
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);
-		ImGui::Text("Hello from another Window");
-		if (ImGui::Button("Close Me"))
-			show_another_window = false;
-		ImGui::End();
-	}
+	/////////Second Window End//////////////
+	//if (show_another_window)
+	//{
+	//	ImGui::Begin("Another Window", &show_another_window);
+	//	ImGui::Text("Hello from another Window");
+	//	if (ImGui::Button("Close Me"))
+	//		show_another_window = false;
+	//	ImGui::End();
+	//}
 
 	////////////////////////////////////////////////////////////
 

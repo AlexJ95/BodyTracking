@@ -169,7 +169,8 @@ void Renderer::update(float deltaT)
 #endif
 	renderEnvironment();
 	renderEntities();
-	ui->drawUI();
+	if(form != NULL)
+		ui->drawUI(form);
 	Kore::Graphics4::end();
 	Kore::Graphics4::swapBuffers();
 }

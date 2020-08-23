@@ -8,6 +8,7 @@
 #include "LevelObject.h"
 #include "AnimatedEntity.h"
 #include "UI3D.h"
+#include "Form.h"
 
 
 class Level
@@ -42,6 +43,7 @@ public:
 	AudioManager* audio;
 	Calibrator* calibrator;
 	Animator* animator;
+	Form* form = NULL;
 
 	Level();
 
