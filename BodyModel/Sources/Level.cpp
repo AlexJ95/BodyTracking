@@ -10,6 +10,7 @@ Level::Level()
 void Level::update(double deltaT)
 {
 	renderer->update(deltaT);
+	renderer->form = form;
 	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT, math->cameraPos);
 }
 
@@ -22,6 +23,10 @@ void Level::init()
 	renderer->init(objects, entities, avatar->entity, animator);
 }
 
+void Level::setUI(UI3D* ui)
+{
+	renderer->ui = ui;
+}
 Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation)
 {
 	render = new LevelObject(meshFile, textureFile, structure, scale, position, rotation);

@@ -1,4 +1,5 @@
 #include "TrainLevel.h"
+#include "MainForm.h"
 
 void TrainLevel::update(double deltaT)
 {
@@ -11,6 +12,7 @@ void TrainLevel::init() {
 	audioSetup();
 	graphicsSetup();
 	Level::init();
+	form = new MainForm();
 }
 
 void TrainLevel::controlsSetup()

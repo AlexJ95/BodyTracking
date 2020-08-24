@@ -9,6 +9,8 @@
 #include <Kore/IO/FileReader.h>
 #include <Kore/Graphics4/PipelineState.h>
 #include <Kore/Graphics1/Color.h>
+#include "UI3D.h"
+#include "Form.h"
 
 using namespace Kore::Graphics4;
 
@@ -60,7 +62,7 @@ public:
 
 	CustomMath* math;
 	Animator* animator;
-
+	Form* form = NULL;
 	//LevelObject variables
 	static const int maxLightCount = 10;
 	Kore::vec4 lightPositions[maxLightCount];
@@ -71,7 +73,7 @@ public:
 	std::vector<LevelObject*> levelObjects;
 	std::vector<AnimatedEntity*> animatedEntities;
 	Avatar* avatar;
-
+	UI3D* ui;
 	Renderer();
 
 	void init(std::vector<LevelObject*> objects, std::vector<AnimatedEntity*> entities, Avatar* avatar, Animator* anim);

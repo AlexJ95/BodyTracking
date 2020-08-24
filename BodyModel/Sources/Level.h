@@ -8,6 +8,9 @@
 #include "AnimatedEntity.h"
 #include "StateMachineAI.h"
 #include "CustomMath.h"
+#include "UI3D.h"
+#include "Form.h"
+
 
 class Level
 {
@@ -49,6 +52,7 @@ public:
 	InputController* input;
 	AudioManager* audio;
 	Animator* animator;
+	Form* form = NULL;
 	CustomMath* math;
 
 	Level();
@@ -56,5 +60,6 @@ public:
 	virtual void update(double deltaT);
 
 	virtual void init();
+	virtual void setUI(UI3D* ui);
 };
 
