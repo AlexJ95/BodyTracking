@@ -5,24 +5,24 @@ Calibrator::Calibrator() {
 	math = math->getInstance();
 }
 
-void Calibrator::calibrate(Avatar* avatar, Animator* animator) {
+void Calibrator::calibrate(AnimatedEntity* entity, BoneNode* bones[numOfEndEffectors]) {
 	math->initTransAndRot();
 	
 	for (int i = 0; i < numOfEndEffectors; ++i) {
-		Kore::vec3 desPosition = avatar->endEffector[i]->getDesPosition();
-		Kore::Quaternion desRotation = avatar->endEffector[i]->getDesRotation();
+		Kore::vec3 desPosition = entity->endEffector[i]->getDesPosition();
+		Kore::Quaternion desRotation = entity->endEffector[i]->getDesRotation();
 
 		// Transform desired position/rotation to the character local coordinate system
 		desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
 		desRotation = math->initRotInv.rotated(desRotation);
 
 		// Get actual position/rotation of the character skeleton
-		BoneNode* bone = animator->getBoneWithIndex(avatar, avatar->endEffector[i]->getBoneIndex());
-		Kore::vec3 targetPos = bone->getPosition();
-		Kore::Quaternion targetRot = bone->getOrientation();
+		//BoneNode* bone = animator->getBoneWithIndex(avatar, avatar->endEffector[i]->getBoneIndex());
+		Kore::vec3 targetPos = bones[i]->getPosition();
+		Kore::Quaternion targetRot = bones[i]->getOrientation();
 
-		avatar->endEffector[i]->setOffsetPosition((Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * targetRot.matrix().Transpose()).Invert() * Kore::mat4::Translation(targetPos.x(), targetPos.y(), targetPos.z()) * Kore::vec4(0, 0, 0, 1));
-		avatar->endEffector[i]->setOffsetRotation((desRotation.invert()).rotated(targetRot));
+		entity->endEffector[i]->setOffsetPosition((Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * targetRot.matrix().Transpose()).Invert() * Kore::mat4::Translation(targetPos.x(), targetPos.y(), targetPos.z()) * Kore::vec4(0, 0, 0, 1));
+		entity->endEffector[i]->setOffsetRotation((desRotation.invert()).rotated(targetRot));
 	}
 }
 

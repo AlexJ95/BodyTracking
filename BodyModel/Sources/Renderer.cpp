@@ -233,7 +233,10 @@ void Renderer::setLights(LevelObject object, Kore::Graphics4::ConstantLocation l
 }
 
 // Subroutine(s) for AnimatedEntities
-void Renderer::animate(AnimatedEntity* entity) {
+void Renderer::animate(AnimatedEntity* entity)
+{
+	entity->M = Kore::mat4::Translation(entity->position.x(), entity->position.y(), entity->position.z()) * entity->rotation.matrix().Transpose();
+
 	Kore::Graphics4::setPipeline(entityGraphics->pipeline);
 
 	Kore::Graphics4::setMatrix(entityGraphics->vLocation, math->getViewMatrix());
@@ -301,7 +304,7 @@ void Renderer::animate(AnimatedEntity* entity) {
 //Subroutines specifically for the Avatar
 void Renderer::animate(Avatar* avatar)
 {
-	animate((AnimatedEntity*) avatar);
+	//animate((AnimatedEntity*) avatar);
 	if (renderTrackerAndController) renderAllVRDevices(avatar);
 	if (renderAxisForEndEffector) renderCSForEndEffector(avatar);
 }
@@ -359,7 +362,7 @@ void Renderer::renderControllerAndTracker(Avatar* avatar, int tracker, Kore::vec
 	}
 
 	// Render a local coordinate system only if the avatar is not calibrated
-	if (!avatar->calibratedAvatar) {
+	if (!avatar->calibrated) {
 		renderVRDevice(avatar, 2, W);
 		//renderVRDevice(2, M);
 	}

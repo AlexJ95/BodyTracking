@@ -9,10 +9,13 @@
 class AnimatedEntity : public MeshObject
 {
 public:
+	Kore::vec3 position;
+	Kore::Quaternion rotation;
 	EndEffector** endEffector;
 	InverseKinematics* invKin;
+	bool calibrated;
 	float currentHeight;
-	AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
+	AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
 	void initializeEndeffectors();
 };
 
@@ -22,7 +25,6 @@ public:
 	std::vector<MeshObject*> viveObjects;
 	bool renderTrackerAndControllers;
 	bool renderAxisForEndEffectors;
-	bool calibratedAvatar;
-
-	Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, bool renderTrackerAndController, bool renderAxisForEndEffector);
+	
+	Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation, bool renderTrackerAndController, bool renderAxisForEndEffector);
 };

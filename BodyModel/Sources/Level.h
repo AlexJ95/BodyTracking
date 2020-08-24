@@ -7,6 +7,8 @@
 #include "Calibrator.h"
 #include "LevelObject.h"
 #include "AnimatedEntity.h"
+#include "StateMachineAI.h"
+#include "CustomMath.h"
 
 class Level
 {
@@ -22,29 +24,30 @@ public:
 	{
 		AnimatedEntity* entity;
 		AnAnimatedEntity() {}; // empty default constructor
-		AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
+		AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
 	};
 
 	struct TheAvatar : public AnAnimatedEntity
 	{
-		bool calibratedAvatar;
 		Avatar* entity;
-		TheAvatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, bool renderTrackerAndController, bool renderAxisForEndEffector);
+		TheAvatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation, bool renderTrackerAndController, bool renderAxisForEndEffector);
 	};
 
 	struct NonPlayerCharacter : public AnAnimatedEntity
 	{
-		NonPlayerCharacter(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
+		StateMachineAI* ai;
+		NonPlayerCharacter(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
 	};
 
 	Renderer* renderer;
 	std::vector<ALevelObject*> environment;
-	std::vector<AnAnimatedEntity*> enemies;
+	std::vector<NonPlayerCharacter*> enemies;
 	TheAvatar* avatar;
 	InputController* input;
 	AudioManager* audio;
 	Calibrator* calibrator;
 	Animator* animator;
+	CustomMath* math;
 
 	Level();
 

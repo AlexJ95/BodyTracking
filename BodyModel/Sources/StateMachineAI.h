@@ -17,9 +17,11 @@ public:
 
 	//the different states of the AI state machine
 	enum class AIState;
-	AIState currentState;
-	typedef AIState (StateMachineAI::*action)(float deltaT, Kore::vec3 playerPosition);
-	std::map <AIState, AIState(StateMachineAI::*)(float deltaT, Kore::vec3 playerPosition)> stateToAction;
+	StateMachineAI::AIState currentState;
+
+	std::map <StateMachineAI::AIState, StateMachineAI::AIState(StateMachineAI::*)(float deltaT, Kore::vec3 playerPosition)> stateToAction;
+	typedef AIState(StateMachineAI::* action)(float deltaT, Kore::vec3 playerPosition);
+	
 	std::map <string, const char*> animationLibrary;
 
 	void update(float deltaT, Kore::vec3 playerPosition);
@@ -34,9 +36,6 @@ public:
 	AIState pursueing(float deltaT, Kore::vec3 playerPosition);
 	AIState planning(float deltaT, Kore::vec3 playerPosition);
 
-	//void update(float deltaT, Kore::vec3 playerPosition);
-
 	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference);
 	//~CyborgAI();
 };
-

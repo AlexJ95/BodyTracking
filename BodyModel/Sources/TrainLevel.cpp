@@ -38,18 +38,23 @@ void TrainLevel::graphicsSetup()
 	Kore::Graphics4::ConstantLocation lightPosLocation = renderer->environmentGraphics->lightPosLocation;
 
 	//Load Avatar
-	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, true, true);
+	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, true);
+
+	//Load Enemy
+	NonPlayerCharacter* enemy = new NonPlayerCharacter("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
+	enemy->ai = new CyborgAI(enemy->entity, animator);
+	enemies.emplace_back(enemy);
 
 	//Load Environment
-	ALevelObject* train = new ALevelObject("train/train9.ogex", "train/", environmentSructure, 1);
+	/*ALevelObject* train = new ALevelObject("train/train9.ogex", "train/", environmentSructure, 1);
 	Kore::Quaternion rotation = Kore::Quaternion(0, 0, 0, 1);
 	rotation.rotate(Kore::Quaternion(Kore::vec3(1, 0, 0), -Kore::pi / 2.0));
 	rotation.rotate(Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi / 2.0));
 	train->render->M = Kore::mat4::RotationY(-0.0075) * Kore::mat4::Translation(0, -3, 0) * rotation.matrix().Transpose();
-	renderer->setLights(*(train->render), lightCount, lightPosLocation);
+	renderer->setLights(*(train->render), lightCount, lightPosLocation);*/
 
 	ALevelObject* houseSmall = new ALevelObject("house/haus.ogex", "house/", environmentSructure, 1);
-	houseSmall->render->M = Kore::mat4::Translation(17, -3.75, 0) * rotation.matrix().Transpose();
+	//houseSmall->render->M = Kore::mat4::Translation(17, -3.75, 0) * rotation.matrix().Transpose();
 
 	/*
 	train->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
@@ -62,7 +67,7 @@ void TrainLevel::graphicsSetup()
 	houseSmall->render(tex_living_room, mLocation_living_room, mLocation_living_room_inverse, diffuse_living_room, specular_living_room, specular_power_living_room, false);
 	*/
 	
-	environment.emplace_back(train);
-	environment.emplace_back(houseSmall);
-	environment.emplace_back(new ALevelObject("floor/floor.ogex", "floor/", environmentSructure, 1));
+	//environment.emplace_back(train);
+	//environment.emplace_back(houseSmall);
+	//environment.emplace_back(new ALevelObject("floor/floor.ogex", "floor/", environmentSructure, 1));
 }

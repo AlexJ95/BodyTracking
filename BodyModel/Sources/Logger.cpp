@@ -137,13 +137,13 @@ void Logger::saveEvaluationData(AnimatedEntity* entity, Animator *animator) {
 }*/
 
 bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::vec3* rawPos, Kore::Quaternion* rawRot, float& scale) {
-	string tag;
+	std::string tag;
 	float posX, posY, posZ;
 	float rotX, rotY, rotZ, rotW;
 	
 	if(!logDataReader.is_open()) {
 		
-		if (ifstream(filename)) {
+		if (std::ifstream(filename)) {
 			logDataReader.open(filename);
 			log(Kore::Info, "Read data from %s", filename);
 			

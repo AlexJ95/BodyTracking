@@ -1,18 +1,22 @@
 #include "AnimatedEntity.h"
 
-AnimatedEntity::AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale)
+AnimatedEntity::AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation)
 	: MeshObject(meshFile, textureFile, structure, scale) 
 {
+	position = initialPosition;
+	rotation = initialRotation;
 	invKin = new InverseKinematics(bones);
+	calibrated = false;
 	// Update bones
 	for (int i = 0; i < bones.size(); ++i) invKin->initializeBone(bones[i]);
 	initializeEndeffectors();
 }
 
-Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, bool renderTrackerAndController, bool renderAxisForEndEffector)
-	: AnimatedEntity(meshFile, textureFile, structure, scale) {
+Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation, bool renderTrackerAndController, bool renderAxisForEndEffector)
+	: AnimatedEntity(meshFile, textureFile, structure, scale, initialPosition, initialRotation) {
 	renderTrackerAndControllers = renderTrackerAndController;
 	renderAxisForEndEffectors = renderAxisForEndEffector;
+	
 	if (renderTrackerAndController) {
 		viveObjects.emplace_back(new MeshObject("vivemodels/vivetracker.ogex", "vivemodels/", structure, 1));
 		viveObjects.emplace_back(new MeshObject("vivemodels/vivecontroller.ogex", "vivemodels/", structure, 1));

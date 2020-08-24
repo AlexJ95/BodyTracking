@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Settings.h"
-#include "Animator.h"
+//#include "Animator.h"
 #include "CustomMath.h"
 #include "AnimatedEntity.h"
 
@@ -14,14 +14,12 @@ class Calibrator
 	float currentUserHeight;
 #endif
 
-	bool calibratedAvatar = false;
-
 	CustomMath* math;
 
 public:
 	Calibrator();
 
-	void calibrate(Avatar* avatar, Animator* animator); //initially calibrates the avatar
+	void calibrate(AnimatedEntity* entity, BoneNode* bone[numOfEndEffectors]); //initially calibrates the avatar
 
 	void setSize(); //adjust avatar size to player
 

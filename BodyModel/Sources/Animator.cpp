@@ -2,6 +2,7 @@
 
 Animator::Animator() {
 	math = math->getInstance();
+	calibrator = new Calibrator();
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
@@ -9,25 +10,26 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 	float scaleFactor;
 	Kore::vec3 desPosition[numOfEndEffectors];
 	Kore::Quaternion desRotation[numOfEndEffectors];
-	bool inAnimation = logger->readData(numOfEndEffectors, files[currentFile], desPosition, desRotation, scaleFactor);
+	bool inAnimation = logger->readData(numOfEndEffectors, filename, desPosition, desRotation, scaleFactor);
 
 	for (int i = 0; i < numOfEndEffectors; ++i) {
 		entity->endEffector[i]->setDesPosition(desPosition[i]);
 		entity->endEffector[i]->setDesRotation(desRotation[i]);
 	}
 
-	/*
-	if (!calibratedAvatar) {
-		avatar->resetPositionAndRotation();
-		avatar->setScale(scaleFactor);
-		calibrate();
-		calibratedAvatar = true;
+	
+	if (!entity->calibrated) {
+		resetPositionAndRotation(entity);
+		entity->setScale(scaleFactor);
+		BoneNode* bones[numOfEndEffectors];
+		for (int i = 0; i < numOfEndEffectors; i++) bones[i] = getBoneWithIndex(entity, entity->endEffector[i]->getBoneIndex());
+		calibrator->calibrate(entity, bones);
+		entity->calibrated = true;
 	}
-	*/
+	
+	for (int i = 0; i < numOfEndEffectors; ++i) executeMovement(entity, i);
 
-	for (int i = 0; i < numOfEndEffectors; ++i) {
-		executeMovement(entity, i);
-	}
+	entity->calibrated = inAnimation;
 	return inAnimation;
 }
 
@@ -39,7 +41,7 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 	// Save raw data
 	//if (logRawData && typeid(entity) == typeid(Avatar)) logger->saveData(entity->endEffector[endEffectorID]->getName(), desPosition, desRotation, entity->scale);
 
-	if (typeid(entity) != typeid(Avatar) || &static_cast<Avatar*>(entity)->calibratedAvatar) {
+	if (entity->calibrated) {
 		// Transform desired position/rotation to the character local coordinate system
 		desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
 		desRotation = math->initRotInv.rotated(desRotation);

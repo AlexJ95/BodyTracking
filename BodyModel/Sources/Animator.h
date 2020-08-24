@@ -4,6 +4,7 @@
 #include "CustomMath.h"
 #include "AnimatedEntity.h"
 #include "Logger.h"
+#include "Calibrator.h"
 
 #include <Kore/Math/Quaternion.h>
 
@@ -12,6 +13,7 @@
 class Animator
 {
 	CustomMath* math;
+	Calibrator* calibrator;
 
 public :
 	Animator();
