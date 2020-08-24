@@ -6,7 +6,7 @@
 #include "InverseKinematics.h"
 #include "MeshObject.h"
 
-class AnimatedEntity : public MeshObject
+class AnimatedEntity
 {
 public:
 	Kore::vec3 position;
@@ -15,7 +15,9 @@ public:
 	InverseKinematics* invKin;
 	bool calibrated;
 	float currentHeight;
-	AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
+	MeshObject* meshObject;
+	AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
+	AnimatedEntity(MeshObject* meshReference, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
 	void initializeEndeffectors();
 };
 

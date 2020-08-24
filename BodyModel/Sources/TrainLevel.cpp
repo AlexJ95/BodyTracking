@@ -41,9 +41,7 @@ void TrainLevel::graphicsSetup()
 	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, true);
 
 	//Load Enemy
-	NonPlayerCharacter* enemy = new NonPlayerCharacter("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
-	enemy->ai = new CyborgAI(enemy->entity, animator);
-	enemies.emplace_back(enemy);
+	createEnemy(new AnAnimatedEntity("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0)), Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
 
 	//Load Environment
 	/*ALevelObject* train = new ALevelObject("train/train9.ogex", "train/", environmentSructure, 1);
@@ -53,7 +51,7 @@ void TrainLevel::graphicsSetup()
 	train->render->M = Kore::mat4::RotationY(-0.0075) * Kore::mat4::Translation(0, -3, 0) * rotation.matrix().Transpose();
 	renderer->setLights(*(train->render), lightCount, lightPosLocation);*/
 
-	ALevelObject* houseSmall = new ALevelObject("house/haus.ogex", "house/", environmentSructure, 1);
+	ALevelObject* houseSmall = new ALevelObject("house/haus.ogex", "house/", environmentSructure, 1, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
 	//houseSmall->render->M = Kore::mat4::Translation(17, -3.75, 0) * rotation.matrix().Transpose();
 
 	/*
@@ -70,4 +68,11 @@ void TrainLevel::graphicsSetup()
 	//environment.emplace_back(train);
 	//environment.emplace_back(houseSmall);
 	//environment.emplace_back(new ALevelObject("floor/floor.ogex", "floor/", environmentSructure, 1));
+}
+
+void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
+{
+	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
+	enemy->ai = new CyborgAI(enemy->entity, animator);
+	enemies.emplace_back(enemy);
 }

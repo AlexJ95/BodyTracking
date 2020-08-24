@@ -13,4 +13,6 @@ public:
     void controlsSetup();
     void audioSetup();
     void graphicsSetup();
+
+    void createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
 };

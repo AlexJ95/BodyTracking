@@ -4,7 +4,6 @@
 #include "Animator.h"
 #include "InputController.h"
 #include "AudioManager.h"
-#include "Calibrator.h"
 #include "LevelObject.h"
 #include "AnimatedEntity.h"
 #include "StateMachineAI.h"
@@ -17,7 +16,10 @@ public:
 	{
 		//Relatively empty and redundant at the moment, however this space is supposed to hold all potential components for levelObject like new hazard or maybe collectible components
 		LevelObject* render;
-		ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale);
+		Kore::vec3 position;
+		Kore::Quaternion rotation;
+		ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
+		ALevelObject(ALevelObject* reference, Kore::vec3 position, Kore::Quaternion rotation);
 	};
 
 	struct AnAnimatedEntity
@@ -25,6 +27,7 @@ public:
 		AnimatedEntity* entity;
 		AnAnimatedEntity() {}; // empty default constructor
 		AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
+		AnAnimatedEntity(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
 	};
 
 	struct TheAvatar : public AnAnimatedEntity
@@ -36,7 +39,7 @@ public:
 	struct NonPlayerCharacter : public AnAnimatedEntity
 	{
 		StateMachineAI* ai;
-		NonPlayerCharacter(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
+		NonPlayerCharacter(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
 	};
 
 	Renderer* renderer;
@@ -45,7 +48,6 @@ public:
 	TheAvatar* avatar;
 	InputController* input;
 	AudioManager* audio;
-	Calibrator* calibrator;
 	Animator* animator;
 	CustomMath* math;
 

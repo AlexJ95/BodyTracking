@@ -72,6 +72,11 @@ void CustomMath::initTransAndRot() {
 	initTrans = Kore::mat4::Translation(initPos.x(), initPos.y(), initPos.z()) * initRot.matrix().Transpose();
 	initTransInv = initTrans.Invert();
 
+	
+}
+
+void CustomMath::init()
+{
 	// Set camera initial position and orientation
 	cameraPos = Kore::vec3(2.6, 1.8, 0.0);
 	Kore::Quaternion q1(Kore::vec3(0.0f, 1.0f, 0.0f), Kore::pi / 2.0f);
@@ -81,4 +86,6 @@ void CustomMath::initTransAndRot() {
 	q2.rotate(q1);
 	Kore::mat4 mat = q2.matrix();
 	camForward = mat * camForward;
+
+	initTransAndRot();
 }

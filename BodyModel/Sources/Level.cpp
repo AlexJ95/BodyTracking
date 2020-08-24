@@ -22,9 +22,14 @@ void Level::init()
 	renderer->init(objects, entities, avatar->entity, animator);
 }
 
-Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale)
+Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation)
 {
-	render = new LevelObject(meshFile, textureFile, structure, scale);
+	render = new LevelObject(meshFile, textureFile, structure, scale, position, rotation);
+}
+
+Level::ALevelObject::ALevelObject(ALevelObject* reference, Kore::vec3 position, Kore::Quaternion rotation)
+{
+	render = new LevelObject(reference->render->meshObject, position, rotation);
 }
 
 Level::AnAnimatedEntity::AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation)
@@ -32,12 +37,17 @@ Level::AnAnimatedEntity::AnAnimatedEntity(const char* meshFile, const char* text
 	entity = new AnimatedEntity(meshFile, textureFile, structure, scale, position, rotation);
 }
 
+Level::AnAnimatedEntity::AnAnimatedEntity(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
+{
+	entity = new AnimatedEntity(reference->entity->meshObject, position, rotation);
+}
+
 Level::TheAvatar::TheAvatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation, bool renderTrackerAndController, bool renderAxisForEndEffector)
 {
 	entity = new Avatar(meshFile, textureFile, structure, scale, position, rotation, renderTrackerAndController, renderAxisForEndEffector);
 }
 
-Level::NonPlayerCharacter::NonPlayerCharacter(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation) : Level::AnAnimatedEntity(meshFile, textureFile, structure, scale, position, rotation)
+Level::NonPlayerCharacter::NonPlayerCharacter(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation) : Level::AnAnimatedEntity(reference, position, rotation)
 {
 	
 }

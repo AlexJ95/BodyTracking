@@ -35,4 +35,6 @@ public:
 	void rotateCamera(int movementX, int movementY);
 
 	void initTransAndRot(); // Initializes the quaternion initRot and matrix initTrans and their inverses
+
+	void init();
 };

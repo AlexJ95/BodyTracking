@@ -133,7 +133,7 @@ void InputController::init()
 {
 	if (initialized) return;
 	initBindings();
-	math->initTransAndRot();
+	math->init();
 }
 
 void InputController::update(float deltaT)

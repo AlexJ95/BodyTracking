@@ -20,7 +20,7 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 	
 	if (!entity->calibrated) {
 		resetPositionAndRotation(entity);
-		entity->setScale(scaleFactor);
+		entity->meshObject->setScale(scaleFactor);
 		BoneNode* bones[numOfEndEffectors];
 		for (int i = 0; i < numOfEndEffectors; i++) bones[i] = getBoneWithIndex(entity, entity->endEffector[i]->getBoneIndex());
 		calibrator->calibrate(entity, bones);
@@ -94,18 +94,18 @@ void Animator::setFixedOrientation(AnimatedEntity* entity, int boneIndex, Kore::
 }
 
 BoneNode* Animator::getBoneWithIndex(AnimatedEntity* entity, int boneIndex) const {
-	BoneNode* bone = entity->bones[boneIndex - 1];
+	BoneNode* bone = entity->meshObject->bones[boneIndex - 1];
 	return bone;
 }
 
 void Animator::resetPositionAndRotation(AnimatedEntity* entity) {
-	for (int i = 0; i < entity->bones.size(); ++i) {
-		entity->bones[i]->transform = entity->bones[i]->bind;
-		entity->bones[i]->local = entity->bones[i]->bind;
-		entity->bones[i]->combined = entity->bones[i]->parent->combined * entity->bones[i]->local;
-		entity->bones[i]->combinedInv = entity->bones[i]->combined.Invert();
-		entity->bones[i]->finalTransform = entity->bones[i]->combined * entity->bones[i]->combinedInv;
-		entity->bones[i]->rotation = Kore::Quaternion(0, 0, 0, 1);
+	for (int i = 0; i < entity->meshObject->bones.size(); ++i) {
+		entity->meshObject->bones[i]->transform = entity->meshObject->bones[i]->bind;
+		entity->meshObject->bones[i]->local = entity->meshObject->bones[i]->bind;
+		entity->meshObject->bones[i]->combined = entity->meshObject->bones[i]->parent->combined * entity->meshObject->bones[i]->local;
+		entity->meshObject->bones[i]->combinedInv = entity->meshObject->bones[i]->combined.Invert();
+		entity->meshObject->bones[i]->finalTransform = entity->meshObject->bones[i]->combined * entity->meshObject->bones[i]->combinedInv;
+		entity->meshObject->bones[i]->rotation = Kore::Quaternion(0, 0, 0, 1);
 	}
 }
 

@@ -181,18 +181,18 @@ void Renderer::render(LevelObject* object, bool mirror)
 
 	Kore::Graphics4::setMatrix(environmentGraphics->vLocation, math->getViewMatrix());
 	Kore::Graphics4::setMatrix(environmentGraphics->pLocation, math->getProjectionMatrix());
-	for (int i = 0; i < object->meshesCount; ++i) {
-		Geometry* geometry = object->geometries[i];
+	for (int i = 0; i < object->meshObject->meshesCount; ++i) {
+		Geometry* geometry = object->meshObject->geometries[i];
 		Kore::mat4 modelMatrix = Kore::mat4::Identity();
-		if (!mirror) modelMatrix = object->M * geometry->transform;
-		else modelMatrix = object->Mmirror * geometry->transform;
+		if (!mirror) modelMatrix = object->meshObject->M * geometry->transform;
+		else modelMatrix = object->meshObject->Mmirror * geometry->transform;
 		Kore::mat4 modelMatrixInverse = modelMatrix.Invert();
 
 		Kore::Graphics4::setMatrix(environmentGraphics->mLocation, modelMatrix);
 		Kore::Graphics4::setMatrix(environmentGraphics->mLocationInverse, modelMatrixInverse);
 
 		unsigned int materialIndex = geometry->materialIndex;
-		Material* material = object->findMaterialWithIndex(materialIndex);
+		Material* material = object->meshObject->findMaterialWithIndex(materialIndex);
 		if (material != nullptr) {
 			Kore::Graphics4::setFloat3(environmentGraphics->diffuse, material->diffuse);
 			Kore::Graphics4::setFloat3(environmentGraphics->specular, material->specular);
@@ -204,21 +204,21 @@ void Renderer::render(LevelObject* object, bool mirror)
 			Kore::Graphics4::setFloat(environmentGraphics->specularPower, 1.0);
 		}
 
-		Texture* image = object->images[i];
+		Texture* image = object->meshObject->images[i];
 		if (image != nullptr) Kore::Graphics4::setTexture(environmentGraphics->tex, image);
 
-		Kore::Graphics4::setVertexBuffer(*object->vertexBuffers[i]);
-		Kore::Graphics4::setIndexBuffer(*object->indexBuffers[i]);
+		Kore::Graphics4::setVertexBuffer(*object->meshObject->vertexBuffers[i]);
+		Kore::Graphics4::setIndexBuffer(*object->meshObject->indexBuffers[i]);
 		Kore::Graphics4::drawIndexedVertices();
 	}
 }
 
 void Renderer::setLights(LevelObject object, Kore::Graphics4::ConstantLocation lightCountLocation, Kore::Graphics4::ConstantLocation lightPosLocation)
 {
-	const int lightCount = (int)object.lights.size();
+	const int lightCount = (int)object.meshObject->lights.size();
 	for (int i = 0; i < lightCount; ++i) {
-		Light* light = object.lights[i];
-		lightPositions[i] = object.M * light->position;
+		Light* light = object.meshObject->lights[i];
+		lightPositions[i] = object.meshObject->M * light->position;
 
 		if (light->type == 0) {
 			lightPositions[i].w() = 0;
@@ -235,7 +235,7 @@ void Renderer::setLights(LevelObject object, Kore::Graphics4::ConstantLocation l
 // Subroutine(s) for AnimatedEntities
 void Renderer::animate(AnimatedEntity* entity)
 {
-	entity->M = Kore::mat4::Translation(entity->position.x(), entity->position.y(), entity->position.z()) * entity->rotation.matrix().Transpose();
+	entity->meshObject->M = Kore::mat4::Translation(entity->position.x(), entity->position.y(), entity->position.z()) * entity->rotation.matrix().Transpose();
 
 	Kore::Graphics4::setPipeline(entityGraphics->pipeline);
 
@@ -244,15 +244,15 @@ void Renderer::animate(AnimatedEntity* entity)
 	Kore::Graphics4::setMatrix(entityGraphics->mLocation, math->initTrans);
 
 	// Update bones
-	for (int i = 0; i < entity->bones.size(); ++i) entity->invKin->initializeBone(entity->bones[i]);
+	for (int i = 0; i < entity->meshObject->bones.size(); ++i) entity->invKin->initializeBone(entity->meshObject->bones[i]);
 
-	for (int j = 0; j < entity->meshesCount; ++j) {
+	for (int j = 0; j < entity->meshObject->meshesCount; ++j) {
 		int currentBoneIndex = 0;	// Iterate over BoneCountArray
 
-		Mesh* mesh = entity->meshes[j];
+		Mesh* mesh = entity->meshObject->meshes[j];
 
 		// Mesh Vertex Buffer
-		float* vertices = entity->vertexBuffers[j]->lock();
+		float* vertices = entity->meshObject->vertexBuffers[j]->lock();
 		for (int i = 0; i < mesh->numVertices; ++i) {
 			Kore::vec4 startPos(0, 0, 0, 1);
 			Kore::vec4 startNormal(0, 0, 0, 1);
@@ -277,9 +277,9 @@ void Renderer::animate(AnimatedEntity* entity)
 			}
 
 			// position
-			vertices[i * 8 + 0] = startPos.x() * entity->scale;
-			vertices[i * 8 + 1] = startPos.y() * entity->scale;
-			vertices[i * 8 + 2] = startPos.z() * entity->scale;
+			vertices[i * 8 + 0] = startPos.x() * entity->meshObject->scale;
+			vertices[i * 8 + 1] = startPos.y() * entity->meshObject->scale;
+			vertices[i * 8 + 2] = startPos.z() * entity->meshObject->scale;
 			// texCoord
 			vertices[i * 8 + 3] = mesh->texcoord[i * 2 + 0];
 			vertices[i * 8 + 4] = 1.0f - mesh->texcoord[i * 2 + 1];
@@ -290,13 +290,13 @@ void Renderer::animate(AnimatedEntity* entity)
 
 			//log(Info, "%f %f %f %f %f %f %f %f", vertices[i * 8 + 0], vertices[i * 8 + 1], vertices[i * 8 + 2], vertices[i * 8 + 3], vertices[i * 8 + 4], vertices[i * 8 + 5], vertices[i * 8 + 6], vertices[i * 8 + 7]);
 		}
-		entity->vertexBuffers[j]->unlock();
+		entity->meshObject->vertexBuffers[j]->unlock();
 
-		Texture* image = entity->images[j];
+		Texture* image = entity->meshObject->images[j];
 
 		Kore::Graphics4::setTexture(entityGraphics->tex, image);
-		Kore::Graphics4::setVertexBuffer(*entity->vertexBuffers[j]);
-		Kore::Graphics4::setIndexBuffer(*entity->indexBuffers[j]);
+		Kore::Graphics4::setVertexBuffer(*entity->meshObject->vertexBuffers[j]);
+		Kore::Graphics4::setIndexBuffer(*entity->meshObject->indexBuffers[j]);
 		Kore::Graphics4::drawIndexedVertices();
 	}
 }

@@ -1,14 +1,26 @@
 #include "AnimatedEntity.h"
 
 AnimatedEntity::AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation)
-	: MeshObject(meshFile, textureFile, structure, scale) 
 {
+	meshObject = new MeshObject(meshFile, textureFile, structure, scale);
 	position = initialPosition;
 	rotation = initialRotation;
-	invKin = new InverseKinematics(bones);
+	invKin = new InverseKinematics(meshObject->bones);
 	calibrated = false;
 	// Update bones
-	for (int i = 0; i < bones.size(); ++i) invKin->initializeBone(bones[i]);
+	for (int i = 0; i < meshObject->bones.size(); ++i) invKin->initializeBone(meshObject->bones[i]);
+	initializeEndeffectors();
+}
+
+AnimatedEntity::AnimatedEntity(MeshObject* meshReference, Kore::vec3 initialPosition, Kore::Quaternion initialRotation)
+{
+	meshObject = meshReference;
+	position = initialPosition;
+	rotation = initialRotation;
+	invKin = new InverseKinematics(meshObject->bones);
+	calibrated = false;
+	// Update bones
+	for (int i = 0; i < meshObject->bones.size(); ++i) invKin->initializeBone(meshObject->bones[i]);
 	initializeEndeffectors();
 }
 
