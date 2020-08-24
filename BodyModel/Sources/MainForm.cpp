@@ -13,7 +13,7 @@ void MainForm::drawForm()
 {
 	ImGuiIO io = ImGui::GetIO();
 	ImVec2 contentSize = io.DisplaySize;
-		
+	
 	///////First Window//////////////////
 	//ImGui Flags in imgui.h
 	if (!show_setting_window & !show_level_window)
