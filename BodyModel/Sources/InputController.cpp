@@ -9,17 +9,14 @@ InputController* InputController::getInstance()
 	return instance;
 }
 
-InputController* InputController::getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackArray, UI3D* ui)
-InputController* InputController::getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackMap)
+InputController* InputController::getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackMap, UI3D* ui)
 {
 	if (!instance)
-		instance = new InputController(callbackMap);
-	else instance->callbacks.insert(callbackMap.begin(), callbackMap.end());
 	{
-		instance = new InputController(callbackArray);
+		instance = new InputController(callbackMap);
 		instance->ui = ui;
 	}
-	else instance->callbacks.insert(callbackArray.begin(), callbackArray.end());
+	else instance->callbacks.insert(callbackMap.begin(), callbackMap.end());
 	return instance;
 }
 
