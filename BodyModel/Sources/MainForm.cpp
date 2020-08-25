@@ -13,15 +13,20 @@ void MainForm::drawForm()
 {
 	ImGuiIO io = ImGui::GetIO();
 	ImVec2 contentSize = io.DisplaySize;
+	ImGui::SetNextWindowBgAlpha(alpha);
 	
 	///////First Window//////////////////
 	//ImGui Flags in imgui.h
-	if (!show_setting_window & !show_level_window)
+	if (show_main_menu & !show_setting_window & !show_level_window & !show_loading_bar)
 	{
 		ImGui::Begin("Menu", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-		ImGui::SetWindowSize("Menu", ImVec2(400, 100), 0);
+		ImGui::SetWindowSize("Menu", ImVec2(400, 130), 0);
 		ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
 		ImGui::SetWindowPos(wPos);
+
+		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.1f);
+		if (ImGui::Button("Start", ImVec2(ImGui::GetWindowSize().x * 0.8f, 0.0f)))
+			show_loading_bar = true;
 
 		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.1f);
 		if (ImGui::Button("Setting", ImVec2(ImGui::GetWindowSize().x * 0.8f, 0.0f)))
@@ -43,6 +48,7 @@ void MainForm::drawForm()
 
 		if (messageBoxOpen)
 		{
+			ImGui::SetNextWindowBgAlpha(alpha+0.3);
 			ImGui::Begin("Quit Game", &messageBoxOpen, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 			ImGui::SetWindowSize("Quit Game", ImVec2(200, 80), 0);
 			ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
@@ -101,13 +107,52 @@ void MainForm::drawForm()
 	
 		ImGui::ListBox("", &currentLevel,levels.data(), levels.size());
 
-		ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 90);
+		ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 180);
 		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 50);
-		if (ImGui::Button("Close",ImVec2(70,30)))
+		if (ImGui::Button("Save",ImVec2(70,30)))
 		{
 			show_level_window = false;
+			levelSelected = true;
+		}
+		ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 90);
+		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 50);
+		if (ImGui::Button("Start", ImVec2(70, 30)))
+		{
+			show_level_window = false;
+			levelSelected = true;
+			show_loading_bar = true;
 		}
 		ImGui::End();
 	}
+	else if(levelSelected)
+	{
+		selectedLevel = currentLevel;
+		levelSelected = false;
+	}
+	else if (show_loading_bar)
+	{
+		ImGui::Begin("Loading...", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.1f);
+		ImGui::SetWindowSize("Loading...", ImVec2(200, 60), 0);
+		ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
+		ImGui::SetWindowPos(wPos);
+
+	
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		float height = 20;
+		float width = ImGui::GetWindowWidth() - 2.f * (pos.x - ImGui::GetWindowPos().x);
+		
+		ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + width*progress,pos.y+ height), IM_COL32(0, 255, 0, 255));
+		ImGui::GetWindowDrawList()->AddRect(pos, ImVec2(pos.x + width,pos.y+height), IM_COL32(255,50, 0, 255));
+		if (progress > 1.f)
+		{
+			show_loading_bar = false;
+			show_main_menu = false;
+		}
+		//only for testing
+		progress += 0.01;
+		ImGui::End();
+	}
+
 	////////////////////////////////////////////////////////////
 };
