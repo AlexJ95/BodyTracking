@@ -98,7 +98,7 @@ void mouseMove(int windowId, int x, int y, int movementX, int movementY)
 
 void InputController::mouseMove(int windowId, int x, int y, int movementX, int movementY)
 {
-	if (rotate) math->rotateCamera(movementX, movementY);
+	if (rotate & !ui->lockBackground()) math->rotateCamera(movementX, movementY);
 }
 
 void mousePress(int windowId, int button, int x, int y)
