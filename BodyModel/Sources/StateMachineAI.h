@@ -10,6 +10,11 @@ protected:
 	AnimatedEntity* entity;
 	Logger* logger;
 	bool inAnimation;
+	float radians = 0.0;	//orientation bezween player and nonPlayerCharacter
+	Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
+	float dRot = 0.3;
+	float dTrans = 0.02;
+	float maxDistance = 2.0f;
 
 public:
 	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference);
