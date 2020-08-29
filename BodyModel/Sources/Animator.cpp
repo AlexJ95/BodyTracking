@@ -35,6 +35,16 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 
 void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 {
+	Kore::Quaternion locRot(0, 0, 0, 1);
+	locRot.rotate(entity->rotation);
+	locRot.normalize();
+	Kore::Quaternion locRotInv = locRot.invert();
+
+	Kore::vec3 locPos = Kore::vec4(0, 0, 0, 1);
+	Kore::mat4 locTrans = Kore::mat4::Translation(locPos.x(), locPos.y(), locPos.z()) * locRot.matrix().Transpose();
+	Kore::mat4 locTransInv = locTrans.Invert();
+
+
 	Kore::vec3 desPosition = entity->endEffector[endEffectorID]->getDesPosition();
 	Kore::Quaternion desRotation = entity->endEffector[endEffectorID]->getDesRotation();
 
@@ -43,14 +53,15 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 
 	if (entity->calibrated) {
 		// Transform desired position/rotation to the character local coordinate system
-		desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
-		desRotation = math->initRotInv.rotated(desRotation);
+		desPosition = locTransInv * math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+		desRotation = locRotInv.rotated(math->initRotInv.rotated(desRotation));
 
 		// Add offset
 		Kore::Quaternion offsetRotation = entity->endEffector[endEffectorID]->getOffsetRotation();
 		Kore::vec3 offsetPosition = entity->endEffector[endEffectorID]->getOffsetPosition();
 		Kore::Quaternion finalRot = desRotation.rotated(offsetRotation);
 		Kore::vec3 finalPos = Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * finalRot.matrix().Transpose() * Kore::mat4::Translation(offsetPosition.x(), offsetPosition.y(), offsetPosition.z()) * Kore::vec4(0, 0, 0, 1);
+		finalPos += entity->position;
 
 		if (endEffectorID == hip) {
 			setFixedPositionAndOrientation(entity, entity->endEffector[endEffectorID]->getBoneIndex(), finalPos, finalRot);
