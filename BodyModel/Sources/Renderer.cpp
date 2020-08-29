@@ -213,6 +213,15 @@ void Renderer::render(LevelObject* object, bool mirror)
 		Kore::Graphics4::setIndexBuffer(*object->meshObject->indexBuffers[i]);
 		Kore::Graphics4::drawIndexedVertices();
 	}
+	object->meshObject->M = translatePosition(object->position) * translateRotation(object->rotation);
+}
+
+Kore::mat4 Renderer::translatePosition(Kore::vec3 pos) {
+	return Kore::mat4::Translation(pos.x(), pos.y(), pos.z());
+}
+
+Kore::mat4 Renderer::translateRotation(Kore::Quaternion rot) {
+	return Kore::mat4::RotationX(rot.x * Kore::pi / 2)* Kore::mat4::RotationY(rot.y * Kore::pi / 2)* Kore::mat4::RotationZ(rot.z * Kore::pi / 2);
 }
 
 void Renderer::setLights(LevelObject object, Kore::Graphics4::ConstantLocation lightCountLocation, Kore::Graphics4::ConstantLocation lightPosLocation)

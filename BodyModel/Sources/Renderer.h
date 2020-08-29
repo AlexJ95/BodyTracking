@@ -48,6 +48,8 @@ public:
 	};
 
 	void render(LevelObject* object, bool mirror);
+	Kore::mat4 translatePosition(Kore::vec3 pos);
+	Kore::mat4 translateRotation(Kore::Quaternion rot);
 	void setLights(LevelObject object, Kore::Graphics4::ConstantLocation lightCountLocation, Kore::Graphics4::ConstantLocation);
 
 	void animate(AnimatedEntity* entity);

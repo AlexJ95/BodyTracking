@@ -1,10 +1,15 @@
-#include "TrainLevel.h"
+ï»¿#include "TrainLevel.h"
 #include "MainForm.h"
 
 void TrainLevel::update(double deltaT)
 {
 	//code level-specific runtime logic here
 	Level::update(deltaT);
+
+	//environment.at(1)->position.x() -= 0.1f;
+
+	environment.at(1)->render->position.x() -= 0.1f;
+	
 }
 
 void TrainLevel::init() {
@@ -23,7 +28,7 @@ void TrainLevel::controlsSetup()
 void TrainLevel::audioSetup()
 {
 	audio = audio->getInstanceAndAppend({
-		{"Hier könnte Ihre Werbung stehen!", new Kore::Sound("sound/start.wav")}
+		{"Hier koennte Ihre Werbung stehen!", new Kore::Sound("sound/start.wav")}
 		});
 }
 
@@ -52,8 +57,14 @@ void TrainLevel::graphicsSetup()
 	rotation.rotate(Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi / 2.0));
 	train->render->M = Kore::mat4::RotationY(-0.0075) * Kore::mat4::Translation(0, -3, 0) * rotation.matrix().Transpose();
 	renderer->setLights(*(train->render), lightCount, lightPosLocation);*/
+	ALevelObject* floor = createNewObject("floor/floor.ogex", "floor/", environmentSructure, 1, Kore::vec3(0, -3, 0), Kore::Quaternion(-1, 0, 0, 0));
+	objects[0] = floor;
 
-	ALevelObject* houseSmall = new ALevelObject("house/haus.ogex", "house/", environmentSructure, 1, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
+	ALevelObject* floor2 = new ALevelObject(floor, Kore::vec3(25, -3, 0.2), Kore::Quaternion(-1, 0, 0, 0));
+	environment.emplace_back(floor2);
+
+	renderer->setLights(*floor->render, lightCount, lightPosLocation);
+	ALevelObject* houseSmall = createNewObject("house/haus.ogex", "house/", environmentSructure, 1, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
 	//houseSmall->render->M = Kore::mat4::Translation(17, -3.75, 0) * rotation.matrix().Transpose();
 
 	/*
@@ -77,4 +88,11 @@ void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, K
 	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
 	enemy->ai = new CyborgAI(enemy->entity, animator);
 	enemies.emplace_back(enemy);
+}
+
+Level::ALevelObject* TrainLevel::createNewObject(String pfad, String pfad2, VertexStructure vstruct,float scale, Kore::vec3 pos, Kore::Quaternion rot) {
+
+	ALevelObject* object = new ALevelObject(pfad, pfad2, vstruct,scale,pos,rot);
+	environment.emplace_back(object);
+	return object;
 }
