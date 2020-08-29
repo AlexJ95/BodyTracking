@@ -85,6 +85,9 @@ void TrainLevel::graphicsSetup()
 
 	carInit(environmentSructure);
 
+	//Load Tunnel
+	
+	//tunnelInit(environmentSructure);
 	
 }
 
@@ -112,10 +115,10 @@ Level::ALevelObject* TrainLevel::createObjectCopy(ALevelObject* object, Kore::ve
 void TrainLevel::skyInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
 	ALevelObject* sky = createNewObject("skybox/skybox.ogex", "skybox/", environmentSructure, 1, Kore::vec3(0, 0, -75), Kore::Quaternion(3, 0, 1, 0));
-	
+	renderer->setLights(*sky->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
 	sky->moveable = false;
 
-	objects[0] = sky;
+	
 }
 
 void TrainLevel::trainInit(Kore::Graphics4::VertexStructure environmentSructure) {
@@ -206,6 +209,12 @@ void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x(), car->render->position.y(), -car->render->position.z()), car->render->rotation);
 	object->render->rotation.z = 3;
 
+}
+
+void TrainLevel::tunnelInit(Kore::Graphics4::VertexStructure environmentSructure) {
+	
+	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(0, 0, 0), Kore::Quaternion(3, 0, 0, 0));
+	objects[0] = tunnel;
 }
 
 void TrainLevel::v()

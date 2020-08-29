@@ -37,4 +37,5 @@ public:
     void houseInit(Kore::Graphics4::VertexStructure environmentSructure);
     void planeInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
+    void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);
 };
