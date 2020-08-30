@@ -96,7 +96,9 @@ void Renderer::renderEnvironment() {
 }
 
 void Renderer::renderEntities() {
-	for (AnimatedEntity* entity : animatedEntities) animate(entity);
+	for (AnimatedEntity* entity : animatedEntities) 
+		if(entity->activated)
+			animate(entity);
 	animate(avatar);
 }
 

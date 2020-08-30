@@ -9,6 +9,8 @@ void TrainLevel::update(double deltaT)
 	//environment.at(1)->position.x() -= 0.1f;
 
 	environment.at(1)->render->position.x() -= 0.1f;
+	spawn(deltaT);
+	checkEnemyCollision();
 	
 }
 
@@ -47,8 +49,13 @@ void TrainLevel::graphicsSetup()
 	//Load Avatar
 	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, true);
 
-	//Load Enemy
-	createEnemy(new AnAnimatedEntity("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0)), Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
+	//create Pool od entitys
+	for (int i = 0; i < poolSize; i++)
+	{
+		//Load Enemy
+		createEnemy(new AnAnimatedEntity("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)), Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
+	}
+
 
 	//Load Environment
 	/*ALevelObject* train = new ALevelObject("train/train9.ogex", "train/", environmentSructure, 1);
@@ -83,9 +90,43 @@ void TrainLevel::graphicsSetup()
 	//environment.emplace_back(new ALevelObject("floor/floor.ogex", "floor/", environmentSructure, 1));
 }
 
+void TrainLevel::spawn(double deltaT)
+{
+
+	if (countDown > maxWaitintTime | (levelStarted & countDown > maxWaitintTime / 2.0))
+	{
+		levelStarted = false;
+		for (NonPlayerCharacter* enemy : enemies)
+		{
+			if (!(enemy->entity->activated))
+			{
+				countDown = 0.0;
+				enemy->ai->spawn();
+				break;
+			}
+		}
+	}
+
+	countDown += deltaT;
+}
+
+void TrainLevel::checkEnemyCollision()
+{
+	for (int i=0; i< poolSize; i++)
+	{
+		if (enemies[i]->entity->activated)
+		{
+			for (int k = 0; k < poolSize & i != k; k++)
+			{
+				enemies[i]->ai->checkColision(enemies[k]->entity->position);
+			}
+		}
+	}
+}
+
 void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
 {
-	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0));
+	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, position, rotation);
 	enemy->ai = new CyborgAI(enemy->entity, animator);
 	enemies.emplace_back(enemy);
 }

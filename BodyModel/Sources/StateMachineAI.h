@@ -10,11 +10,11 @@ protected:
 	AnimatedEntity* entity;
 	Logger* logger;
 	bool inAnimation;
-	float radians = 0.0;	//orientation bezween player and nonPlayerCharacter
 	Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
-	float dRot = 0.3;
-	float dTrans = 0.02;
-	float maxDistance = 2.0f;
+
+	float maxDistanceToEnemy = 0.5f;
+	Kore::vec3 currentPosOtherEnemy;
+	bool tooClose = false;
 
 public:
 	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference);
@@ -24,17 +24,32 @@ public:
 	enum class AIState;
 	StateMachineAI::AIState currentState;
 
+
+
 	std::map <StateMachineAI::AIState, StateMachineAI::AIState(StateMachineAI::*)(float deltaT, Kore::vec3 playerPosition)> stateToAction;
 	typedef AIState(StateMachineAI::* action)(float deltaT, Kore::vec3 playerPosition);
 	
 	std::map <string, const char*> animationLibrary;
 
 	void update(float deltaT, Kore::vec3 playerPosition);
+	void spawn();
+	void respawn();
+	void hit();						//vielleicht verschiedene Attacken einbauen
+	void checkColision(Kore::vec3 posOtherEnemy);
+	
 };
 
 class CyborgAI : public StateMachineAI
 {
+private:
+	float radians = 0.0;	//orientation bezween player and nonPlayerCharacter
 public:
+	float dRot = 0.3;
+	float dRotCol = 0.04;
+	float dTrans = 0.02;
+	float maxDistanceToPlayer = 1.0f;
+	
+
 	enum class AIState { Attacking, Pursueing, Planning };
 	
 	AIState attacking(float deltaT, Kore::vec3 playerPosition);
@@ -42,5 +57,6 @@ public:
 	AIState planning(float deltaT, Kore::vec3 playerPosition);
 
 	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference);
+	
 	//~CyborgAI();
 };

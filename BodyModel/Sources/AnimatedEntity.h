@@ -13,8 +13,10 @@ public:
 	Kore::Quaternion rotation;
 	EndEffector** endEffector;
 	InverseKinematics* invKin;
+	bool activated=false;
 	bool calibrated;
 	float currentHeight;
+	float strength = 1.0;
 	MeshObject* meshObject;
 	AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
 	AnimatedEntity(MeshObject* meshReference, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
