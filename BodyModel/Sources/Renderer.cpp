@@ -234,7 +234,7 @@ void Renderer::setLights(LevelObject object, Kore::Graphics4::ConstantLocation l
 		lightPositions[i] = object.meshObject->M * light->position;
 
 		if (light->type == 0) {
-			lightPositions[i].w() = 0;
+			lightPositions[i].w() = 1;
 		}
 		else if (light->type == 1) {
 			lightPositions[i].w() = 1;
