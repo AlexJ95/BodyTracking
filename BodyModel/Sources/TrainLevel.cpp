@@ -95,7 +95,7 @@ void TrainLevel::graphicsSetup()
 
 	//Load Tunnel
 	
-	//tunnelInit(environmentSructure);
+	tunnelInit(environmentSructure);
 	
 }
 
@@ -350,4 +350,5 @@ void TrainLevel::z()
 {
 	objects[0]->render->rotation.z += offsets;
 	Kore::log(Kore::Info, "Zr = %f", objects[0]->render->rotation.z);
+	objects[0]->render->activated = !objects[0]->render->activated;
 }
