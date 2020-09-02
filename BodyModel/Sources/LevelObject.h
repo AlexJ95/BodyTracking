@@ -11,6 +11,7 @@ public:
 	Kore::vec3 position;
 	Kore::Quaternion rotation;
 	bool activated = true;
+	std::string tag;
 	MeshObject* meshObject;
 	LevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
 	LevelObject(MeshObject* referenceMesh, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);

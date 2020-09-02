@@ -27,8 +27,15 @@ void TrainLevel::updateFPS(double deltaT) {
 void TrainLevel::updateBuilding(double deltaT,double speed) {	
 	for (ALevelObject* object : environment)
 		if(object->moveable)
-		if (object->render->position.x() > -78)
-			object->render->position.x() -= deltaT * speed;
+			if (object->render->position.x() > -78)
+			{
+
+				if(object->render->tag == "car")
+				object->render->position.x() -= deltaT * speed * 2;
+				else if (object->render->tag == "airplane")
+					object->render->position.x() -= deltaT * speed * 3;
+				else object->render->position.x() -= deltaT * speed * 2;
+			}
 		else object->render->position.x() = 78;
 }
 
@@ -87,7 +94,7 @@ void TrainLevel::graphicsSetup()
 	houseInit(environmentSructure);
 
 	//Load Airplane
-	planeInit(environmentSructure);
+	airplaneInit(environmentSructure);
 
 	//Load Car
 
@@ -296,15 +303,16 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 	}
 }
 
-void TrainLevel::planeInit(Kore::Graphics4::VertexStructure environmentSructure) {
+void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
-	ALevelObject* plane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
-
+	ALevelObject* airplane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
+	airplane->render->tag = "airplane";
 }
 
 void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
 	ALevelObject* car = createNewObject("cars/car.ogex", "cars/", environmentSructure, 1, Kore::vec3(78, -2, 6), Kore::Quaternion(3, 0, 1, 0));
+	car->render->tag = "car";
 	ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x(), car->render->position.y(), -car->render->position.z()), car->render->rotation);
 	object->render->rotation.z = 3;
 
