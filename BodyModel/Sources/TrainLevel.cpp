@@ -1,6 +1,18 @@
 ﻿#include "TrainLevel.h"
 #include "MainForm.h"
 
+/*
+	ALevelObject* object->moveable		: set Object should move or not, still render in window
+				  object->activated		: set Object should render or not, still moveable	
+				  object->render->tag	: set object with a tag, for compare
+	
+	ALevelObjects are saved in environment;
+	NonPlayerCharacters are saved in enemies;
+
+	
+	*/
+
+
 void TrainLevel::update(double deltaT)
 {
 	//code level-specific runtime logic here
@@ -24,6 +36,7 @@ void TrainLevel::updateFPS(double deltaT) {
 		time = 0;
 	}
 }
+
 
 void TrainLevel::updateBuilding(double deltaT,double speed) {	
 	for (ALevelObject* object : environment)
