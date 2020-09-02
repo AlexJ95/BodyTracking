@@ -21,20 +21,27 @@ public:
     void controlsSetup();
     void audioSetup();
     void graphicsSetup();
+    void checkHittingAvatar();
+    void checkHittingEnemy();
 
     Level::ALevelObject* objects[1];
     bool levelStarted = true;
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
-    int poolSize = 4;
+    int poolSize = 3;
+    float hittingHeight = 0.5;
+    float hittingRadius = 1.0;
+    Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
     float time;
     int fps = 0;;
     float offsets;
 
     void createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
-    void spawn(double deltaT);
-    void checkEnemyCollision();
+    void spawn(double deltaT);
+
+    void checkEnemyCollision();
+
     Level::ALevelObject* createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot);
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
     void skyInit(Kore::Graphics4::VertexStructure environmentSructure);

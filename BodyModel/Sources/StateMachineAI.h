@@ -25,7 +25,6 @@ public:
 	StateMachineAI::AIState currentState;
 
 
-
 	std::map <StateMachineAI::AIState, StateMachineAI::AIState(StateMachineAI::*)(float deltaT, Kore::vec3 playerPosition)> stateToAction;
 	typedef AIState(StateMachineAI::* action)(float deltaT, Kore::vec3 playerPosition);
 	
@@ -43,12 +42,16 @@ class CyborgAI : public StateMachineAI
 {
 private:
 	float radians = 0.0;	//orientation bezween player and nonPlayerCharacter
+	bool attack = false;
 public:
 	float dRot = 0.3;
-	float dRotCol = 0.04;
+	float dRotCol = 0.1;
 	float dTrans = 0.02;
 	float maxDistanceToPlayer = 1.0f;
-	
+	float limitPosX = 1.5;
+
+	static int numberOfAttackers;
+	int maxAttackers = 2;
 
 	enum class AIState { Attacking, Pursueing, Planning };
 	

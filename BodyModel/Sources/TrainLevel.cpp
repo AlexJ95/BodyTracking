@@ -6,6 +6,10 @@ void TrainLevel::update(double deltaT)
 	//code level-specific runtime logic here
 	updateBuilding(deltaT,20);
 	Level::update(deltaT);
+	spawn(deltaT);
+	checkEnemyCollision();
+	checkHittingAvatar();
+	avatar->entity->position =locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(),1.0);
 }
 
 void TrainLevel::updateFPS(double deltaT) {
@@ -18,9 +22,6 @@ void TrainLevel::updateFPS(double deltaT) {
 		fps = 0;
 		time = 0;
 	}
-	spawn(deltaT);
-	checkEnemyCollision();
-	
 }
 
 void TrainLevel::updateBuilding(double deltaT,double speed) {	
@@ -98,6 +99,7 @@ void TrainLevel::graphicsSetup()
 	
 }
 
+//////////////////////////////interaction Methods
 void TrainLevel::spawn(double deltaT)
 {
 
@@ -118,6 +120,70 @@ void TrainLevel::spawn(double deltaT)
 	countDown += deltaT;
 }
 
+void TrainLevel::checkHittingAvatar()
+{
+	for (NonPlayerCharacter* enemy : enemies)
+	{
+		Kore::vec3 leftFootPos = enemy->entity->endEffector[leftFoot]->getDesPosition();
+		Kore::vec3 rightFootPos = enemy->entity->endEffector[rightFoot]->getDesPosition();
+		 
+		Kore::vec3 dir_L = (enemy->entity->position + leftFootPos) - avatar->entity->position;
+		Kore::vec3 dir_R = (enemy->entity->position + rightFootPos) - avatar->entity->position;
+
+		dir_L.z() = 0;
+		dir_R.z() = 0;
+
+		Kore::vec3 a = enemy->entity->endEffector[leftFoot]->getDesPosition();
+		float b = dir_L.getLength();
+
+		if (enemy->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeight & dir_L.getLength() < hittingRadius & !enemy->entity->attackingSucceed)
+		{
+			enemy->entity->attackingSucceed = true;
+			avatar->entity->hit();
+		}
+		else if (enemy->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeight & dir_R.getLength() < hittingRadius & !enemy->entity->attackingSucceed)
+		{
+			enemy->entity->attackingSucceed = true;
+			avatar->entity->hit();
+		}
+		else if (dir_L.getLength() > hittingRadius & enemy->entity->attackingSucceed)
+		{
+			enemy->entity->attackingSucceed = false;
+		}
+	}
+}
+
+void TrainLevel::checkHittingEnemy()
+{
+	for (NonPlayerCharacter* enemy : enemies)
+	{
+		Kore::vec3 leftFootPos = avatar->entity->endEffector[leftFoot]->getDesPosition();
+		Kore::vec3 rightFootPos = avatar->entity->endEffector[rightFoot]->getDesPosition();
+
+		Kore::vec3 dir_L = leftFootPos - enemy->entity->position;
+		Kore::vec3 dir_R = rightFootPos - enemy->entity->position;
+
+		dir_L.z() = 0;
+		dir_R.z() = 0;
+
+		if (avatar->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeight & dir_L.getLength() < hittingRadius & !avatar->entity->attackingSucceed)
+		{
+			avatar->entity->attackingSucceed = true;
+			enemy->entity->hit();
+		}
+		else if (avatar->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeight & dir_R.getLength() < hittingRadius & !avatar->entity->attackingSucceed)
+		{
+			avatar->entity->attackingSucceed = true;
+			enemy->entity->hit();
+		}
+		else if (dir_L.getLength() > hittingRadius & avatar->entity->attackingSucceed)
+		{
+			avatar->entity->attackingSucceed = false;
+		}
+	}
+}
+
+
 void TrainLevel::checkEnemyCollision()
 {
 	for (int i=0; i< poolSize; i++)
@@ -131,6 +197,7 @@ void TrainLevel::checkEnemyCollision()
 		}
 	}
 }
+///////////////////////////////////////////////////////////////////
 
 void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
 {
@@ -157,9 +224,7 @@ void TrainLevel::skyInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
 	ALevelObject* sky = createNewObject("skybox/skybox.ogex", "skybox/", environmentSructure, 1, Kore::vec3(0, 0, -75), Kore::Quaternion(3, 0, 1, 0));
 	renderer->setLights(*sky->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
-	sky->moveable = false;
-
-	
+	sky->moveable = false;	
 }
 
 void TrainLevel::trainInit(Kore::Graphics4::VertexStructure environmentSructure) {
@@ -172,9 +237,6 @@ void TrainLevel::trainInit(Kore::Graphics4::VertexStructure environmentSructure)
 	float xoffset = 16.8;
 	ALevelObject* object = createObjectCopy(trainm, Kore::vec3(trainm->render->position.x() + xoffset, trainm->render->position.y(), trainm->render->position.z()), trainm->render->rotation);
 	object->moveable = false;
-	
-
-	
 }
 
 void TrainLevel::groundInit(Kore::Graphics4::VertexStructure environmentSructure) {
@@ -205,10 +267,6 @@ void TrainLevel::groundInit(Kore::Graphics4::VertexStructure environmentSructure
 		xoffset += 26.0f;
 		xoffset2 += 20;
 	}
-	
-
-
-	
 }
 
 void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure) {

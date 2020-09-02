@@ -16,7 +16,8 @@ StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorRe
 
 void StateMachineAI::spawn()
 {
-	Kore::vec3 startPos((float)(rand() % 10), (float)(rand() % 10),0.0f);
+	Kore::vec3 startPos((float)(rand() % 2-1), (float)(rand() % 5),0.0f);
+	//Kore::vec3 startPos(0.0f, 0.0f, 0.0f);
 	entity->position = startPos;
 	entity->activated = true;
 	entity->currentHeight = 100.0;
@@ -27,10 +28,6 @@ void StateMachineAI::respawn()			//Vielleicht extra AIState mit Animation "Sterb
 	entity->activated = false;
 }
 
-void StateMachineAI::hit()				//vielleicht verschiedene Attacken einbauen
-{
-	entity->currentHeight -= 20.0 / entity->strength;
-}
 
 void StateMachineAI::checkColision(Kore::vec3 posOtherEnemy)
 {
@@ -40,14 +37,24 @@ void StateMachineAI::checkColision(Kore::vec3 posOtherEnemy)
 		tooClose = true;
 		currentPosOtherEnemy = posOtherEnemy;
 	}
-
 }
+
+int CyborgAI::numberOfAttackers = 0;
 
 CyborgAI::AIState CyborgAI::attacking(float deltaT, Kore::vec3 playerPosition)
 {
+	//if (!attack)
+	//{
+	//	numberOfAttackers++;
+	//}
+	//attack = true;
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Kicking"), logger);
-	if (inAnimation) return AIState::Attacking;
-	else return AIState::Planning;
+	if (inAnimation)
+		return AIState::Attacking;
+	else
+	{
+		return AIState::Planning;
+	}
 }
 
 CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
@@ -65,7 +72,19 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
 
 	Kore::vec3 prevDir = locToGlob * (entity->rotation.matrix() * Kore::vec4(0, -1, 0, 1));
 	prevDir.normalize();
-	
+
+	//if (numberOfAttackers >= maxAttackers && Kore::abs(-entToPlayerDir * prevDir) < 0.999)
+	//{
+	//	float sign = (-entToPlayerDir).cross(prevDir).y();
+	//	
+	//	if (sign > 0)
+	//		radians += 0.1*dRot * Kore::acos((-entToPlayerDir) * prevDir);
+	//	else
+	//		radians -= 0.1*dRot * Kore::acos((-entToPlayerDir) * prevDir);
+
+	//	entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
+
+	//}
 	if (!tooClose  && Kore::abs(entToPlayerDir * prevDir) < 0.999)
 	{
 		float sign = entToPlayerDir.cross(prevDir).y();
@@ -76,11 +95,9 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
 			radians -= dRot * Kore::acos(entToPlayerDir * prevDir);
 
 		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
-		float a = Kore::abs(entToPlayerDir * prevDir);
-	
 
 	}
-	else if (tooClose && dirBetweenEnemys.getLength() < maxDistanceToEnemy * 3.0 && Kore::abs(dirBetweenEnemysGlob * prevDir) < 0.999)
+	else if (tooClose && dirBetweenEnemys.getLength() < maxDistanceToEnemy * 3.5 && Kore::abs(dirBetweenEnemysGlob * prevDir) < 0.999)
 	{
 		float sign = entToPlayerDir.cross(dirBetweenEnemysGlob).y();
 
@@ -92,12 +109,21 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
 		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
 
 	}
-	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 3.0)
+	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 3.5)
 		tooClose = false;
 
+	
 	if (currentDistance > maxDistanceToPlayer | tooClose)
+	{
 		entity->position += dTrans * (locToGlob.Invert() * Kore::vec4(prevDir.x(), prevDir.y(), prevDir.z(), 1.0));
 
+		if (entity->position.x() > limitPosX)
+			entity->position.x() = limitPosX;
+		else if (entity->position.x() < -limitPosX)
+			entity->position.x() = -limitPosX;
+	}
+
+	
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);
 	if (inAnimation) return AIState::Pursueing;
 	else return AIState::Planning;
@@ -105,6 +131,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
 
 CyborgAI::AIState CyborgAI::planning(float deltaT, Kore::vec3 playerPosition)
 {
+	
 	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
 	Kore::vec3 entToPlayerDir = (playerPosition - entityPosGlob);
 	Kore::vec3 prevDir = locToGlob * (entity->rotation.matrix() * Kore::vec4(0, -1, 0, 1));
@@ -119,8 +146,17 @@ CyborgAI::AIState CyborgAI::planning(float deltaT, Kore::vec3 playerPosition)
 		respawn();
 		return AIState::Planning;
 	}
-	else if (currentDistance <= maxDistanceToPlayer & crossValue <0.1) return AIState::Attacking;
-	return AIState::Pursueing;
+	else if (currentDistance <= maxDistanceToPlayer & crossValue < 0.1)
+	{
+		return AIState::Attacking;
+	}
+	else
+	{
+		//if (attack & numberOfAttackers >= maxAttackers)
+		//	numberOfAttackers--;
+		//attack = false;
+		return AIState::Pursueing;
+	}
 }
 
 CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference) : StateMachineAI(enemyEntity, animatorReference)

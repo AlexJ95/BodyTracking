@@ -8,8 +8,10 @@
 #include "AnimatedEntity.h"
 #include "StateMachineAI.h"
 #include "CustomMath.h"
+#include "EndEffector.h"
 #include "UI3D.h"
 #include "Form.h"
+
 
 
 class Level
