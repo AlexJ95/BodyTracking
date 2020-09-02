@@ -5,6 +5,7 @@ void TrainLevel::update(double deltaT)
 {
 	//code level-specific runtime logic here
 	updateBuilding(deltaT,20);
+	updateFPS(deltaT);
 	Level::update(deltaT);
 	spawn(deltaT);
 	checkEnemyCollision();
@@ -30,11 +31,11 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 			if (object->render->position.x() > -78)
 			{
 
-				if(object->render->tag == "car")
+				if(object->render->tag == "car1")
 				object->render->position.x() -= deltaT * speed * 2;
 				else if (object->render->tag == "airplane")
 					object->render->position.x() -= deltaT * speed * 3;
-				else object->render->position.x() -= deltaT * speed * 2;
+				else object->render->position.x() -= deltaT * speed;
 			}
 		else object->render->position.x() = 78;
 }
@@ -315,6 +316,7 @@ void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	car->render->tag = "car";
 	ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x(), car->render->position.y(), -car->render->position.z()), car->render->rotation);
 	object->render->rotation.z = 3;
+	object->render->tag = "car1";
 
 }
 
