@@ -8,6 +8,7 @@ class StateMachineAI
 protected:
 	Animator* animator;
 	AnimatedEntity* entity;
+	Avatar* avatar;
 	Logger* logger;
 	bool inAnimation;
 	Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
@@ -17,7 +18,7 @@ protected:
 	bool tooClose = false;
 
 public:
-	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference);
+	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatar);
 	//virtual ~StateMachineAI() = 0;
 
 	//the different states of the AI state machine
@@ -25,14 +26,14 @@ public:
 	StateMachineAI::AIState currentState;
 
 
-	std::map <StateMachineAI::AIState, StateMachineAI::AIState(StateMachineAI::*)(float deltaT, Kore::vec3 playerPosition)> stateToAction;
-	typedef AIState(StateMachineAI::* action)(float deltaT, Kore::vec3 playerPosition);
+	std::map <StateMachineAI::AIState, StateMachineAI::AIState(StateMachineAI::*)(float deltaT)> stateToAction;
+	typedef AIState(StateMachineAI::* action)(float deltaT);
 	
 	std::map <string, const char*> animationLibrary;
 
-	void update(float deltaT, Kore::vec3 playerPosition);
+	void update(float deltaT);
 	void spawn();
-	void checkColision(Kore::vec3 posOtherEnemy);
+	void checkCollision(Kore::vec3 posOtherEnemy);
 	
 };
 
@@ -54,12 +55,12 @@ public:
 
 	enum class AIState { Attacking, Pursueing, Planning, Dying };
 	
-	AIState attacking(float deltaT, Kore::vec3 playerPosition);
-	AIState pursueing(float deltaT, Kore::vec3 playerPosition);
-	AIState planning(float deltaT, Kore::vec3 playerPosition);
-	AIState dying(float deltaT, Kore::vec3 playerPosition);
+	AIState attacking	(float deltaT);
+	AIState pursueing	(float deltaT);
+	AIState planning	(float deltaT);
+	AIState dying		(float deltaT);
 
-	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference);
+	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatar);
 	
 	//~CyborgAI();
 };

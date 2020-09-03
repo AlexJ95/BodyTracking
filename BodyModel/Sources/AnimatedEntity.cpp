@@ -81,6 +81,21 @@ Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphi
 	}
 }
 
+void Avatar::update(float deltaT)
+{
+	if (movementExpiration > 0) movementExpiration -= deltaT;
+	else movementExpired = true;
+}
+
+void Avatar::recognizedMotion(PlayerMovement currentMovement)
+{
+	lastMovement = currentMovement;
+	movementExpiration = 5; //to be tweaked!!!1!1!!11!elf|
+
+	//Insert logic for pro-active movements here or call subroutines here
+	//For example attacking or walking and jogging
+}
+
 void AnimatedEntity::initializeEndeffectors()
 {
 	endEffector = new EndEffector * [numOfEndEffectors];

@@ -26,7 +26,7 @@ public:
 	void hit();
 	void resetCurrentHeight();
 	bool isDead();
-	bool attackingSucceed = false;
+	bool attackedSuccessfully = false;
 
 	float getReached() const;
 	float getStucked() const;
@@ -40,10 +40,19 @@ public:
 class Avatar : public AnimatedEntity
 {
 public:
+	// Motion Recognition logic
+	enum PlayerMovement {Jogging, Kick, KickPunch, LateralBounding, Lunges, Punch, Sitting, Squats, Standing, Walking};
+	PlayerMovement lastMovement = Standing;
+	bool movementExpired = true;
+	float movementExpiration = 0;
+
 	std::vector<MeshObject*> viveObjects;
 	bool renderTrackerAndControllers;
 	bool renderAxisForEndEffectors;
 
-
 	Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation, bool renderTrackerAndController, bool renderAxisForEndEffector);
+	
+	void update(float deltaT);
+
+	void recognizedMotion(PlayerMovement currentMovement); //this will be called from the MotionRecognitionClass whenever it recognizes a new motion
 };

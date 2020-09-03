@@ -67,8 +67,8 @@ namespace {
 
 		// Sound initiation
 		audio = audio->getInstanceAndAppend({
-				{"startRecordingSound", new Kore::Sound("sound/start.wav")},
-				{"stopRecordingSound", new Kore::Sound("sound/stop.wav")}
+				{"startRecordingSound",	new Kore::Sound("sound/start.wav")},
+				{"stopRecordingSound",	new Kore::Sound("sound/stop.wav")}
 			});
 
 		currentLevel = new TrainLevel();

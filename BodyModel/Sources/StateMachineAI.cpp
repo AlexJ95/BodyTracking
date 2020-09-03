@@ -1,12 +1,13 @@
 #include "StateMachineAI.h"
 
-void StateMachineAI::update(float deltaT, Kore::vec3 playerPosition)
+//Implementation of the abstract AI and it's statemachine functionality
+void StateMachineAI::update(float deltaT)
 {
 	if(entity->activated)
-		currentState = (this->*stateToAction.at(currentState))(deltaT, playerPosition);
+		currentState = (this->*stateToAction.at(currentState))(deltaT);
 }
 
-StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference)
+StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatar)
 {
 	entity = enemyEntity;
 	animator = animatorReference;
@@ -23,8 +24,7 @@ void StateMachineAI::spawn()
 	entity->resetCurrentHeight();
 }
 
-
-void StateMachineAI::checkColision(Kore::vec3 posOtherEnemy)
+void StateMachineAI::checkCollision(Kore::vec3 posOtherEnemy)
 {
 	float distanceBetweeenEnemys = (entity->position - posOtherEnemy).getLength();
 	if (distanceBetweeenEnemys < maxDistanceToEnemy)
@@ -34,13 +34,19 @@ void StateMachineAI::checkColision(Kore::vec3 posOtherEnemy)
 	}
 }
 
+
+// Implementation of the AI for the Trainlevel
 int CyborgAI::numberOfAttackers = 0;
 
-CyborgAI::AIState CyborgAI::attacking(float deltaT, Kore::vec3 playerPosition)
+CyborgAI::AIState CyborgAI::attacking(float deltaT)
 {
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Kicking"), logger);
 
-	if (inAnimation & !entity->isDead())
+	if (avatar->movementExpired || (avatar->lastMovement != Avatar::LateralBounding)) avatar->hit(); //Example of movement recognition-implementation
+
+	//TODO: Implement Action/Reaction table as in the Google tables sheet (Use placeholder movements for enemies for now?)
+
+	if (inAnimation && !entity->isDead())
 	{
 		return AIState::Attacking;
 	}
@@ -51,7 +57,7 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT, Kore::vec3 playerPosition)
 	return AIState::Planning;
 }
 
-CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
+CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 {
 	Kore::vec3 dirBetweenEnemys = entity->position - currentPosOtherEnemy;
 	Kore::vec3 dirBetweenEnemysGlob = locToGlob * Kore::vec4(dirBetweenEnemys.x(), dirBetweenEnemys.y(), dirBetweenEnemys.z(), 1.0);
@@ -59,7 +65,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
 	dirBetweenEnemysGlob.normalize();
 
 	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
-	Kore::vec3 entToPlayerDir = (playerPosition - entityPosGlob);
+	Kore::vec3 entToPlayerDir = (avatar->position - entityPosGlob);
 	entToPlayerDir.y()=0;
 	float currentDistance = entToPlayerDir.getLength();
 	entToPlayerDir.normalize();
@@ -123,7 +129,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
 	return AIState::Planning;
 }
 
-CyborgAI::AIState CyborgAI::dying(float deltaT, Kore::vec3 playerPosition)
+CyborgAI::AIState CyborgAI::dying(float deltaT)
 {
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Dying"), logger);
 
@@ -138,11 +144,10 @@ CyborgAI::AIState CyborgAI::dying(float deltaT, Kore::vec3 playerPosition)
 	return AIState::Planning;
 }
 
-CyborgAI::AIState CyborgAI::planning(float deltaT, Kore::vec3 playerPosition)
+CyborgAI::AIState CyborgAI::planning(float deltaT)
 {
-	
 	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
-	Kore::vec3 entToPlayerDir = (playerPosition - entityPosGlob);
+	Kore::vec3 entToPlayerDir = (avatar->position - entityPosGlob);
 	Kore::vec3 prevDir = locToGlob * (entity->rotation.matrix() * Kore::vec4(0, -1, 0, 1));
 
 	entToPlayerDir.y() = 0;
@@ -162,13 +167,13 @@ CyborgAI::AIState CyborgAI::planning(float deltaT, Kore::vec3 playerPosition)
 }
 
 
-CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference) : StateMachineAI(enemyEntity, animatorReference)
+CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatar) : StateMachineAI(enemyEntity, animatorReference, avatar)
 {
 	stateToAction = {
-		{(StateMachineAI::AIState) CyborgAI::AIState::Attacking, reinterpret_cast<action>(&CyborgAI::attacking)},
-		{(StateMachineAI::AIState) CyborgAI::AIState::Pursueing, reinterpret_cast<action>(&CyborgAI::pursueing)},
-		{(StateMachineAI::AIState) CyborgAI::AIState::Planning, reinterpret_cast<action>(&CyborgAI::planning)},
-		{(StateMachineAI::AIState) CyborgAI::AIState::Dying, reinterpret_cast<action>(&CyborgAI::dying)}
+		{(StateMachineAI::AIState) CyborgAI::AIState::Attacking,	reinterpret_cast<action>(&CyborgAI::attacking)},
+		{(StateMachineAI::AIState) CyborgAI::AIState::Pursueing,	reinterpret_cast<action>(&CyborgAI::pursueing)},
+		{(StateMachineAI::AIState) CyborgAI::AIState::Planning,		reinterpret_cast<action>(&CyborgAI::planning)},
+		{(StateMachineAI::AIState) CyborgAI::AIState::Dying,		reinterpret_cast<action>(&CyborgAI::dying)}
 	};
 	animationLibrary = {
 		{"Kicking", files[3]},

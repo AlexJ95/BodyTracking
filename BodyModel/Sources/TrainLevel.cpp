@@ -163,19 +163,19 @@ void TrainLevel::checkHittingAvatar()
 		float a = leftFootPos.z();
 		float b = dir_L.getLength();
 
-		if (leftFootPos.z() > hittingHeight & dir_L.getLength() < hittingRadius & !enemy->entity->attackingSucceed)
+		if (leftFootPos.z() > hittingHeight & dir_L.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
 		{
-			enemy->entity->attackingSucceed = true;
+			enemy->entity->attackedSuccessfully = true;
 			avatar->entity->hit();
 		}
-		else if (rightFootPos.z() > hittingHeight & dir_R.getLength() < hittingRadius & !enemy->entity->attackingSucceed)
+		else if (rightFootPos.z() > hittingHeight & dir_R.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
 		{
-			enemy->entity->attackingSucceed = true;
+			enemy->entity->attackedSuccessfully = true;
 			avatar->entity->hit();
 		}
-		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & enemy->entity->attackingSucceed)
+		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & enemy->entity->attackedSuccessfully)
 		{
-			enemy->entity->attackingSucceed = false;
+			enemy->entity->attackedSuccessfully = false;
 		}
 	}
 }
@@ -194,19 +194,19 @@ void TrainLevel::checkHittingEnemy()
 		dir_L.z() = 0;
 		dir_R.z() = 0;
 
-		if (avatar->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeight & dir_L.getLength() < hittingRadius & !avatar->entity->attackingSucceed)
+		if (avatar->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeight & dir_L.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
 		{
-			avatar->entity->attackingSucceed = true;
+			avatar->entity->attackedSuccessfully = true;
 			enemy->entity->hit();
 		}
-		else if (avatar->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeight & dir_R.getLength() < hittingRadius & !avatar->entity->attackingSucceed)
+		else if (avatar->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeight & dir_R.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
 		{
-			avatar->entity->attackingSucceed = true;
+			avatar->entity->attackedSuccessfully = true;
 			enemy->entity->hit();
 		}
-		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & avatar->entity->attackingSucceed)
+		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & avatar->entity->attackedSuccessfully)
 		{
-			avatar->entity->attackingSucceed = false;
+			avatar->entity->attackedSuccessfully = false;
 		}
 	}
 }
@@ -220,7 +220,7 @@ void TrainLevel::checkEnemyCollision()
 		{
 			for (int k = 0; k < poolSize & i != k; k++)
 			{
-				enemies[i]->ai->checkColision(enemies[k]->entity->position);
+				enemies[i]->ai->checkCollision(enemies[k]->entity->position);
 			}
 		}
 	}
@@ -230,7 +230,7 @@ void TrainLevel::checkEnemyCollision()
 void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
 {
 	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, position, rotation);
-	enemy->ai = new CyborgAI(enemy->entity, animator);
+	enemy->ai = new CyborgAI(enemy->entity, animator, avatar);
 	enemies.emplace_back(enemy);
 }
 
