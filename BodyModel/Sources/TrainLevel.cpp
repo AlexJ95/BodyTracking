@@ -6,10 +6,13 @@ void TrainLevel::update(double deltaT)
 	//code level-specific runtime logic here
 	updateBuilding(deltaT,20);
 	Level::update(deltaT);
+
+	avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
 	spawn(deltaT);
 	checkEnemyCollision();
 	checkHittingAvatar();
-	avatar->entity->position =locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(),1.0);
+	checkHittingEnemy();
+	
 }
 
 void TrainLevel::updateFPS(double deltaT) {
@@ -124,29 +127,30 @@ void TrainLevel::checkHittingAvatar()
 {
 	for (NonPlayerCharacter* enemy : enemies)
 	{
-		Kore::vec3 leftFootPos = enemy->entity->endEffector[leftFoot]->getDesPosition();
-		Kore::vec3 rightFootPos = enemy->entity->endEffector[rightFoot]->getDesPosition();
+
+		Kore::vec3 leftFootPos = enemy->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
+		Kore::vec3 rightFootPos = enemy->entity->meshObject->bones[rightFootBoneIndex]->getPosition();
 		 
-		Kore::vec3 dir_L = (enemy->entity->position + leftFootPos) - avatar->entity->position;
-		Kore::vec3 dir_R = (enemy->entity->position + rightFootPos) - avatar->entity->position;
+		Kore::vec3 dir_L = leftFootPos - avatar->entity->position;
+		Kore::vec3 dir_R = rightFootPos - avatar->entity->position;
 
 		dir_L.z() = 0;
 		dir_R.z() = 0;
 
-		Kore::vec3 a = enemy->entity->endEffector[leftFoot]->getDesPosition();
+		float a = leftFootPos.z();
 		float b = dir_L.getLength();
 
-		if (enemy->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeight & dir_L.getLength() < hittingRadius & !enemy->entity->attackingSucceed)
+		if (leftFootPos.z() > hittingHeight & dir_L.getLength() < hittingRadius & !enemy->entity->attackingSucceed)
 		{
 			enemy->entity->attackingSucceed = true;
 			avatar->entity->hit();
 		}
-		else if (enemy->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeight & dir_R.getLength() < hittingRadius & !enemy->entity->attackingSucceed)
+		else if (rightFootPos.z() > hittingHeight & dir_R.getLength() < hittingRadius & !enemy->entity->attackingSucceed)
 		{
 			enemy->entity->attackingSucceed = true;
 			avatar->entity->hit();
 		}
-		else if (dir_L.getLength() > hittingRadius & enemy->entity->attackingSucceed)
+		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & enemy->entity->attackingSucceed)
 		{
 			enemy->entity->attackingSucceed = false;
 		}
@@ -157,8 +161,9 @@ void TrainLevel::checkHittingEnemy()
 {
 	for (NonPlayerCharacter* enemy : enemies)
 	{
-		Kore::vec3 leftFootPos = avatar->entity->endEffector[leftFoot]->getDesPosition();
-		Kore::vec3 rightFootPos = avatar->entity->endEffector[rightFoot]->getDesPosition();
+		
+		Kore::vec3 leftFootPos = avatar->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
+		Kore::vec3 rightFootPos = avatar->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
 
 		Kore::vec3 dir_L = leftFootPos - enemy->entity->position;
 		Kore::vec3 dir_R = rightFootPos - enemy->entity->position;
@@ -176,7 +181,7 @@ void TrainLevel::checkHittingEnemy()
 			avatar->entity->attackingSucceed = true;
 			enemy->entity->hit();
 		}
-		else if (dir_L.getLength() > hittingRadius & avatar->entity->attackingSucceed)
+		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & avatar->entity->attackingSucceed)
 		{
 			avatar->entity->attackingSucceed = false;
 		}
