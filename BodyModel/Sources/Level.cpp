@@ -20,6 +20,7 @@ void Level::init()
 	std::vector<AnimatedEntity*> entities;
 	for (NonPlayerCharacter* entity : enemies) entities.emplace_back(entity->entity);
 	renderer->init(objects, entities, avatar->entity, animator);
+	input->setAnimatorAndAvatar(animator, avatar->entity);
 }
 
 void Level::setUI(UI3D* ui)

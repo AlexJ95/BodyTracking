@@ -13,14 +13,16 @@ CustomMath* CustomMath::getInstance()
 	return instance;
 }
 
-CustomMath::CustomMath() {
+CustomMath::CustomMath()
+{
 	camUp = Kore::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	camForward = Kore::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 	camRight = Kore::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 	cameraPos = Kore::vec3(0, 0, 0);
 }
 
-Kore::mat4 CustomMath::getMirrorMatrix() {
+Kore::mat4 CustomMath::getMirrorMatrix()
+{
 	Kore::Quaternion rot(0, 0, 0, 1);
 	rot.rotate(Kore::Quaternion(Kore::vec3(0, 1, 0), Kore::pi));
 	Kore::mat4 zMirror = Kore::mat4::Identity();
@@ -30,14 +32,27 @@ Kore::mat4 CustomMath::getMirrorMatrix() {
 	return M;
 }
 
-Kore::mat4 CustomMath::getProjectionMatrix() {
+void CustomMath::setProjectionAndViewMatrices(Kore::mat4 projectionMatrix, Kore::mat4 viewMatrix)
+{
+	vrProjectionMatrix = projectionMatrix;
+	vrViewMatrix = viewMatrix;
+}
+
+Kore::mat4 CustomMath::getProjectionMatrix()
+{
+#ifdef KORE_STEAMVR
+	if (hmdMode || !firstPersonMonitor) return vrProjectionMatrix;
+#endif
 	Kore::mat4 P = Kore::mat4::Perspective(45, (float)width / (float)height, 0.01f, 1000);
 	P.Set(0, 0, -P.get(0, 0));
-
 	return P;
 }
 
-Kore::mat4 CustomMath::getViewMatrix() {
+Kore::mat4 CustomMath::getViewMatrix()
+{
+#ifdef KORE_STEAMVR
+	if (hmdMode || !firstPersonMonitor) return vrViewMatrix;
+#endif
 	Kore::mat4 V = Kore::mat4::lookAlong(camForward.xyz(), cameraPos, Kore::vec3(0.0f, 1.0f, 0.0f));
 	return V;
 }
@@ -71,8 +86,6 @@ void CustomMath::initTransAndRot() {
 	Kore::vec3 initPos = Kore::vec4(0, 0, 0, 1);
 	initTrans = Kore::mat4::Translation(initPos.x(), initPos.y(), initPos.z()) * initRot.matrix().Transpose();
 	initTransInv = initTrans.Invert();
-
-	
 }
 
 void CustomMath::init()

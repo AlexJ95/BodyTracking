@@ -4,21 +4,30 @@
 #include "CustomMath.h"
 #include "AnimatedEntity.h"
 #include "Logger.h"
-#include "Calibrator.h"
+
+#ifdef KORE_STEAMVR
+#include <Kore/Vr/VrInterface.h>
+#include <Kore/Vr/SensorState.h>
+#endif
 
 #include <Kore/Math/Quaternion.h>
 
+#include <algorithm>
 #include <typeinfo>
 
 class Animator
 {
+#ifdef KORE_STEAMVR
+	float currentUserHeight;
+#endif
 	CustomMath* math;
-	Calibrator* calibrator;
 
 public :
 	Animator();
 
 	bool executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger);
+
+	void rigVrPose(Avatar* avatar);
 
 	void executeMovement(AnimatedEntity* entity, int endEffectorID); //moves a singular endeffector to desired attitude
 	
@@ -32,12 +41,17 @@ public :
 
 	void resetPositionAndRotation(AnimatedEntity* entity);
 
-	float getReached(AnimatedEntity* entity) const;
-	float getStucked(AnimatedEntity* entity) const;
-	float* getIterations(AnimatedEntity* entity) const;
-	float* getErrorPos(AnimatedEntity* entity) const;
-	float* getErrorRot(AnimatedEntity* entity) const;
-	float* getTime(AnimatedEntity* entity) const;
-	float* getTimeIteration(AnimatedEntity* entity) const;
+	void calibrate(AnimatedEntity* entity, BoneNode* bone[numOfEndEffectors]); //initially calibrates the avatar
+
+	void setSize(Avatar* avatar); //adjust avatar size to player
+
+	void initEndEffector(Avatar* avatar, int efID, int deviceID, Kore::vec3 pos, Kore::Quaternion rot);
+
+	void assignControllerAndTracker(Avatar* avatar);
+
+	void resetAvatarPose(Avatar* avatar);
+
+	void calibrateAvatar(Avatar* avatar);
+
 	float getCurrentHeight(AnimatedEntity* entity) const;
 };

@@ -11,14 +11,11 @@
 
 #include "TrainLevel.h"
 
-#include <Kore/IO/FileReader.h>
 #include <Kore/System.h>
 #include <Kore/Log.h>
 
 #ifdef KORE_STEAMVR
 #include <Kore/Vr/VrInterface.h>
-#include <Kore/Vr/SensorState.h>
-#include <Kore/Input/Gamepad.h>
 #endif
 
 namespace {
@@ -65,7 +62,8 @@ namespace {
 				{Kore::KeyCode::KeyV, xachse},
 				{Kore::KeyCode::KeyB, yachse},
 				{Kore::KeyCode::KeyN, zachse},
-			},ui);
+			});
+		inputController->setUI(ui);
 
 		// Sound initiation
 		audio = audio->getInstanceAndAppend({
@@ -78,7 +76,7 @@ namespace {
 		currentLevel->setUI(ui);
 
 #ifdef KORE_STEAMVR
-		VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
+		Kore::VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
 #endif
 	}
 

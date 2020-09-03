@@ -2,7 +2,6 @@
 
 Animator::Animator() {
 	math = math->getInstance();
-	calibrator = new Calibrator();
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
@@ -23,7 +22,7 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 		entity->meshObject->setScale(scaleFactor);
 		BoneNode* bones[numOfEndEffectors];
 		for (int i = 0; i < numOfEndEffectors; i++) bones[i] = getBoneWithIndex(entity, entity->endEffector[i]->getBoneIndex());
-		calibrator->calibrate(entity, bones);
+		calibrate(entity, bones);
 		entity->calibrated = true;
 	}
 	
@@ -31,6 +30,36 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 
 	entity->calibrated = inAnimation;
 	return inAnimation;
+}
+
+void Animator::rigVrPose(Avatar* avatar)
+{
+#ifdef KORE_STEAMVR
+	Kore::VrInterface::begin();
+
+	VrPoseState vrDevice;
+	for (int i = 0; i < numOfEndEffectors; ++i) {
+		if (avatar->endEffector[i]->getDeviceIndex() != -1) {
+
+			if (i == head) {
+				SensorState state = Kore::VrInterface::getSensorState(0);
+
+				// Get HMD position and rotation
+				avatar->endEffector[i]->setDesPosition(state.pose.vrPose.position);
+				avatar->endEffector[i]->setDesRotation(state.pose.vrPose.orientation);
+			}
+			else {
+				vrDevice = Kore::VrInterface::getController(avatar->endEffector[i]->getDeviceIndex());
+
+				// Get VR device position and rotation
+				avatar->endEffector[i]->setDesPosition(vrDevice.vrPose.position);
+				avatar->endEffector[i]->setDesRotation(vrDevice.vrPose.orientation);
+			}
+
+			executeMovement(avatar, i);
+		}
+	}
+#endif
 }
 
 void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
@@ -120,32 +149,129 @@ void Animator::resetPositionAndRotation(AnimatedEntity* entity) {
 	}
 }
 
-float Animator::getReached(AnimatedEntity* entity) const {
-	return entity->invKin->getReached();
+void Animator::calibrate(AnimatedEntity* entity, BoneNode* bones[numOfEndEffectors])
+{
+	math->initTransAndRot();
+
+	for (int i = 0; i < numOfEndEffectors; ++i) {
+		Kore::vec3 desPosition = entity->endEffector[i]->getDesPosition();
+		Kore::Quaternion desRotation = entity->endEffector[i]->getDesRotation();
+
+		// Transform desired position/rotation to the character local coordinate system
+		desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+		desRotation = math->initRotInv.rotated(desRotation);
+
+		// Get actual position/rotation of the character skeleton
+		//BoneNode* bone = animator->getBoneWithIndex(avatar, avatar->endEffector[i]->getBoneIndex());
+		Kore::vec3 targetPos = bones[i]->getPosition();
+		Kore::Quaternion targetRot = bones[i]->getOrientation();
+
+		entity->endEffector[i]->setOffsetPosition((Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * targetRot.matrix().Transpose()).Invert() * Kore::mat4::Translation(targetPos.x(), targetPos.y(), targetPos.z()) * Kore::vec4(0, 0, 0, 1));
+		entity->endEffector[i]->setOffsetRotation((desRotation.invert()).rotated(targetRot));
+	}
 }
 
-float Animator::getStucked(AnimatedEntity* entity) const {
-	return entity->invKin->getStucked();
+#ifdef KORE_STEAMVR
+void Animator::setSize(Avatar* avatar)
+{
+	float currentAvatarHeight = getCurrentHeight(avatar);
+
+	SensorState state = Kore::VrInterface::getSensorState(0);
+	Kore::vec3 hmdPos = state.pose.vrPose.position; // z -> face, y -> up down
+	float currentUserHeight = hmdPos.y();
+
+	float scale = currentUserHeight / currentAvatarHeight;
+	avatar->meshObject->setScale(scale);
 }
 
-float* Animator::getIterations(AnimatedEntity* entity) const {
-	return entity->invKin->getIterations();
+void Animator::initEndEffector(Avatar* avatar, int efID, int deviceID, Kore::vec3 pos, Kore::Quaternion rot)
+{
+	avatar->endEffector[efID]->setDeviceIndex(deviceID);
+	avatar->endEffector[efID]->setDesPosition(pos);
+	avatar->endEffector[efID]->setDesRotation(rot);
 }
 
-float* Animator::getErrorPos(AnimatedEntity* entity) const {
-	return entity->invKin->getErrorPos();
+void Animator::assignControllerAndTracker(Avatar* avatar)
+{
+	VrPoseState vrDevice;
+
+	const int numTrackers = 5;
+	int trackerCount = 0;
+
+	std::vector<EndEffector*> trackers;
+
+	// Get indices for VR devices
+	for (int i = 0; i < 16; ++i) {
+		vrDevice = Kore::VrInterface::getController(i);
+
+		Kore::vec3 devicePos = vrDevice.vrPose.position;
+		Kore::Quaternion deviceRot = vrDevice.vrPose.orientation;
+
+		if (vrDevice.trackedDevice == TrackedDevice::ViveTracker) {
+			EndEffector* tracker = new EndEffector(-1);
+			tracker->setDeviceIndex(i);
+			tracker->setDesPosition(devicePos);
+			tracker->setDesRotation(deviceRot);
+			trackers.push_back(tracker);
+
+			++trackerCount;
+			if (trackerCount == numTrackers) {
+				// Sort trackers regarding the y-Axis (height)
+				std::sort(trackers.begin(), trackers.end(), sortByYAxis());
+
+				// Left or Right Leg
+				std::sort(trackers.begin(), trackers.begin() + 2, sortByZAxis());
+				initEndEffector(avatar, leftFoot, trackers[0]->getDeviceIndex(), trackers[0]->getDesPosition(), trackers[0]->getDesRotation());
+				initEndEffector(avatar, rightFoot, trackers[1]->getDeviceIndex(), trackers[1]->getDesPosition(), trackers[1]->getDesRotation());
+
+				// Hip
+				initEndEffector(avatar, hip, trackers[2]->getDeviceIndex(), trackers[2]->getDesPosition(), trackers[2]->getDesRotation());
+
+				// Left or Right Forearm
+				std::sort(trackers.begin() + 3, trackers.begin() + 5, sortByZAxis());
+				initEndEffector(avatar, leftForeArm, trackers[3]->getDeviceIndex(), trackers[3]->getDesPosition(), trackers[3]->getDesRotation());
+				initEndEffector(avatar, rightForeArm, trackers[4]->getDeviceIndex(), trackers[4]->getDesPosition(), trackers[4]->getDesRotation());
+			}
+
+
+		}
+		else if (vrDevice.trackedDevice == TrackedDevice::Controller) {
+			// Hand controller
+			if (devicePos.z() > 0) {
+				initEndEffector(avatar, rightHand, i, devicePos, deviceRot);
+			}
+			else {
+				initEndEffector(avatar, leftHand, i, devicePos, deviceRot);
+			}
+		}
+	}
+
+	// HMD
+	SensorState stateLeftEye = Kore::VrInterface::getSensorState(0);
+	SensorState stateRightEye = Kore::VrInterface::getSensorState(1);
+	Kore::vec3 leftEyePos = stateLeftEye.pose.vrPose.position;
+	Kore::vec3 rightEyePos = stateRightEye.pose.vrPose.position;
+	Kore::vec3 hmdPosCenter = (leftEyePos + rightEyePos) / 2;
+	initEndEffector(avatar, head, 0, hmdPosCenter, stateLeftEye.pose.vrPose.orientation);
+}
+#endif
+
+void Animator::resetAvatarPose(Avatar* avatar)
+{
+	avatar->calibrated = false;
+	math->initTransAndRot();
+	resetPositionAndRotation(avatar);
+	setSize(avatar);
 }
 
-float* Animator::getErrorRot(AnimatedEntity* entity) const {
-	return entity->invKin->getErrorRot();
-}
-
-float* Animator::getTime(AnimatedEntity* entity) const {
-	return entity->invKin->getTime();
-}
-
-float* Animator::getTimeIteration(AnimatedEntity* entity) const {
-	return entity->invKin->getTimeIteration();
+void Animator::calibrateAvatar(Avatar* avatar)
+{
+	assignControllerAndTracker(avatar);
+	BoneNode* bones[numOfEndEffectors];
+	for (int i = 0; i < numOfEndEffectors; i++) bones[i] = getBoneWithIndex(avatar, avatar->endEffector[i]->getBoneIndex());
+	calibrate(avatar, bones);
+	avatar->calibrated = true;
+	//log(Info, "Calibrate avatar");
 }
 
 float Animator::getCurrentHeight(AnimatedEntity* entity) const {

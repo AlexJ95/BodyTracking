@@ -6,6 +6,12 @@
 #include "LevelObject.h"
 #include "AnimatedEntity.h"
 
+#ifdef KORE_STEAMVR
+#include <Kore/Vr/VrInterface.h>
+#include <Kore/Vr/SensorState.h>
+#include <Kore/Vr/VrPoseState.h>
+#endif
+
 #include <Kore/IO/FileReader.h>
 #include <Kore/Graphics4/PipelineState.h>
 #include <Kore/Graphics1/Color.h>

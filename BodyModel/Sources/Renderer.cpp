@@ -18,7 +18,6 @@ void Renderer::init(std::vector<LevelObject*> objects, std::vector<AnimatedEntit
 
 void Renderer::loadEnvironmentShader(String vertexShaderFile, String fragmentShaderFile)
 {
-	
 	Kore::FileReader vs(vertexShaderFile);
 	Kore::FileReader fs(fragmentShaderFile);
 	environmentGraphics->vertexShader = new Shader(vs.readAll(), vs.size(), VertexShader);
@@ -109,70 +108,40 @@ void Renderer::update(float deltaT)
 	Kore::Graphics4::setPipeline(entityGraphics->pipeline);
 
 #ifdef KORE_STEAMVR
-	VrInterface::begin();
+	Kore::VrInterface::begin();
 
-	if (!controllerButtonsInitialized) initButtons();
-
-	VrPoseState vrDevice;
-	for (int i = 0; i < numOfEndEffectors; ++i) {
-		if (endEffector[i]->getDeviceIndex() != -1) {
-
-			if (i == head) {
-				SensorState state = VrInterface::getSensorState(0);
-
-				// Get HMD position and rotation
-				endEffector[i]->setDesPosition(state.pose.vrPose.position);
-				endEffector[i]->setDesRotation(state.pose.vrPose.orientation);
-			}
-			else {
-				vrDevice = VrInterface::getController(endEffector[i]->getDeviceIndex());
-
-				// Get VR device position and rotation
-				endEffector[i]->setDesPosition(vrDevice.vrPose.position);
-				endEffector[i]->setDesRotation(vrDevice.vrPose.orientation);
-			}
-
-			executeMovement(i);
-		}
-	}
-
+	math->hmdMode = true;
 	// Render for both eyes
 	SensorState state;
 	for (int j = 0; j < 2; ++j) {
-		VrInterface::beginRender(j);
+		Kore::VrInterface::beginRender(j);
 
-		Graphics4::clear(Graphics4::ClearColorFlag | Graphics4::ClearDepthFlag, Graphics1::Color::Black, 1.0f, 0);
+		Kore::Graphics4::clear(Kore::Graphics4::ClearColorFlag | Kore::Graphics4::ClearDepthFlag, Kore::Graphics1::Color::Black, 1.0f, 0);
 
-		state = VrInterface::getSensorState(j);
+		state = Kore::VrInterface::getSensorState(j);
 
-		renderAvatar(state.pose.vrPose.eye, state.pose.vrPose.projection);
+		math->setProjectionAndViewMatrices(state.pose.vrPose.projection, state.pose.vrPose.eye);
 
-		if (renderRoom) renderLivingRoom(state.pose.vrPose.eye, state.pose.vrPose.projection);
+		renderEntities();
+		if (renderRoom) renderEnvironment();
 
-		VrInterface::endRender(j);
+		Kore::VrInterface::endRender(j);
 	}
+	math->hmdMode = false;
 
-	VrInterface::warpSwap();
+	Kore::VrInterface::warpSwap();
 
-	Graphics4::restoreRenderTarget();
-	Graphics4::clear(Graphics4::ClearColorFlag | Graphics4::ClearDepthFlag, Graphics1::Color::Black, 1.0f, 0);
-
-	// Render on monitor
-	mat4 P = getProjectionMatrix();
-	mat4 V = getViewMatrix();
-
-	if (!firstPersonMonitor) renderAvatar(V, P);
-	else renderAvatar(state.pose.vrPose.eye, state.pose.vrPose.projection);
-
-	if (renderRoom) {
-		if (!firstPersonMonitor) renderLivingRoom(V, P);
-		else renderLivingRoom(state.pose.vrPose.eye, state.pose.vrPose.projection);
-	}
+	Kore::Graphics4::restoreRenderTarget();
+	Kore::Graphics4::clear(Kore::Graphics4::ClearColorFlag | Kore::Graphics4::ClearDepthFlag, Kore::Graphics1::Color::Black, 1.0f, 0);
 #endif
-	renderEnvironment();
+	// Render on monitor
 	renderEntities();
+	if (renderRoom) renderEnvironment();
+
+	// Render ui
 	if(form != NULL)
 		ui->drawUI(form);
+
 	Kore::Graphics4::end();
 	Kore::Graphics4::swapBuffers();
 }
@@ -327,16 +296,16 @@ void Renderer::renderAllVRDevices(Avatar* avatar) {
 #ifdef KORE_STEAMVR
 	VrPoseState controller;
 	for (int i = 0; i < 16; ++i) {
-		controller = VrInterface::getController(i);
+		controller = Kore::VrInterface::getController(i);
 
-		vec3 desPosition = controller.vrPose.position;
+		Kore::vec3 desPosition = controller.vrPose.position;
 		Kore::Quaternion desRotation = controller.vrPose.orientation;
 
 		if (controller.trackedDevice == TrackedDevice::ViveTracker) {
-			renderControllerAndTracker(true, desPosition, desRotation);
+			renderControllerAndTracker(avatar, true, desPosition, desRotation);
 		}
 		else if (controller.trackedDevice == TrackedDevice::Controller) {
-			renderControllerAndTracker(false, desPosition, desRotation);
+			renderControllerAndTracker(avatar, false, desPosition, desRotation);
 		}
 
 	}

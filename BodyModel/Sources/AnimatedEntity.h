@@ -23,6 +23,14 @@ public:
 	void initializeEndeffectors();
 	void hit();
 	bool attackingSucceed = false;
+
+	float getReached() const;
+	float getStucked() const;
+	float* getIterations() const;
+	float* getErrorPos() const;
+	float* getErrorRot() const;
+	float* getTime() const;
+	float* getTimeIteration() const;
 };
 
 class Avatar : public AnimatedEntity

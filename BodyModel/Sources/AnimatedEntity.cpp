@@ -29,6 +29,33 @@ void AnimatedEntity::hit()				//vielleicht verschiedene Attacken einbauen
 	currentHeight -= 20.0 / strength;
 }
 
+float AnimatedEntity::getReached() const {
+	return invKin->getReached();
+}
+
+float AnimatedEntity::getStucked() const {
+	return invKin->getStucked();
+}
+
+float* AnimatedEntity::getIterations() const {
+	return invKin->getIterations();
+}
+
+float* AnimatedEntity::getErrorPos() const {
+	return invKin->getErrorPos();
+}
+
+float* AnimatedEntity::getErrorRot() const {
+	return invKin->getErrorRot();
+}
+
+float* AnimatedEntity::getTime() const {
+	return invKin->getTime();
+}
+
+float* AnimatedEntity::getTimeIteration() const {
+	return invKin->getTimeIteration();
+}
 
 Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation, bool renderTrackerAndController, bool renderAxisForEndEffector)
 	: AnimatedEntity(meshFile, textureFile, structure, scale, initialPosition, initialRotation) {

@@ -19,12 +19,19 @@ public:
 	Kore::mat4 initTransInv;
 	Kore::Quaternion initRot;
 	Kore::Quaternion initRotInv;
+
+	Kore::mat4 vrProjectionMatrix;
+	Kore::mat4 vrViewMatrix;
+
+	bool hmdMode = false;
 	
 	static CustomMath* getInstance(); // Get the singleton instance
 
 	CustomMath();
 
 	Kore::mat4 getMirrorMatrix(); // Esed to mirror avatar in demo
+
+	void setProjectionAndViewMatrices(Kore::mat4 projectionMatrix, Kore::mat4 viewMatrix);
 
 	Kore::mat4 getProjectionMatrix(); // Not sure what exactly this one does
 
