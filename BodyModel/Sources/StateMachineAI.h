@@ -32,8 +32,6 @@ public:
 
 	void update(float deltaT, Kore::vec3 playerPosition);
 	void spawn();
-	void respawn();
-	void hit();						//vielleicht verschiedene Attacken einbauen
 	void checkColision(Kore::vec3 posOtherEnemy);
 	
 };
@@ -49,15 +47,17 @@ public:
 	float dTrans = 0.02;
 	float maxDistanceToPlayer = 1.0f;
 	float limitPosX = 1.5;
+	bool died;
 
 	static int numberOfAttackers;
 	int maxAttackers = 2;
 
-	enum class AIState { Attacking, Pursueing, Planning };
+	enum class AIState { Attacking, Pursueing, Planning, Dying };
 	
 	AIState attacking(float deltaT, Kore::vec3 playerPosition);
 	AIState pursueing(float deltaT, Kore::vec3 playerPosition);
 	AIState planning(float deltaT, Kore::vec3 playerPosition);
+	AIState dying(float deltaT, Kore::vec3 playerPosition);
 
 	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference);
 	

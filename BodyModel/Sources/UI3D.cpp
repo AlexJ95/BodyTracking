@@ -47,42 +47,16 @@ void UI3D::drawUI(Form *form)
 	ImGui::NewFrame();
 
 	form->drawForm();
-	////////////////////////////////////////////////////////////
-	//here we create 3DUI with ImGUI
-
-	///////First Window//////////////////
-	//ImGui::Begin("Test");
-
-	//ImGui::Text("This is an example Text.");
-	//if (ImGui::Button("Click me"))
-	//	counter += 1;
-	//std::string clickCount = "Click Count " + std::to_string(counter);
-	//ImGui::Text(clickCount.c_str());
-	//ImGui::Checkbox("Another Window", &show_another_window);
-	//ImGui::End();
-	/////////First Window End///////////////
-
-	/////////second Window//////////////////
-
-
-	/////////Second Window End//////////////
-	//if (show_another_window)
-	//{
-	//	ImGui::Begin("Another Window", &show_another_window);
-	//	ImGui::Text("Hello from another Window");
-	//	if (ImGui::Button("Close Me"))
-	//		show_another_window = false;
-	//	ImGui::End();
-	//}
-
-	////////////////////////////////////////////////////////////
-
-
+	isFormShown = form->isFormShown();
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
+bool UI3D::isUIshown()
+{
+	return isFormShown;
+}
 
 bool UI3D::lockBackground()
 {

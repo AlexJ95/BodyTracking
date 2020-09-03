@@ -26,13 +26,22 @@ AnimatedEntity::AnimatedEntity(MeshObject* meshReference, Kore::vec3 initialPosi
 
 void AnimatedEntity::hit()				//vielleicht verschiedene Attacken einbauen
 {
-	currentHeight -= 20.0 / strength;
+	currentHeight -= 100.0 * strength;
+}
+
+void AnimatedEntity::resetCurrentHeight()
+{
+	currentHeight = 100.0;
+}
+
+bool AnimatedEntity::isDead()
+{
+	return (currentHeight <= 0.0);
 }
 
 float AnimatedEntity::getReached() const {
 	return invKin->getReached();
 }
-
 float AnimatedEntity::getStucked() const {
 	return invKin->getStucked();
 }

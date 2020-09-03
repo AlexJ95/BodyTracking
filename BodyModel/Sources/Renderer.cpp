@@ -122,8 +122,11 @@ void Renderer::update(float deltaT)
 
 		math->setProjectionAndViewMatrices(state.pose.vrPose.projection, state.pose.vrPose.eye);
 
-		renderEntities();
-		if (renderRoom) renderEnvironment();
+		if (!ui->isUIshown())
+	{
+	renderEntities();
+	if (renderRoom) renderEnvironment();
+	}
 
 		Kore::VrInterface::endRender(j);
 	}
@@ -134,11 +137,13 @@ void Renderer::update(float deltaT)
 	Kore::Graphics4::restoreRenderTarget();
 	Kore::Graphics4::clear(Kore::Graphics4::ClearColorFlag | Kore::Graphics4::ClearDepthFlag, Kore::Graphics1::Color::Black, 1.0f, 0);
 #endif
-	// Render on monitor
+	if (!ui->isUIshown())
+	{
+			// Render on monitor
 	renderEntities();
 	if (renderRoom) renderEnvironment();
-
-	// Render ui
+	}
+    	// Render ui
 	if(form != NULL)
 		ui->drawUI(form);
 

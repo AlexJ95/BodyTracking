@@ -8,6 +8,8 @@
 
 class AnimatedEntity
 {
+private:
+	float currentHeight;
 public:
 	Kore::vec3 position;
 	Kore::Quaternion rotation;
@@ -15,13 +17,15 @@ public:
 	InverseKinematics* invKin;
 	bool activated=false;
 	bool calibrated;
-	float currentHeight;
-	float strength = 1.0;
+
+	float strength = 1.0;	//strength=1.0 -> mit einem Schlag ist di Entity tod
 	MeshObject* meshObject;
 	AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
 	AnimatedEntity(MeshObject* meshReference, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
 	void initializeEndeffectors();
 	void hit();
+	void resetCurrentHeight();
+	bool isDead();
 	bool attackingSucceed = false;
 
 	float getReached() const;

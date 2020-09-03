@@ -22,9 +22,11 @@ private:
 	
 	//UI3D inkrementieren
 	int counter=0;
+	bool isFormShown = false;
 public:
 	UI3D(Kore::Window* window);
 	~UI3D();
 	void drawUI(Form* form);
 	bool lockBackground();
+	bool isUIshown();
 };

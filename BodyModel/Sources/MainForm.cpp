@@ -19,6 +19,7 @@ void MainForm::drawForm()
 	//ImGui Flags in imgui.h
 	if (show_main_menu & !show_setting_window & !show_level_window & !show_loading_bar)
 	{
+		showingForm = true;
 		ImGui::Begin("Menu", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 		ImGui::SetWindowSize("Menu", ImVec2(400, 130), 0);
 		ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
@@ -148,6 +149,7 @@ void MainForm::drawForm()
 		{
 			show_loading_bar = false;
 			show_main_menu = false;
+			showingForm = false;
 		}
 		//only for testing
 		progress += 0.01;

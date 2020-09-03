@@ -8,8 +8,10 @@
 
 class Form
 {
-private:
+protected:
+	bool showingForm = false;
 public:
 	Form();
 	void virtual drawForm();
+	bool isFormShown();
 };
