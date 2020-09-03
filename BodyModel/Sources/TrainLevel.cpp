@@ -1,10 +1,23 @@
 ﻿#include "TrainLevel.h"
 #include "MainForm.h"
 
+/*
+	ALevelObject* object->moveable		: set Object should move or not, still render in window
+				  object->activated		: set Object should render or not, still moveable	
+				  object->render->tag	: set object with a tag, for compare
+	
+	ALevelObjects are saved in environment;
+	NonPlayerCharacters are saved in enemies;
+
+	
+	*/
+
+
 void TrainLevel::update(double deltaT)
 {
 	//code level-specific runtime logic here
 	updateBuilding(deltaT,20);
+	updateFPS(deltaT);
 	Level::update(deltaT);
 
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
@@ -27,11 +40,19 @@ void TrainLevel::updateFPS(double deltaT) {
 	}
 }
 
+
 void TrainLevel::updateBuilding(double deltaT,double speed) {	
 	for (ALevelObject* object : environment)
 		if(object->moveable)
-		if (object->render->position.x() > -78)
-			object->render->position.x() -= deltaT * speed;
+			if (object->render->position.x() > -78)
+			{
+
+				if(object->render->tag == "car1")
+				object->render->position.x() -= deltaT * speed * 2;
+				else if (object->render->tag == "airplane")
+					object->render->position.x() -= deltaT * speed * 3;
+				else object->render->position.x() -= deltaT * speed;
+			}
 		else object->render->position.x() = 78;
 }
 
@@ -90,7 +111,7 @@ void TrainLevel::graphicsSetup()
 	houseInit(environmentSructure);
 
 	//Load Airplane
-	planeInit(environmentSructure);
+	airplaneInit(environmentSructure);
 
 	//Load Car
 
@@ -98,7 +119,7 @@ void TrainLevel::graphicsSetup()
 
 	//Load Tunnel
 	
-	//tunnelInit(environmentSructure);
+	tunnelInit(environmentSructure);
 	
 }
 
@@ -301,17 +322,19 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 	}
 }
 
-void TrainLevel::planeInit(Kore::Graphics4::VertexStructure environmentSructure) {
+void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
-	ALevelObject* plane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
-
+	ALevelObject* airplane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
+	airplane->render->tag = "airplane";
 }
 
 void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
 	ALevelObject* car = createNewObject("cars/car.ogex", "cars/", environmentSructure, 1, Kore::vec3(78, -2, 6), Kore::Quaternion(3, 0, 1, 0));
+	car->render->tag = "car";
 	ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x(), car->render->position.y(), -car->render->position.z()), car->render->rotation);
 	object->render->rotation.z = 3;
+	object->render->tag = "car1";
 
 }
 
@@ -355,4 +378,5 @@ void TrainLevel::z()
 {
 	objects[0]->render->rotation.z += offsets;
 	Kore::log(Kore::Info, "Zr = %f", objects[0]->render->rotation.z);
+	objects[0]->render->activated = !objects[0]->render->activated;
 }

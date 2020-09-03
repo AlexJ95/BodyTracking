@@ -92,7 +92,7 @@ void Renderer::loadEntityShader(String vertexShaderFile, String fragmentShaderFi
 }
 
 void Renderer::renderEnvironment() {
-	for (LevelObject* object : levelObjects) render(object, false);
+	for (LevelObject* object : levelObjects) if (object->activated) render(object, false);
 }
 
 void Renderer::renderEntities() {
@@ -181,41 +181,40 @@ void Renderer::update(float deltaT)
 //Subroutines for LevelObjects
 void Renderer::render(LevelObject* object, bool mirror)
 {
-	Kore::Graphics4::setPipeline(environmentGraphics->pipeline);
+		Kore::Graphics4::setPipeline(environmentGraphics->pipeline);
+		Kore::Graphics4::setMatrix(environmentGraphics->vLocation, math->getViewMatrix());
+		Kore::Graphics4::setMatrix(environmentGraphics->pLocation, math->getProjectionMatrix());
+		for (int i = 0; i < object->meshObject->meshesCount; ++i) {
+			Geometry* geometry = object->meshObject->geometries[i];
+			Kore::mat4 modelMatrix = Kore::mat4::Identity();
+			if (!mirror) modelMatrix = object->meshObject->M * geometry->transform;
+			else modelMatrix = object->meshObject->Mmirror * geometry->transform;
+			Kore::mat4 modelMatrixInverse = modelMatrix.Invert();
 
-	Kore::Graphics4::setMatrix(environmentGraphics->vLocation, math->getViewMatrix());
-	Kore::Graphics4::setMatrix(environmentGraphics->pLocation, math->getProjectionMatrix());
-	for (int i = 0; i < object->meshObject->meshesCount; ++i) {
-		Geometry* geometry = object->meshObject->geometries[i];
-		Kore::mat4 modelMatrix = Kore::mat4::Identity();
-		if (!mirror) modelMatrix = object->meshObject->M * geometry->transform;
-		else modelMatrix = object->meshObject->Mmirror * geometry->transform;
-		Kore::mat4 modelMatrixInverse = modelMatrix.Invert();
+			Kore::Graphics4::setMatrix(environmentGraphics->mLocation, modelMatrix);
+			Kore::Graphics4::setMatrix(environmentGraphics->mLocationInverse, modelMatrixInverse);
 
-		Kore::Graphics4::setMatrix(environmentGraphics->mLocation, modelMatrix);
-		Kore::Graphics4::setMatrix(environmentGraphics->mLocationInverse, modelMatrixInverse);
+			unsigned int materialIndex = geometry->materialIndex;
+			Material* material = object->meshObject->findMaterialWithIndex(materialIndex);
+			if (material != nullptr) {
+				Kore::Graphics4::setFloat3(environmentGraphics->diffuse, material->diffuse);
+				Kore::Graphics4::setFloat3(environmentGraphics->specular, material->specular);
+				Kore::Graphics4::setFloat(environmentGraphics->specularPower, material->specular_power);
+			}
+			else {
+				Kore::Graphics4::setFloat3(environmentGraphics->diffuse, Kore::vec3(1.0, 1.0, 1.0));
+				Kore::Graphics4::setFloat3(environmentGraphics->specular, Kore::vec3(1.0, 1.0, 1.0));
+				Kore::Graphics4::setFloat(environmentGraphics->specularPower, 1.0);
+			}
 
-		unsigned int materialIndex = geometry->materialIndex;
-		Material* material = object->meshObject->findMaterialWithIndex(materialIndex);
-		if (material != nullptr) {
-			Kore::Graphics4::setFloat3(environmentGraphics->diffuse, material->diffuse);
-			Kore::Graphics4::setFloat3(environmentGraphics->specular, material->specular);
-			Kore::Graphics4::setFloat(environmentGraphics->specularPower, material->specular_power);
+			Texture* image = object->meshObject->images[i];
+			if (image != nullptr) Kore::Graphics4::setTexture(environmentGraphics->tex, image);
+
+			Kore::Graphics4::setVertexBuffer(*object->meshObject->vertexBuffers[i]);
+			Kore::Graphics4::setIndexBuffer(*object->meshObject->indexBuffers[i]);
+			Kore::Graphics4::drawIndexedVertices();
 		}
-		else {
-			Kore::Graphics4::setFloat3(environmentGraphics->diffuse, Kore::vec3(1.0, 1.0, 1.0));
-			Kore::Graphics4::setFloat3(environmentGraphics->specular, Kore::vec3(1.0, 1.0, 1.0));
-			Kore::Graphics4::setFloat(environmentGraphics->specularPower, 1.0);
-		}
-
-		Texture* image = object->meshObject->images[i];
-		if (image != nullptr) Kore::Graphics4::setTexture(environmentGraphics->tex, image);
-
-		Kore::Graphics4::setVertexBuffer(*object->meshObject->vertexBuffers[i]);
-		Kore::Graphics4::setIndexBuffer(*object->meshObject->indexBuffers[i]);
-		Kore::Graphics4::drawIndexedVertices();
-	}
-	object->meshObject->M = translatePosition(object->position) * translateRotation(object->rotation);
+		object->meshObject->M = translatePosition(object->position) * translateRotation(object->rotation);
 }
 
 Kore::mat4 Renderer::translatePosition(Kore::vec3 pos) {
