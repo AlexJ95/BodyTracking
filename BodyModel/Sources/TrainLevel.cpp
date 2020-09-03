@@ -103,7 +103,7 @@ void TrainLevel::graphicsSetup()
 	for (int i = 0; i < poolSize; i++)
 	{
 		//Load Enemy
-		createEnemy(new AnAnimatedEntity("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)), Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
+		createEnemy(new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)), Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
 	}
 
 	//Load Ground
