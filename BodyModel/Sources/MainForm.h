@@ -20,7 +20,7 @@ private:
 
 	//Loading Bar
 	bool show_loading_bar=false;
-	
+
 public:
 	MainForm();
 	void drawForm();

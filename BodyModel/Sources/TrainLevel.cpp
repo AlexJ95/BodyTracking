@@ -25,7 +25,6 @@ void TrainLevel::update(double deltaT)
 	checkEnemyCollision();
 	checkHittingAvatar();
 	checkHittingEnemy();
-	
 }
 
 void TrainLevel::updateFPS(double deltaT) {
@@ -42,18 +41,21 @@ void TrainLevel::updateFPS(double deltaT) {
 
 
 void TrainLevel::updateBuilding(double deltaT,double speed) {	
-	for (ALevelObject* object : environment)
-		if(object->moveable)
-			if (object->render->position.x() > -78)
-			{
+	if (!form->isFormShown())
+	{
+		for (ALevelObject* object : environment)
+			if (object->moveable)
+				if (object->render->position.x() > -78)
+				{
 
-				if(object->render->tag == "car1")
-				object->render->position.x() -= deltaT * speed * 2;
-				else if (object->render->tag == "airplane")
-					object->render->position.x() -= deltaT * speed * 3;
-				else object->render->position.x() -= deltaT * speed;
-			}
-		else object->render->position.x() = 78;
+					if (object->render->tag == "car1")
+						object->render->position.x() -= deltaT * speed * 2;
+					else if (object->render->tag == "airplane")
+						object->render->position.x() -= deltaT * speed * 3;
+					else object->render->position.x() -= deltaT * speed;
+				}
+				else object->render->position.x() = 78;
+	}
 }
 
 void TrainLevel::init() {
@@ -127,7 +129,7 @@ void TrainLevel::graphicsSetup()
 void TrainLevel::spawn(double deltaT)
 {
 
-	if (countDown > maxWaitintTime | (levelStarted & countDown > maxWaitintTime / 2.0))
+	if (countDown > maxWaitintTime | (levelStarted & countDown > maxWaitintTime / 10.0))
 	{
 		levelStarted = false;
 		for (NonPlayerCharacter* enemy : enemies)

@@ -109,7 +109,8 @@ void mousePress(int windowId, int button, int x, int y)
 
 void InputController::mousePress(int windowId, int button, int x, int y)
 {
-	rotate = true;
+	if (!ui->isUIshown())
+		rotate = true;
 }
 
 void mouseRelease(int windowId, int button, int x, int y)
@@ -141,11 +142,14 @@ void InputController::init()
 
 void InputController::update(float deltaT)
 {
-	// Move position of camera based on WASD keys
-	Kore::vec3 cameraPos = math->cameraPos;
-	if (S) cameraPos -= math->camForward * (float)deltaT * cameraMoveSpeed;
-	if (W) cameraPos += math->camForward * (float)deltaT * cameraMoveSpeed;
-	if (A) cameraPos += math->camRight * (float)deltaT * cameraMoveSpeed;
-	if (D) cameraPos -= math->camRight * (float)deltaT * cameraMoveSpeed;
-	math->cameraPos = cameraPos;
+	if (!ui->isUIshown())
+	{
+		// Move position of camera based on WASD keys
+		Kore::vec3 cameraPos = math->cameraPos;
+		if (S) cameraPos -= math->camForward * (float)deltaT * cameraMoveSpeed;
+		if (W) cameraPos += math->camForward * (float)deltaT * cameraMoveSpeed;
+		if (A) cameraPos += math->camRight * (float)deltaT * cameraMoveSpeed;
+		if (D) cameraPos -= math->camRight * (float)deltaT * cameraMoveSpeed;
+		math->cameraPos = cameraPos;
+	}
 }

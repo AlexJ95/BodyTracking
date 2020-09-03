@@ -169,8 +169,12 @@ void Renderer::update(float deltaT)
 		else renderLivingRoom(state.pose.vrPose.eye, state.pose.vrPose.projection);
 	}
 #endif
-	renderEnvironment();
-	renderEntities();
+
+	if (!ui->isUIshown())
+	{
+		renderEnvironment();
+		renderEntities();
+	}
 	if(form != NULL)
 		ui->drawUI(form);
 	Kore::Graphics4::end();

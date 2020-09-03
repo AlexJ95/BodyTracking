@@ -16,7 +16,7 @@ StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorRe
 
 void StateMachineAI::spawn()
 {
-	Kore::vec3 startPos((float)(rand() % 2-1), (float)(rand() % 5),0.0f);
+	Kore::vec3 startPos((float)(rand() % 2-1), 0.0f ,0.0f);
 	//Kore::vec3 startPos(0.0f, 0.0f, 0.0f);
 	entity->position = startPos;
 	entity->activated = true;
@@ -46,7 +46,7 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT, Kore::vec3 playerPosition)
 	}
 	else if (entity->isDead())
 	{
-		return AIState::Dieing;
+		return AIState::Dying;
 	}
 	return AIState::Planning;
 }
@@ -118,18 +118,18 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT, Kore::vec3 playerPosition)
 	}
 	else if (entity->isDead())
 	{
-		return AIState::Dieing;
+		return AIState::Dying;
 	}
 	return AIState::Planning;
 }
 
-CyborgAI::AIState CyborgAI::dieing(float deltaT, Kore::vec3 playerPosition)
+CyborgAI::AIState CyborgAI::dying(float deltaT, Kore::vec3 playerPosition)
 {
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Deing"), logger);
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Dying"), logger);
 
 	if (inAnimation)
 	{
-		return AIState::Dieing;
+		return AIState::Dying;
 	}
 	else
 	{
@@ -167,11 +167,13 @@ CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference) : S
 	stateToAction = {
 		{(StateMachineAI::AIState) CyborgAI::AIState::Attacking, reinterpret_cast<action>(&CyborgAI::attacking)},
 		{(StateMachineAI::AIState) CyborgAI::AIState::Pursueing, reinterpret_cast<action>(&CyborgAI::pursueing)},
-		{(StateMachineAI::AIState) CyborgAI::AIState::Planning, reinterpret_cast<action>(&CyborgAI::planning)}
+		{(StateMachineAI::AIState) CyborgAI::AIState::Planning, reinterpret_cast<action>(&CyborgAI::planning)},
+		{(StateMachineAI::AIState) CyborgAI::AIState::Dying, reinterpret_cast<action>(&CyborgAI::dying)}
 	};
 	animationLibrary = {
 		{"Kicking", files[3]},
 		{"Walking", files[1]}
+		//{"Dying",files[...]}
 	};
 	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Planning;
 }

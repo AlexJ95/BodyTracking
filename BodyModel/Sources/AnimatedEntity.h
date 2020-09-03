@@ -25,7 +25,7 @@ public:
 	void initializeEndeffectors();
 	void hit();
 	void resetCurrentHeight();
-	float getCurrentHeight();
+	bool isDead();
 	bool attackingSucceed = false;
 };
 

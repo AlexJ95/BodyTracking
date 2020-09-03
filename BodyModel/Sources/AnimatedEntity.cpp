@@ -34,9 +34,9 @@ void AnimatedEntity::resetCurrentHeight()
 	currentHeight = 100.0;
 }
 
-float AnimatedEntity::getCurrentHeight()
+bool AnimatedEntity::isDead()
 {
-	return currentHeight;
+	return (currentHeight <= 0.0);
 }
 
 Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation, bool renderTrackerAndController, bool renderAxisForEndEffector)
