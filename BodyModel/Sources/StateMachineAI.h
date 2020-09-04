@@ -18,7 +18,7 @@ protected:
 	bool tooClose = false;
 
 public:
-	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatar);
+	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
 	//virtual ~StateMachineAI() = 0;
 
 	//the different states of the AI state machine
@@ -60,7 +60,7 @@ public:
 	AIState planning	(float deltaT);
 	AIState dying		(float deltaT);
 
-	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatar);
+	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
 	
 	//~CyborgAI();
 };

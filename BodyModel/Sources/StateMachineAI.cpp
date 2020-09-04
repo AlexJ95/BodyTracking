@@ -7,10 +7,11 @@ void StateMachineAI::update(float deltaT)
 		currentState = (this->*stateToAction.at(currentState))(deltaT);
 }
 
-StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatar)
+StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference)
 {
 	entity = enemyEntity;
 	animator = animatorReference;
+	avatar = avatarReference;
 	logger = new Logger();
 	inAnimation = false;
 }
@@ -167,7 +168,7 @@ CyborgAI::AIState CyborgAI::planning(float deltaT)
 }
 
 
-CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatar) : StateMachineAI(enemyEntity, animatorReference, avatar)
+CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference) : StateMachineAI(enemyEntity, animatorReference, avatarReference)
 {
 	stateToAction = {
 		{(StateMachineAI::AIState) CyborgAI::AIState::Attacking,	reinterpret_cast<action>(&CyborgAI::attacking)},

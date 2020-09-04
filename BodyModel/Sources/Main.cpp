@@ -41,13 +41,13 @@ namespace {
 		}
 	}
 
-	void links() { currentLevel->l(); }
-	void rechts() { currentLevel->r(); }
-	void vorne() { currentLevel->v(); }
-	void hinten() { currentLevel->h(); }
-	void xachse() { currentLevel->x(); }
-	void yachse() { currentLevel->y(); }
-	void zachse() { currentLevel->z(); }
+	void links()	{ currentLevel->l(); }
+	void rechts()	{ currentLevel->r(); }
+	void vorne()	{ currentLevel->v(); }
+	void hinten()	{ currentLevel->h(); }
+	void xachse()	{ currentLevel->x(); }
+	void yachse()	{ currentLevel->y(); }
+	void zachse()	{ currentLevel->z(); }
 
 	void init() {
 		logger = new Logger;

@@ -130,6 +130,7 @@ void InputController::mouseRelease(int windowId, int button, int x, int y)
 	rotate = false;
 }
 
+#ifdef KORE_STEAMVR
 void gamepadButton(int buttonNr, float value)
 {
 	InputController* inputController;
@@ -144,6 +145,7 @@ void InputController::gamepadButton(int buttonNr, float value)
 	// Menu button => calibrate
 	if (buttonNr == 1 && value == 1) animator->calibrateAvatar(avatar);
 }
+#endif
 
 void initBindings()
 {

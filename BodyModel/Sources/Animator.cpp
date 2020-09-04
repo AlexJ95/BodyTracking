@@ -254,7 +254,6 @@ void Animator::assignControllerAndTracker(Avatar* avatar)
 	Kore::vec3 hmdPosCenter = (leftEyePos + rightEyePos) / 2;
 	initEndEffector(avatar, head, 0, hmdPosCenter, stateLeftEye.pose.vrPose.orientation);
 }
-#endif
 
 void Animator::resetAvatarPose(Avatar* avatar)
 {
@@ -281,3 +280,4 @@ float Animator::getCurrentHeight(AnimatedEntity* entity) const {
 	position *= 1.0 / position.w();
 	return position.z();
 }
+#endif
