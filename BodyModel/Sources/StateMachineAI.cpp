@@ -60,13 +60,16 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 
 CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 {
+	Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->position.x(), avatar->position.y(), avatar->position.z(), 1.0);
+	avatarPosGlob.y() = 0;
 	Kore::vec3 dirBetweenEnemys = entity->position - currentPosOtherEnemy;
 	Kore::vec3 dirBetweenEnemysGlob = locToGlob * Kore::vec4(dirBetweenEnemys.x(), dirBetweenEnemys.y(), dirBetweenEnemys.z(), 1.0);
 	dirBetweenEnemysGlob.y() = 0;
 	dirBetweenEnemysGlob.normalize();
+	
 
 	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
-	Kore::vec3 entToPlayerDir = (avatar->position - entityPosGlob);
+	Kore::vec3 entToPlayerDir = (avatarPosGlob - entityPosGlob);
 	entToPlayerDir.y()=0;
 	float currentDistance = entToPlayerDir.getLength();
 	entToPlayerDir.normalize();
@@ -148,7 +151,8 @@ CyborgAI::AIState CyborgAI::dying(float deltaT)
 CyborgAI::AIState CyborgAI::planning(float deltaT)
 {
 	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
-	Kore::vec3 entToPlayerDir = (avatar->position - entityPosGlob);
+	Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->position.x(), avatar->position.y(), avatar->position.z(), 1.0);
+	Kore::vec3 entToPlayerDir = (avatarPosGlob - entityPosGlob);
 	Kore::vec3 prevDir = locToGlob * (entity->rotation.matrix() * Kore::vec4(0, -1, 0, 1));
 
 	entToPlayerDir.y() = 0;
