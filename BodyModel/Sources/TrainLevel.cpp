@@ -230,7 +230,7 @@ void TrainLevel::checkEnemyCollision()
 void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
 {
 	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, position, rotation);
-	enemy->ai = new CyborgAI(enemy->entity, animator, avatar);
+	enemy->ai = new CyborgAI(enemy->entity, animator, avatar->entity);
 	enemies.emplace_back(enemy);
 }
 

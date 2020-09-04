@@ -13,7 +13,7 @@ void Level::update(double deltaT)
 	renderer->form = form;
 	
 
-	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT, math->cameraPos);
+	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT);
 }
 
 void Level::init()
