@@ -82,8 +82,17 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 
 	if (entity->calibrated) {
 		// Transform desired position/rotation to the character local coordinate system
-		desPosition = locTransInv * math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
-		desRotation = locRotInv.rotated(math->initRotInv.rotated(desRotation));
+		if (isnan(locRotInv.x))
+		{
+			desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+			desRotation = math->initRotInv.rotated(desRotation);
+		}
+		else
+		{
+			desPosition = locTransInv * math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+			desRotation = locRotInv.rotated(math->initRotInv.rotated(desRotation));
+		}
+
 
 		// Add offset
 		Kore::Quaternion offsetRotation = entity->endEffector[endEffectorID]->getOffsetRotation();

@@ -28,7 +28,7 @@ public:
     bool levelStarted = true;
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
-    int poolSize = 1;
+    int poolSize = 3;
     float hittingHeight = 0.5;
     float hittingRadius = 0.3;
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
