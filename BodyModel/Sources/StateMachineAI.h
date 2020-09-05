@@ -34,6 +34,8 @@ public:
 	void update(float deltaT);
 	void spawn();
 	void checkCollision(Kore::vec3 posOtherEnemy);
+	static int beatedEnemyCount;
+	static float lastDeadPos;
 	
 };
 
@@ -49,9 +51,6 @@ public:
 	float maxDistanceToPlayer = 1.0f;
 	float limitPosX = 1.5;
 	bool died;
-
-	static int numberOfAttackers;
-	int maxAttackers = 2;
 
 	enum class AIState { Attacking, Pursueing, Planning, Dying };
 	

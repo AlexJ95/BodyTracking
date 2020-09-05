@@ -16,8 +16,8 @@ CustomMath* CustomMath::getInstance()
 CustomMath::CustomMath()
 {
 	camUp = Kore::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	camForward = Kore::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-	camRight = Kore::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+	camForward = Kore::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+	camRight = Kore::vec4(-1.0f, 0.0f, 0.0f, 0.0f);
 	cameraPos = Kore::vec3(0, 0, 0);
 }
 

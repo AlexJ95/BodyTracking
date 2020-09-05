@@ -25,10 +25,11 @@ public:
     void checkHittingEnemy();
 
     Level::ALevelObject* objects[1];
-    bool levelStarted = true;
+    bool stationStarted = true;
+
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
-    int poolSize = 3;
+    int poolSize = 1;
     float hittingHeight = 0.5;
     float hittingRadius = 0.3;
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
@@ -39,6 +40,11 @@ public:
 
     void createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
     void spawn(double deltaT);
+  
+    int stationNr = 1;
+    float stationLength = 15.0;
+    bool stationComplete = false; 
+    void checkStation(double deltaT);
 
     void checkEnemyCollision();
 

@@ -16,6 +16,7 @@ public:
 	EndEffector** endEffector;
 	InverseKinematics* invKin;
 	bool activated=false;
+	bool beated = false;
 	bool calibrated;
 
 	float strength = 1.0;	//strength=1.0 -> mit einem Schlag ist di Entity tod

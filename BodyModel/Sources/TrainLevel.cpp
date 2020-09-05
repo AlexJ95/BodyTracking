@@ -21,10 +21,13 @@ void TrainLevel::update(double deltaT)
 	Level::update(deltaT);
 
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
-	spawn(deltaT);
-	checkEnemyCollision();
-	checkHittingAvatar();
-	checkHittingEnemy();
+	if (!form->isFormShown())
+	{
+		checkStation(deltaT);
+		checkEnemyCollision();
+		checkHittingAvatar();
+		checkHittingEnemy();
+	}
 }
 
 void TrainLevel::updateFPS(double deltaT) {
@@ -126,16 +129,47 @@ void TrainLevel::graphicsSetup()
 }
 
 //////////////////////////////interaction Methods
+
+void TrainLevel::checkStation(double deltaT)
+{
+	if (!stationComplete)
+	{
+		spawn(deltaT);
+	}
+
+	if (StateMachineAI::beatedEnemyCount >= poolSize & !stationComplete)
+	{
+		stationComplete = true;
+	}
+	else if(stationComplete & avatar->entity->position.y() <= (StateMachineAI::lastDeadPos -  stationLength))
+	{
+		for (NonPlayerCharacter* enemy : enemies)
+		{
+			enemy->entity->beated = false;
+		}
+		StateMachineAI::beatedEnemyCount = 0;
+		stationComplete = false;
+		stationStarted=true;
+		stationNr++;
+	}
+}
+
 void TrainLevel::spawn(double deltaT)
 {
 
-	if (countDown > maxWaitintTime | (levelStarted & countDown > maxWaitintTime / 10.0))
+	if (countDown > maxWaitintTime | (stationStarted & countDown > maxWaitintTime / 10.0))
 	{
-		levelStarted = false;
+		stationStarted = false;
+		
 		for (NonPlayerCharacter* enemy : enemies)
 		{
-			if (!(enemy->entity->activated))
+			if (!(enemy->entity->beated) & !(enemy->entity->activated))
 			{
+				float randomX_Pos = (float)(rand() % 2 - 1);
+				if (randomX_Pos == 0.0)
+					randomX_Pos += 0.1;
+				enemy->entity->position=Kore::vec3(randomX_Pos, (avatar->entity->position.y() - stationLength), 0.0f);
+				enemy->entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi);
 				countDown = 0.0;
 				enemy->ai->spawn();
 				break;
@@ -278,7 +312,6 @@ void TrainLevel::groundInit(Kore::Graphics4::VertexStructure environmentSructure
 	object = createObjectCopy(lfloor, Kore::vec3(lfloor->render->position.x(), lfloor->render->position.y(), -lfloor->render->position.z()), lfloor->render->rotation);
 
 	
-
 	float xoffset = 26.0f;
 	float xoffset2 = 20;
 	float zoffset = 0.0f;

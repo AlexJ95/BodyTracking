@@ -18,9 +18,10 @@ StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorRe
 
 void StateMachineAI::spawn()
 {
-	Kore::vec3 startPos((float)(rand() % 2-1), 0.0f ,0.0f);
+	//Kore::vec3 startPos((float)(rand() % 2-1), 0.0f ,0.0f);
 	//Kore::vec3 startPos(0.0f, 0.0f, 0.0f);
-	entity->position = startPos;
+	//entity->position = startPos;
+
 	entity->activated = true;
 	entity->resetCurrentHeight();
 }
@@ -37,7 +38,8 @@ void StateMachineAI::checkCollision(Kore::vec3 posOtherEnemy)
 
 
 // Implementation of the AI for the Trainlevel
-int CyborgAI::numberOfAttackers = 0;
+int StateMachineAI::beatedEnemyCount = 0;
+float StateMachineAI::lastDeadPos = 0.0;
 
 CyborgAI::AIState CyborgAI::attacking(float deltaT)
 {
@@ -55,7 +57,8 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 	{
 		return AIState::Dying;
 	}
-	return AIState::Planning;
+	return AIState::Dying; //Test
+	//return AIState::Planning;
 }
 
 CyborgAI::AIState CyborgAI::pursueing(float deltaT)
@@ -135,7 +138,10 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 
 CyborgAI::AIState CyborgAI::dying(float deltaT)
 {
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Dying"), logger);
+		lastDeadPos = entity->position.y();
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);  //Test
+	//inAnimation = animator->executeAnimation(entity, animationLibrary.at("Dying"), logger);
+	
 
 	if (inAnimation)
 	{
@@ -144,6 +150,8 @@ CyborgAI::AIState CyborgAI::dying(float deltaT)
 	else
 	{
 		entity->activated = false;
+		entity->beated = true;
+		beatedEnemyCount++;
 	}
 	return AIState::Planning;
 }
