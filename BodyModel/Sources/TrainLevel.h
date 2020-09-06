@@ -52,8 +52,10 @@ public:
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
     void skyInit(Kore::Graphics4::VertexStructure environmentSructure);
     void trainInit(Kore::Graphics4::VertexStructure environmentSructure);
+	void trainInit(Kore::Graphics4::VertexStructure environmentSructure, int trainLenght);
     void groundInit(Kore::Graphics4::VertexStructure environmentSructure);
     void houseInit(Kore::Graphics4::VertexStructure environmentSructure);
+	void houseInit(Kore::Graphics4::VertexStructure environmentSructure, bool placeholder);
     void airplaneInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);
