@@ -72,25 +72,27 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 	
 
 	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
+	entityPosGlob.y() = 0;
 	Kore::vec3 entToPlayerDir = (avatarPosGlob - entityPosGlob);
-	entToPlayerDir.y()=0;
 	float currentDistance = entToPlayerDir.getLength();
 	entToPlayerDir.normalize();
 
 	Kore::vec3 prevDir = locToGlob * (entity->rotation.matrix() * Kore::vec4(0, -1, 0, 1));
+	prevDir.y() = 0;
 	prevDir.normalize();
 
 	if (!tooClose  && Kore::abs(entToPlayerDir * prevDir) < 0.999)
 	{
 		float sign = entToPlayerDir.cross(prevDir).y();
 
+
 		if (sign > 0)
 			radians += dRot * Kore::acos(entToPlayerDir * prevDir);
 		else
 			radians -= dRot * Kore::acos(entToPlayerDir * prevDir);
 
-		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
 
+		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
 	}
 	else if (tooClose && dirBetweenEnemys.getLength() < maxDistanceToEnemy * 3.5 && Kore::abs(dirBetweenEnemysGlob * prevDir) < 0.999)
 	{
@@ -100,14 +102,13 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 			radians -= dRotCol * Kore::acos(dirBetweenEnemysGlob * prevDir);
 		else
 			radians += dRotCol * Kore::acos(dirBetweenEnemysGlob * prevDir);
+		
 
 		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
-
 	}
 	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 3.5)
 		tooClose = false;
 
-	
 	if (currentDistance > maxDistanceToPlayer | tooClose)
 	{
 		entity->position += dTrans * (locToGlob.Invert() * Kore::vec4(prevDir.x(), prevDir.y(), prevDir.z(), 1.0));
@@ -122,7 +123,6 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 		}
 	}
 
-	
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);
 
 	if (inAnimation & !entity->isDead())
@@ -138,7 +138,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 
 CyborgAI::AIState CyborgAI::dying(float deltaT)
 {
-		lastDeadPos = entity->position.y();
+	lastDeadPos = entity->position.y();
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);  //Test
 	//inAnimation = animator->executeAnimation(entity, animationLibrary.at("Dying"), logger);
 	

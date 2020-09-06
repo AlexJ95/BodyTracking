@@ -11,13 +11,15 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 	Kore::Quaternion desRotation[numOfEndEffectors];
 	bool inAnimation = logger->readData(numOfEndEffectors, filename, desPosition, desRotation, scaleFactor);
 
-	for (int i = 0; i < numOfEndEffectors; ++i) {
+	for (int i = 0; i < numOfEndEffectors; ++i) 
+	{
 		entity->endEffector[i]->setDesPosition(desPosition[i]);
 		entity->endEffector[i]->setDesRotation(desRotation[i]);
 	}
 
 	
-	if (!entity->calibrated) {
+	if (!entity->calibrated) 
+	{
 		resetPositionAndRotation(entity);
 		entity->meshObject->setScale(scaleFactor);
 		BoneNode* bones[numOfEndEffectors];

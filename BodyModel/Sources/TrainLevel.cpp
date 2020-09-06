@@ -157,7 +157,7 @@ void TrainLevel::checkStation(double deltaT)
 void TrainLevel::spawn(double deltaT)
 {
 
-	if (countDown > maxWaitintTime | (stationStarted & countDown > maxWaitintTime / 10.0))
+	if (countDown > maxWaitintTime | (stationStarted & countDown > maxWaitintTime / 100.0))
 	{
 		stationStarted = false;
 		

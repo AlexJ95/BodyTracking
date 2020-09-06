@@ -42,7 +42,7 @@ public:
 class CyborgAI : public StateMachineAI
 {
 private:
-	float radians = 0.0;	//orientation bezween player and nonPlayerCharacter
+	float radians = Kore::pi;	//orientation bezween player and nonPlayerCharacter
 	bool attack = false;
 public:
 	float dRot = 0.3;
