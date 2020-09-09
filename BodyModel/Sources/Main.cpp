@@ -8,6 +8,8 @@
 #include "InputController.h"
 #include "AudioManager.h"
 #include "UI3D.h"
+#include "HMM.h"
+#include "MachineLearningMotionRecognition.h"
 
 #include "TrainLevel.h"
 
@@ -25,18 +27,21 @@ namespace {
 	Level* currentLevel;
 	UI3D* ui;
 	Kore::Window* window;
+
+	MachineLearningMotionRecognition* motionRecognizer;
 	
 	double startTime;
 	double lastTime;
 
 	void record() {
 		logRawData = !logRawData;
-
-		if (logRawData) {
-			audio->play("startRecordingSound");
+		
+		if (!logRawData && !motionRecognizer->isActive() && !hmm->isRecordingActive() && !hmm->isRecognitionActive()) {
+			Audio1::play(startRecordingSound);
 			logger->startLogger("logData");
-		} else {
-			audio->play("stopRecordingSound");
+		}
+		else if (logRawData && !motionRecognizer->isActive() && !hmm->isRecordingActive() && !hmm->isRecognitionActive()) {
+			Audio1::play(stopRecordingSound);
 			logger->endLogger();
 		}
 	}
