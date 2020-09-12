@@ -28,6 +28,8 @@ public:
     Level::ALevelObject* objects[1];
     bool stationStarted = true;
 
+    bool gameStart;
+
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
     int poolSize = 10;
@@ -35,6 +37,7 @@ public:
     float hittingRadius = 0.3;
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
+    float starttime;
     float time;
     int fps = 0;;
     float offsets;

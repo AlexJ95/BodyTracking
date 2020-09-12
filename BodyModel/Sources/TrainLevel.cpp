@@ -16,10 +16,17 @@
 void TrainLevel::update(double deltaT)
 {
 	//code level-specific runtime logic here
-	updateBuilding(deltaT,20);
-	updateFPS(deltaT);
 	Level::update(deltaT);
-	gamePlay(deltaT);
+
+
+	if (gameStart) {
+		updateBuilding(deltaT, 20);
+		updateFPS(deltaT);		
+		starttime += deltaT;
+		if(starttime > 3.0f)
+			gamePlay(deltaT);
+		else starttime += deltaT;
+	}
 
 }
 
@@ -113,6 +120,7 @@ void TrainLevel::init() {
 	Level::init();
 	form = new MainForm();
 	offsets = 1;
+	gameStart = true;
 }
 
 void TrainLevel::controlsSetup()
