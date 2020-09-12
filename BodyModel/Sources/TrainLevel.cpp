@@ -66,8 +66,14 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 				if (object->render->position.x() > -420)
 				{
 
-					if (object->render->tag == "car")
+					if (object->render->tag == "car") {
 						object->render->position.x() -= deltaT * speed * 0.5f;
+						object->render->position.z() -= 0.01 * deltaT;
+					}
+					else if (object->render->tag == "car1") {
+						object->render->position.x() -= deltaT * speed * 0.3f;
+						object->render->position.z() -= 0.01 * deltaT;
+					}
 					else if (object->render->tag == "airplane") {
 						object->render->position.x() -= deltaT * speed * 3;
 						if (object->render->position.x() < 0)
@@ -103,13 +109,13 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 						object->render->position.x() = 454;
 						object->render->position.z() = -8.79f;
 					}
-					//if (object->render->tag == "car1") {
-					//	object->render->position.x() = 454;
-					//	object->render->position.z() = -5;
-					//}
+					if (object->render->tag == "car1") {
+						object->render->position.x() = 454;
+						object->render->position.z() = 9.5;
+					}
 					if (object->render->tag == "car") {
 						object->render->position.x() = 454;
-						object->render->position.z() = 11;
+						object->render->position.z() = 6.5;
 					}
 					if (object->render->tag == "airplane") {
 						object->render->position.x() = 454;
@@ -592,15 +598,15 @@ void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructu
 
 	ALevelObject* airplane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
 	airplane->render->tag = "airplane";
+	airplane->render->activated = false;
 }
 
 void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
-	ALevelObject* car = createNewObject("cars/car.ogex", "cars/", environmentSructure, 1, Kore::vec3(78, -2, 6), Kore::Quaternion(3, 0, 1, 0));
+	ALevelObject* car = createNewObject("cars/car.ogex", "cars/", environmentSructure, 1, Kore::vec3(78, -2, 5), Kore::Quaternion(3, 0, 1, 0));
 	car->render->tag = "car";
-	//ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x(), car->render->position.y(), -car->render->position.z()), car->render->rotation);
-	//object->render->rotation.z = 3;
-	//object->render->tag = "car1";
+	ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x()*2, car->render->position.y(), car->render->position.z()+3.5), car->render->rotation);
+	object->render->tag = "car1";
 
 }
 
