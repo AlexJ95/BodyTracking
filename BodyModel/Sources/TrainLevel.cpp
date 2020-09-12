@@ -51,7 +51,7 @@ void TrainLevel::updateFPS(double deltaT) {
 	if (time > 1.0f)
 	{
 		Kore::log(Kore::Info, "%d", fps);
-
+		Kore::log(Kore::Info, "Player Position is %f %f %f", avatar->entity->position.x(), avatar->entity->position.y(), avatar->entity->position.z());
 		fps = 0;
 		time = 0;
 	}
@@ -68,8 +68,14 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 
 					if (object->render->tag == "car")
 						object->render->position.x() -= deltaT * speed * 0.5f;
-					else if (object->render->tag == "airplane")
+					else if (object->render->tag == "airplane") {
 						object->render->position.x() -= deltaT * speed * 3;
+						if (object->render->position.x() < 0)
+							object->render->position.y() += deltaT * speed;
+						else if (object->render->position.y() > 15)
+								object->render->position.y() -= deltaT * speed;
+						
+					}
 					else {
 						object->render->position.x() -= deltaT * speed;
 						object->render->position.z() -= deltaT * speed * 0.0075f;
@@ -107,6 +113,7 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 					}
 					if (object->render->tag == "airplane") {
 						object->render->position.x() = 454;
+						object->render->position.y() = 50;
 					}
 						
 				}
@@ -585,7 +592,6 @@ void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructu
 
 	ALevelObject* airplane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
 	airplane->render->tag = "airplane";
-	airplane->render->activated = false;
 }
 
 void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
