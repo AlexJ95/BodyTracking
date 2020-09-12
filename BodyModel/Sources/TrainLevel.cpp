@@ -51,8 +51,8 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 				if (object->render->position.x() > -420)
 				{
 
-					if (object->render->tag == "car1")
-						object->render->position.x() -= deltaT * speed * 2;
+					if (object->render->tag == "car")
+						object->render->position.x() -= deltaT * speed * 0.5f;
 					else if (object->render->tag == "airplane")
 						object->render->position.x() -= deltaT * speed * 3;
 					else {
@@ -82,10 +82,10 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 						object->render->position.x() = 454;
 						object->render->position.z() = -8.79f;
 					}
-					if (object->render->tag == "car1") {
-						object->render->position.x() = 454;
-						object->render->position.z() = -5;
-					}
+					//if (object->render->tag == "car1") {
+					//	object->render->position.x() = 454;
+					//	object->render->position.z() = -5;
+					//}
 					if (object->render->tag == "car") {
 						object->render->position.x() = 454;
 						object->render->position.z() = 11;
@@ -144,7 +144,7 @@ void TrainLevel::graphicsSetup()
 	for (int i = 0; i < poolSize; i++)
 	{
 		//Load Enemy
-		createEnemy(new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)), Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
+		createEnemy(entitySructure);
 	}
 
 	//Load Ground
@@ -172,7 +172,7 @@ void TrainLevel::checkStation(double deltaT)
 {
 	if (!stationComplete & currentEnemyCount < maxEnemyCount)
 	{
-		spawn(deltaT);
+			spawn(deltaT);
 	}
 
 	if (StateMachineAI::beatedEnemyCount >= maxEnemyCount & !stationComplete)
@@ -309,10 +309,12 @@ void TrainLevel::checkEnemyCollision()
 }
 ///////////////////////////////////////////////////////////////////
 
-void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
+void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure)
 {
-	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, position, rotation);
+	AnAnimatedEntity* reference = new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
+	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
 	enemy->ai = new CyborgAI(enemy->entity, animator, avatar->entity);
+	enemy->entity->activated = false;
 	enemies.emplace_back(enemy);
 }
 
@@ -388,7 +390,7 @@ void TrainLevel::trainInit(Kore::Graphics4::VertexStructure environmentSructure,
 		ALevelObject* trainMiddle7 = createObjectCopy(trainMiddle1, Kore::vec3(trainMiddle1->render->position.x() + xoffset * 6, trainMiddle1->render->position.y(), trainMiddle1->render->position.z() + zoffset * 6), Kore::Quaternion(3, 0, yRot, 0));
 		ALevelObject* trainMiddle8 = createObjectCopy(trainMiddle1, Kore::vec3(trainMiddle1->render->position.x() + xoffset * 7, trainMiddle1->render->position.y(), trainMiddle1->render->position.z() + zoffset * 7), Kore::Quaternion(3, 0, yRot, 0));
 		ALevelObject* trainFront3 = createObjectCopy(trainBack, Kore::vec3(trainBack->render->position.x() + xoffset * 9 + 0.2, trainBack->render->position.y(), trainBack->render->position.z() + zoffset * 9), Kore::Quaternion(3, 0, yRot, 0));
-		trainMiddle22->moveable = false;
+		trainMiddle22->moveable = false;	
 		trainMiddle33->moveable = false;
 		trainMiddle4->moveable = false;
 		trainMiddle5->moveable = false;
@@ -559,15 +561,16 @@ void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructu
 
 	ALevelObject* airplane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
 	airplane->render->tag = "airplane";
+	airplane->render->activated = false;
 }
 
 void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
 	ALevelObject* car = createNewObject("cars/car.ogex", "cars/", environmentSructure, 1, Kore::vec3(78, -2, 6), Kore::Quaternion(3, 0, 1, 0));
 	car->render->tag = "car";
-	ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x(), car->render->position.y(), -car->render->position.z()), car->render->rotation);
-	object->render->rotation.z = 3;
-	object->render->tag = "car1";
+	//ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x(), car->render->position.y(), -car->render->position.z()), car->render->rotation);
+	//object->render->rotation.z = 3;
+	//object->render->tag = "car1";
 
 }
 
@@ -575,6 +578,7 @@ void TrainLevel::tunnelInit(Kore::Graphics4::VertexStructure environmentSructure
 	
 	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(0, 0, 0), Kore::Quaternion(3, 0, 0, 0));
 	objects[0] = tunnel;
+	tunnel->render->activated = false;
 }
 
 void TrainLevel::v()

@@ -37,8 +37,6 @@ public:
     float time;
     int fps = 0;;
     float offsets;
-
-    void createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
     void spawn(double deltaT);
   
     int stationNr = 1;
@@ -49,6 +47,8 @@ public:
     void checkStation(double deltaT);
 
     void checkEnemyCollision();
+
+    
 
     Level::ALevelObject* createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot);
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
@@ -61,4 +61,5 @@ public:
     void airplaneInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);
+    void createEnemy(Kore::Graphics4::VertexStructure entitySructure);
 };
