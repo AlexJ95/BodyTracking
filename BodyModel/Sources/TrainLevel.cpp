@@ -144,7 +144,7 @@ void TrainLevel::graphicsSetup()
 	for (int i = 0; i < poolSize; i++)
 	{
 		//Load Enemy
-		createEnemy(new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)), Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
+		createEnemy(entitySructure);
 	}
 
 	//Load Ground
@@ -299,9 +299,10 @@ void TrainLevel::checkEnemyCollision()
 }
 ///////////////////////////////////////////////////////////////////
 
-void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
+void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure)
 {
-	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, position, rotation);
+	AnAnimatedEntity* reference = new AnAnimatedEntity("enemy/avatar_maleY.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
+	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
 	enemy->ai = new CyborgAI(enemy->entity, animator, avatar->entity);
 	enemies.emplace_back(enemy);
 }
@@ -378,7 +379,7 @@ void TrainLevel::trainInit(Kore::Graphics4::VertexStructure environmentSructure,
 		ALevelObject* trainMiddle7 = createObjectCopy(trainMiddle1, Kore::vec3(trainMiddle1->render->position.x() + xoffset * 6, trainMiddle1->render->position.y(), trainMiddle1->render->position.z() + zoffset * 6), Kore::Quaternion(3, 0, yRot, 0));
 		ALevelObject* trainMiddle8 = createObjectCopy(trainMiddle1, Kore::vec3(trainMiddle1->render->position.x() + xoffset * 7, trainMiddle1->render->position.y(), trainMiddle1->render->position.z() + zoffset * 7), Kore::Quaternion(3, 0, yRot, 0));
 		ALevelObject* trainFront3 = createObjectCopy(trainBack, Kore::vec3(trainBack->render->position.x() + xoffset * 9 + 0.2, trainBack->render->position.y(), trainBack->render->position.z() + zoffset * 9), Kore::Quaternion(3, 0, yRot, 0));
-		trainMiddle22->moveable = false;
+		trainMiddle22->moveable = false;	
 		trainMiddle33->moveable = false;
 		trainMiddle4->moveable = false;
 		trainMiddle5->moveable = false;
