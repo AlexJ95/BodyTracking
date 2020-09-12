@@ -19,6 +19,12 @@ void TrainLevel::update(double deltaT)
 	updateBuilding(deltaT,20);
 	updateFPS(deltaT);
 	Level::update(deltaT);
+	gamePlay(deltaT);
+
+}
+
+void TrainLevel::gamePlay(double deltaT) {
+
 
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
 	if (!form->isFormShown())
@@ -28,6 +34,8 @@ void TrainLevel::update(double deltaT)
 		checkHittingAvatar();
 		checkHittingEnemy();
 	}
+
+
 }
 
 void TrainLevel::updateFPS(double deltaT) {
