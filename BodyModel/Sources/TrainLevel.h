@@ -29,7 +29,7 @@ public:
 
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
-    int poolSize = 1;
+    int poolSize = 10;
     float hittingHeight = 0.5;
     float hittingRadius = 0.3;
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
@@ -44,6 +44,8 @@ public:
     int stationNr = 1;
     float stationLength = 15.0;
     bool stationComplete = false; 
+    int maxEnemyCount = 5;  //sollte 1 sein 2 nur zum testen
+    int currentEnemyCount = 0; 
     void checkStation(double deltaT);
 
     void checkEnemyCollision();

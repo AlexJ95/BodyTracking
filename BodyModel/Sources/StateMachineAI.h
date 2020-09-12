@@ -13,7 +13,7 @@ protected:
 	bool inAnimation;
 	Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
-	float maxDistanceToEnemy = 0.5f;
+	float maxDistanceToEnemy = 0.8f;
 	Kore::vec3 currentPosOtherEnemy;
 	bool tooClose = false;
 
@@ -46,7 +46,7 @@ private:
 	bool attack = false;
 public:
 	float dRot = 0.3;
-	float dRotCol = 0.1;
+	float dRotCol = 0.08;
 	float dTrans = 0.02;
 	float maxDistanceToPlayer = 1.0f;
 	float limitPosX = 1.5;

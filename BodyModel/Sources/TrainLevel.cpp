@@ -170,14 +170,20 @@ void TrainLevel::graphicsSetup()
 
 void TrainLevel::checkStation(double deltaT)
 {
-	if (!stationComplete)
+	if (!stationComplete & currentEnemyCount < maxEnemyCount)
 	{
 		spawn(deltaT);
 	}
 
-	if (StateMachineAI::beatedEnemyCount >= poolSize & !stationComplete)
+	if (StateMachineAI::beatedEnemyCount >= maxEnemyCount & !stationComplete)
 	{
 		stationComplete = true;
+		currentEnemyCount = 0;
+
+		if (maxEnemyCount < poolSize)
+			maxEnemyCount++;
+		else
+			maxEnemyCount = poolSize;
 	}
 	else if(stationComplete & avatar->entity->position.y() <= (StateMachineAI::lastDeadPos -  stationLength))
 	{
@@ -210,6 +216,7 @@ void TrainLevel::spawn(double deltaT)
 				enemy->entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi);
 				countDown = 0.0;
 				enemy->ai->spawn();
+				currentEnemyCount++;
 				break;
 			}
 		}
@@ -286,13 +293,16 @@ void TrainLevel::checkHittingEnemy()
 
 void TrainLevel::checkEnemyCollision()
 {
-	for (int i=0; i< poolSize; i++)
+	for (int i=0; i< maxEnemyCount; i++)
 	{
 		if (enemies[i]->entity->activated)
 		{
-			for (int k = 0; k < poolSize & i != k; k++)
+			for (int k = 0; k < maxEnemyCount & i != k; k++)
 			{
-				enemies[i]->ai->checkCollision(enemies[k]->entity->position);
+				if(!enemies[k]->entity->beated)
+					enemies[i]->ai->checkCollision(enemies[k]->entity->position);
+				else
+					enemies[i]->ai->checkCollision(Kore::vec3(1000.0,0.0,0.0));
 			}
 		}
 	}

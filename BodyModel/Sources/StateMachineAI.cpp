@@ -106,7 +106,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 
 		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
 	}
-	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 3.5)
+	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 1.5)
 		tooClose = false;
 
 	if (currentDistance > maxDistanceToPlayer | tooClose)
