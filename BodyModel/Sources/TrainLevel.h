@@ -46,7 +46,7 @@ public:
     int stationNr = 1;
     float stationLength = 15.0;
     bool stationComplete = false; 
-    int maxEnemyCount = 5;  //sollte 1 sein 2 nur zum testen
+    int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0; 
     void checkStation(double deltaT);
 

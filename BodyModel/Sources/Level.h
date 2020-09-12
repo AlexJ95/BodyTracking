@@ -31,6 +31,7 @@ public:
 	struct AnAnimatedEntity
 	{
 		AnimatedEntity* entity;
+		std::string tag;
 		AnAnimatedEntity() {}; // empty default constructor
 		AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
 		AnAnimatedEntity(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
@@ -38,13 +39,13 @@ public:
 
 	struct TheAvatar : public AnAnimatedEntity
 	{
-		Avatar* entity;
+		Avatar* entity;	
 		TheAvatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation, bool renderTrackerAndController, bool renderAxisForEndEffector);
 	};
 
 	struct NonPlayerCharacter : public AnAnimatedEntity
 	{
-		StateMachineAI* ai;
+		StateMachineAI* ai;		
 		NonPlayerCharacter(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
 	};
 
