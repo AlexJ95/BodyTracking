@@ -60,6 +60,9 @@ void InputController::keyDown(Kore::KeyCode code)
 	case Kore::KeyD:
 		D = true;
 		break;
+	case Kore::KeyT:
+		T = true;
+		break;
 	case Kore::KeyR:
 #ifdef KORE_STEAMVR
 		Kore::VrInterface::resetHmdPose();
@@ -90,6 +93,9 @@ void InputController::keyUp(Kore::KeyCode code)
 		break;
 	case Kore::KeyD:
 		D = false;
+		break;
+	case Kore::KeyT:
+		T = false;
 		break;
 	default:
 		break;

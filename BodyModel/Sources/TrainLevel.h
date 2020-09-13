@@ -14,6 +14,7 @@ public:
     void r();
     void v();
     void h();
+	void t();
     void x();
     void y();
     void z();
@@ -42,6 +43,9 @@ public:
     int fps = 0;;
     float offsets;
     void spawn(double deltaT);
+	
+	bool tunnelActivated;
+	int tunnelCounter;
   
     int stationNr = 1;
     float stationLength = 15.0;

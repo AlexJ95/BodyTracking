@@ -70,6 +70,7 @@ public:
 	virtual void r();
 	virtual void v();
 	virtual void h();
+	virtual void t();
 	virtual void x();
 	virtual void y();
 	virtual void z();

@@ -29,7 +29,7 @@ class InputController
 
 	// Keyboard and Mouse controls
 	bool rotate = false;
-	bool W = false, A = false, S = false, D = false;
+	bool W = false, A = false, S = false, D = false, T = false;
 	float cameraMoveSpeed = 4.f;
 	
 public:

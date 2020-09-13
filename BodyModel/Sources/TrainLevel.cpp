@@ -71,8 +71,15 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 						object->render->position.z() -= 0.01 * deltaT;
 					}
 					else if (object->render->tag == "car1") {
-						object->render->position.x() -= deltaT * speed * 0.3f;
-						object->render->position.z() -= 0.01 * deltaT;
+						object->render->position.x() -= deltaT * speed * 2;
+						object->render->position.z() -= deltaT * speed * 0.01f;
+					}
+					else if (object->render->tag == "tunnelS") {
+						
+						//object->render->activated = true;
+						object->render->position.x() -= deltaT * speed * 3;
+						object->render->position.z() -= deltaT * speed * 0.02f;
+						
 					}
 					else if (object->render->tag == "airplane") {
 						object->render->position.x() -= deltaT * speed * 3;
@@ -99,27 +106,43 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 					}
 					if (object->render->tag == "floorl") {
 						object->render->position.x() = 580;
-						object->render->position.z() = 11.5f;
+						object->render->position.z() = -3.0f;
 					}
 					if (object->render->tag == "houseR") {
 						object->render->position.x() = 454;
-						object->render->position.z() = 17.21;
+						object->render->position.z() = 20.21;
 					}
 					if (object->render->tag == "houseL") {
 						object->render->position.x() = 454;
-						object->render->position.z() = -8.79f;
+						object->render->position.z() = -14.0f;
 					}
 					if (object->render->tag == "car1") {
 						object->render->position.x() = 454;
-						object->render->position.z() = 9.5;
+						object->render->position.z() = -6;
 					}
 					if (object->render->tag == "car") {
 						object->render->position.x() = 454;
-						object->render->position.z() = 6.5;
+						object->render->position.z() = 12;
 					}
 					if (object->render->tag == "airplane") {
 						object->render->position.x() = 454;
 						object->render->position.y() = 50;
+					}
+					if (object->render->tag == "tunnelS") {
+						tunnelCounter++;
+						if (tunnelCounter == 9) {
+							tunnelCounter = 0;
+							
+							for (ALevelObject* object : environment) {
+								if (object->render->tag == "tunnelS") {
+									object->render->activated = false;
+									object->moveable = false;
+								}
+							}
+						}
+						object->render->position.x() = 454;
+						object->render->position.z() = 3;
+						
 					}
 						
 				}
@@ -134,6 +157,7 @@ void TrainLevel::init() {
 	form = new MainForm();
 	offsets = 1;
 	gameStart = true;
+	tunnelCounter = 8;
 }
 
 void TrainLevel::controlsSetup()
@@ -375,7 +399,7 @@ void TrainLevel::skyInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	renderer->setLights(*sky->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
 	sky->moveable = false;	
 }
-
+//Old
 void TrainLevel::trainInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	ALevelObject* trainf = createNewObject("train/trainFront.ogex", "train/", environmentSructure, 1, Kore::vec3(40.8, -3, 0), Kore::Quaternion(3, 0, 2, 0));
 	trainf->moveable = false;
@@ -473,10 +497,6 @@ void TrainLevel::groundInit(Kore::Graphics4::VertexStructure environmentSructure
 		//xoffset2 += 20;
 	}
 
-	for (int x = 0; x < 40; x++) {
-		//object = createObjectCopy(hfloor, Kore::vec3(hfloor->render->position.x() + xoffset2 * x, hfloor->render->position.y(), hfloor->render->position.z() + zoffset2 * x), hfloor->render->rotation);
-		//object->render->tag = "floorh";
-	}
 
 	for (int x = 0; x < 56; x++) {
 		object = createObjectCopy(lfloor, Kore::vec3(lfloor->render->position.x() + xoffset2 * x, lfloor->render->position.y(), lfloor->render->position.z() + zoffset2 * x), lfloor->render->rotation);
@@ -566,7 +586,7 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 		}
 	}
 }
-
+//Old
 void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure, bool placeholder) {
 	ALevelObject* houseL = createNewObject("houseL/hausL.ogex", "houseL/", environmentSructure, 1, Kore::vec3(-34.2, -3, 17), Kore::Quaternion(3, 0, 0, 0));
 	ALevelObject* houseS = createNewObject("houseS/haus.ogex", "houseS/", environmentSructure, 1, Kore::vec3(-26.5, -3, 17), Kore::Quaternion(3, 0, 0, 0));	
@@ -612,9 +632,54 @@ void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
 void TrainLevel::tunnelInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	
-	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(0, 0, 0), Kore::Quaternion(3, 0, 0, 0));
-	objects[0] = tunnel;
+	//float yRot = 1.995f;
+	float yRot = 1.996f;
+	//float xoffset = 16.0f;
+	float xoffset = 15.0f;
+	//float zoffset = 0.11f;
+	float zoffset = 0.1f;
+	float yoffset = 0.023;
+	//Right height = -11
+	//ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(0, -10, 0), Kore::Quaternion(3, 0, 0, 0));
+	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(454 - xoffset * 8, -10, 3 - zoffset * 8), Kore::Quaternion(3, 0, 0, 0));
+	//ALevelObject* trainBack = createNewObject("train/trainFront.ogex", "train/", environmentSructure, 1, Kore::vec3(7.2, -3, 0.08), Kore::Quaternion(3, 0, -0.005f, 0));
+	ALevelObject* tunnel2 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset, tunnel->render->position.y() + yoffset, tunnel->render->position.z() + zoffset), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel3 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 2, tunnel->render->position.y() + yoffset * 2, tunnel->render->position.z() + zoffset * 2), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel4 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 3, tunnel->render->position.y() + yoffset * 3, tunnel->render->position.z() + zoffset * 3), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel5 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 4, tunnel->render->position.y() + yoffset * 4, tunnel->render->position.z() + zoffset * 4), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel6 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 5, tunnel->render->position.y() + yoffset * 5, tunnel->render->position.z() + zoffset * 5), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel7 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 6, tunnel->render->position.y() + yoffset * 6, tunnel->render->position.z() + zoffset * 6), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel8 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 7, tunnel->render->position.y() + yoffset * 7, tunnel->render->position.z() + zoffset * 7), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel9 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 8, tunnel->render->position.y() + yoffset * 8, tunnel->render->position.z() + zoffset * 8), Kore::Quaternion(3, 0, yRot, 0));
+	tunnel2->render->activated = false;
+	tunnel3->render->activated = false;
+	tunnel4->render->activated = false;
+	tunnel5->render->activated = false;
+	tunnel6->render->activated = false;
+	tunnel7->render->activated = false;
+	tunnel8->render->activated = false;
+	tunnel9->render->activated = false;
 	tunnel->render->activated = false;
+	tunnel2->moveable = false;
+	tunnel3->moveable = false;
+	tunnel4->moveable = false;
+	tunnel5->moveable = false;
+	tunnel6->moveable = false;
+	tunnel7->moveable = false;
+	tunnel8->moveable = false;
+	tunnel9->moveable = false;
+	tunnel->moveable = false;
+	tunnel->render->tag = "tunnelS";
+	tunnel2->render->tag = "tunnelS";
+	tunnel3->render->tag = "tunnelS";
+	tunnel4->render->tag = "tunnelS";
+	tunnel5->render->tag = "tunnelS";
+	tunnel6->render->tag = "tunnelS";
+	tunnel7->render->tag = "tunnelS";
+	tunnel8->render->tag = "tunnelS";
+	tunnel9->render->tag = "tunnelS";
+	
+	//objects[0] = tunnel;
 }
 
 void TrainLevel::v()
@@ -636,6 +701,15 @@ void TrainLevel::r()
 {
 	objects[0]->render->position.z() -= offsets;
 	Kore::log(Kore::Info, "Z = %f", objects[0]->render->position.z());
+}
+void TrainLevel::t()
+{
+	for (ALevelObject* object : environment) {
+		if (object->render->tag == "tunnelS") {
+			object->moveable = true;
+			object->render->activated = true;
+		}
+	}
 }
 void TrainLevel::x()
 {

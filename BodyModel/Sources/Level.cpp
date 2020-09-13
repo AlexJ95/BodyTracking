@@ -41,6 +41,9 @@ void Level::v()
 void Level::h()
 {
 }
+void Level::t()
+{
+}
 void Level::x()
 {
 }
