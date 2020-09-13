@@ -45,6 +45,7 @@ namespace {
 	void rechts()	{ currentLevel->r(); }
 	void vorne()	{ currentLevel->v(); }
 	void hinten()	{ currentLevel->h(); }
+	void tunnel() { currentLevel->t(); }
 	void xachse()	{ currentLevel->x(); }
 	void yachse()	{ currentLevel->y(); }
 	void zachse()	{ currentLevel->z(); }
@@ -57,9 +58,10 @@ namespace {
 				{Kore::KeyCode::KeyQ, Kore::System::stop},
 				{Kore::KeyCode::KeyF, links},
 				{Kore::KeyCode::KeyH, rechts},
-				{Kore::KeyCode::KeyT, vorne},
+				{Kore::KeyCode::KeyV, vorne},
 				{Kore::KeyCode::KeyG, hinten},
-				{Kore::KeyCode::KeyV, xachse},
+				{Kore::KeyCode::KeyT, tunnel},
+				{Kore::KeyCode::KeyX, xachse},
 				{Kore::KeyCode::KeyB, yachse},
 				{Kore::KeyCode::KeyN, zachse},
 			});
