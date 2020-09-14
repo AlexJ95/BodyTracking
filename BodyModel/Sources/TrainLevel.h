@@ -42,14 +42,14 @@ public:
     float time;
     int fps = 0;;
     float offsets;
-<<<<<<< Updated upstream
-    void spawn(double deltaT);
+// Updated upstream
+    //void spawn(double deltaT);
 	
 	bool tunnelActivated;
 	int tunnelCounter;
-=======
+
     void spawn(double deltaT, Kore::vec3 AirPlanePos);
->>>>>>> Stashed changes
+//  Stashed changes
   
     int stationNr = 1;
     float stationLength = 30.0;
