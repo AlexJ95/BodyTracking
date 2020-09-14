@@ -10,8 +10,10 @@ class Form
 {
 protected:
 	bool showingForm = false;
+	bool startGame = false;
 public:
 	Form();
 	void virtual drawForm();
 	bool isFormShown();
+	bool gameStarted();
 };

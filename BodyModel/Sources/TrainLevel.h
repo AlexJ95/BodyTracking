@@ -31,7 +31,7 @@ public:
 
     bool gameStart;
 
-    double maxWaitintTime = 2.0;
+    double maxWaitintTime = 5.0;
     double countDown = 0.0;
     int poolSize = 10;
     float hittingHeight = 0.5;
@@ -48,7 +48,7 @@ public:
 	bool tunnelActivated;
 	int tunnelCounter;
 
-    void spawn(double deltaT, Kore::vec3 AirPlanePos);
+    void spawn(double deltaT);// , Kore::vec3 AirPlanePos);
 //  Stashed changes
   
     int stationNr = 1;
@@ -56,8 +56,9 @@ public:
     bool stationComplete = false; 
     int maxEnemyCount = 3;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0; 
-    void checkStation(double deltaT, Kore::vec3 AirPlanePos);
-
+    void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
+    Kore::vec3 airPlanePos;
+    bool airplaneAtTheHeight = false;
     void checkEnemyCollision();
 
     

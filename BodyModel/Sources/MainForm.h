@@ -20,6 +20,12 @@ private:
 
 	//Loading Bar
 	bool show_loading_bar=false;
+	bool show_CountDown = false;
+	int countDown = 3;
+	int nanoSeconds = 300;
+	int maxNanoSeconds = 300;
+	bool switchCountDown = false;
+	
 
 public:
 	MainForm();

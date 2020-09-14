@@ -34,9 +34,9 @@ void TrainLevel::gamePlay(double deltaT) {
 
 
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
-	if (!form->isFormShown())
+	if (form->gameStarted())
 	{
-		//checkStation(deltaT);
+		checkStation(deltaT);
 		checkEnemyCollision();
 		checkHittingAvatar();
 		checkHittingEnemy();
@@ -89,11 +89,10 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 						else if (object->render->position.y() > 15)
 						{
 							object->render->position.y() -= deltaT * speed;
-							
+
 						}
-						else
-							checkStation(deltaT, object->render->position);
-						
+
+						airPlanePos = object->render->position;
 						
 					}
 					else {
@@ -225,11 +224,11 @@ void TrainLevel::graphicsSetup()
 
 //////////////////////////////interaction Methods
 
-void TrainLevel::checkStation(double deltaT, Kore::vec3 AirPlanePos)
+void TrainLevel::checkStation(double deltaT)//, Kore::vec3 AirPlanePos)
 {
-	if (!stationComplete & currentEnemyCount < maxEnemyCount & AirPlanePos.x() <= Kore::abs(avatar->entity->position.y() - stationLength))
+	if (!stationComplete & currentEnemyCount < maxEnemyCount)// & airPlanePos.x() <= Kore::abs(avatar->entity->position.y() - stationLength))
 	{
-		spawn(deltaT, AirPlanePos);
+		spawn(deltaT);//, AirPlanePos);
 	}
 
 	if (StateMachineAI::beatedEnemyCount >= maxEnemyCount & !stationComplete)
@@ -256,7 +255,7 @@ void TrainLevel::checkStation(double deltaT, Kore::vec3 AirPlanePos)
 	countDown += deltaT;
 }
 
-void TrainLevel::spawn(double deltaT, Kore::vec3 AirPlanePos)
+void TrainLevel::spawn(double deltaT)//, Kore::vec3 AirPlanePos)
 {
 
 	if (countDown > maxWaitintTime | (stationStarted & countDown > maxWaitintTime / 100.0))
@@ -267,10 +266,11 @@ void TrainLevel::spawn(double deltaT, Kore::vec3 AirPlanePos)
 		{
 			if (!(enemy->entity->beated) & !(enemy->entity->activated))
 			{
+				Kore::vec3 globAirPlanePos = locToGlob * Kore::vec4(airPlanePos.x(), airPlanePos.y(), airPlanePos.z(), 1.0);
 				float randomX_Pos = (float)(rand() % 2 - 1);
 				if (randomX_Pos == 0.0)
 					randomX_Pos += 0.1;
-				enemy->entity->position=Kore::vec3(AirPlanePos.z(), (avatar->entity->position.y() - stationLength), 0.0f);
+				enemy->entity->position = Kore::vec3(randomX_Pos, (avatar->entity->position.y() - stationLength), 0.0f);
 				enemy->entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi);
 				countDown = 0.0;
 				enemy->ai->spawn();

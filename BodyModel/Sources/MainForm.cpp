@@ -150,10 +150,51 @@ void MainForm::drawForm()
 			show_loading_bar = false;
 			show_main_menu = false;
 			showingForm = false;
+			show_CountDown = true;
 		}
 		//only for testing
 		progress += 0.01;
 		ImGui::End();
+	}
+	else if (show_CountDown)
+	{
+		ImGui::Begin("Count Down", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+		ImGui::SetWindowSize("Count Down", ImVec2(100, 50), 0);
+		ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
+		ImGui::SetWindowPos(wPos);
+		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f -ImGui::GetWindowSize().x*0.01 );
+		ImGui::SetCursorPosY(ImGui::GetWindowSize().y * 0.5f- ImGui::GetWindowSize().y * 0.1f);
+		//ImGui::Text((char*)countDown);
+		if (nanoSeconds > (maxNanoSeconds * (2.0 / 4.0)) && nanoSeconds <= (maxNanoSeconds * (3.0 / 4.0)) && !switchCountDown)
+		{
+			countDown--;
+			switchCountDown = true;
+		}
+		else if (nanoSeconds > (maxNanoSeconds * (1.0 / 4.0)) && nanoSeconds <= (maxNanoSeconds * (2.0 / 4.0)) && switchCountDown)
+		{
+			countDown--;
+			switchCountDown = false;
+		}
+		else if (nanoSeconds > 0 && nanoSeconds <= maxNanoSeconds * (1.0 / 7.0))
+		{
+			ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.28f);
+			ImGui::Text("Action!");
+		}
+		else if (nanoSeconds <= 0)
+		{
+			show_CountDown = false;
+			startGame = true;
+			
+		}
+		else
+		{
+			std::string s = std::to_string(countDown);
+			ImGui::Text(s.c_str());
+		}
+
+
+		ImGui::End();
+		nanoSeconds--;
 	}
 
 	////////////////////////////////////////////////////////////
