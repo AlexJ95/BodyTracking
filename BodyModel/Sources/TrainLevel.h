@@ -31,7 +31,7 @@ public:
 
     bool gameStart;
 
-    double maxWaitintTime = 5.0;
+    double maxWaitintTime = 2.0;
     double countDown = 0.0;
     int poolSize = 10;
     float hittingHeight = 0.5;
@@ -42,17 +42,21 @@ public:
     float time;
     int fps = 0;;
     float offsets;
+<<<<<<< Updated upstream
     void spawn(double deltaT);
 	
 	bool tunnelActivated;
 	int tunnelCounter;
+=======
+    void spawn(double deltaT, Kore::vec3 AirPlanePos);
+>>>>>>> Stashed changes
   
     int stationNr = 1;
-    float stationLength = 15.0;
+    float stationLength = 30.0;
     bool stationComplete = false; 
-    int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
+    int maxEnemyCount = 3;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0; 
-    void checkStation(double deltaT);
+    void checkStation(double deltaT, Kore::vec3 AirPlanePos);
 
     void checkEnemyCollision();
 
