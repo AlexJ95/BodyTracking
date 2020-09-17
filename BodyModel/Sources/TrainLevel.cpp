@@ -41,6 +41,7 @@ void TrainLevel::gamePlay(double deltaT) {
 		checkEnemyCollision();
 		checkHittingAvatar();
 		checkHittingEnemy();
+		checkingMoving();
 	}
 }
 
@@ -349,6 +350,15 @@ void TrainLevel::showAttackInUI(string colorTag)
 		mainForm->kindOfAttacking = NULL;
 }
 
+void TrainLevel::checkingMoving()
+{
+	if (avatar->entity->lastMovement == Avatar::Jogging && !avatar->entity->movementExpired)
+	{
+		Kore::vec3 dir = math->camForward;
+		math->cameraPos += dir * camVelocity;
+	}
+}
+
 void TrainLevel::checkHittingEnemy()
 {
 	float crossValue = 100000;
@@ -409,6 +419,11 @@ void TrainLevel::checkHittingEnemy()
 			if (avatar->entity->lastMovement == Avatar::Kick && !avatar->entity->movementExpired)
 			{
 				((MainForm*)form)->highScore++;
+
+				if (enemy->entity->colorTag == "NinjaW" | enemy->entity->colorTag == "NinjaY"| enemy->entity->colorTag == "NinjaR" | enemy->entity->colorTag == "NinjaM")
+				{
+					((MainForm*)form)->highScore++;
+				}
 			}
 		}
 		else if (avatar->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeightFoot & dir_R_Foot.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
@@ -419,6 +434,11 @@ void TrainLevel::checkHittingEnemy()
 			if (avatar->entity->lastMovement == Avatar::Kick && !avatar->entity->movementExpired)
 			{
 				((MainForm*)form)->highScore++;
+
+				if (enemy->entity->colorTag == "NinjaW" | enemy->entity->colorTag == "NinjaY" | enemy->entity->colorTag == "NinjaR" | enemy->entity->colorTag == "NinjaM")
+				{
+					((MainForm*)form)->highScore++;
+				}
 			}
 		}
 		else if (avatar->entity->endEffector[leftHand]->getDesPosition().z() > hittingHeightHand & dir_L_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
@@ -429,6 +449,11 @@ void TrainLevel::checkHittingEnemy()
 			if (avatar->entity->lastMovement == Avatar::Punch && !avatar->entity->movementExpired)
 			{
 				((MainForm*)form)->highScore++;
+
+				if (enemy->entity->colorTag == "NinjaW" | enemy->entity->colorTag == "NinjaY" | enemy->entity->colorTag == "NinjaB")
+				{
+					((MainForm*)form)->highScore++;
+				}
 			}
 		}
 		else if (avatar->entity->endEffector[rightHand]->getDesPosition().z() > hittingHeightHand & dir_R_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
@@ -439,6 +464,11 @@ void TrainLevel::checkHittingEnemy()
 			if (avatar->entity->lastMovement == Avatar::Punch && !avatar->entity->movementExpired)
 			{
 				((MainForm*)form)->highScore++;
+
+				if (enemy->entity->colorTag == "NinjaW" | enemy->entity->colorTag == "NinjaY" | enemy->entity->colorTag == "NinjaB")
+				{
+					((MainForm*)form)->highScore++;
+				}
 			}
 		}
 		else if (dir_L_Foot.getLength() > hittingRadius & dir_R_Foot.getLength() > hittingRadius & avatar->entity->attackedSuccessfully)

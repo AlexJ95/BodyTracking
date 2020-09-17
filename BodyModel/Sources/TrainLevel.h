@@ -62,7 +62,9 @@ public:
     bool airplaneAtTheHeight = false;
     void checkEnemyCollision(); 
     void showAttackInUI(string colorTag);
+    void checkingMoving();
     float minAttackingDistance = 3.0;
+    float camVelocity = 0.1;
 
     Level::ALevelObject* createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot);
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
