@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include <iostream>
 
 #include "Settings.h"
 #include "Level.h" //implicitly imported with trainlevel, but still in here for redundancy in case someone wants to extend this project and for abstraction
