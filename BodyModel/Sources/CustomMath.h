@@ -24,6 +24,8 @@ public:
 	Kore::mat4 vrViewMatrix;
 
 	bool hmdMode = false;
+
+	float lastTime;
 	
 	static CustomMath* getInstance(); // Get the singleton instance
 

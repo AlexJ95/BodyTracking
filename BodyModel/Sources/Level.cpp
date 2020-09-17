@@ -3,7 +3,7 @@
 Level::Level()
 {
 	renderer = new Renderer();
-	animator = new Animator();
+	
 	math = math->getInstance();
 }
 
@@ -12,12 +12,13 @@ void Level::update(double deltaT)
 	renderer->update(deltaT);
 	renderer->form = form;
 	
-
+	animator->rigVrPose(avatar->entity);
 	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT);
 }
 
 void Level::init()
 {	
+	
 	for (ALevelObject* object : environment) objects.emplace_back(object->render);
 	std::vector<AnimatedEntity*> entities;
 	for (NonPlayerCharacter* entity : enemies) entities.emplace_back(entity->entity);

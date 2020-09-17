@@ -8,8 +8,6 @@
 #include "InputController.h"
 #include "AudioManager.h"
 #include "UI3D.h"
-#include "HMM.h"
-#include "MachineLearningMotionRecognition.h"
 
 #include "TrainLevel.h"
 
@@ -23,12 +21,11 @@
 namespace {
 	InputController* inputController;
 	AudioManager* audio;
+	CustomMath* math;
 	Logger* logger;
 	Level* currentLevel;
 	UI3D* ui;
 	Kore::Window* window;
-
-	MachineLearningMotionRecognition* motionRecognizer;
 	
 	double startTime;
 	double lastTime;
@@ -36,12 +33,12 @@ namespace {
 	void record() {
 		logRawData = !logRawData;
 		
-		if (!logRawData && !motionRecognizer->isActive() && !hmm->isRecordingActive() && !hmm->isRecognitionActive()) {
-			Audio1::play(startRecordingSound);
+		if (!logRawData /*&& !motionRecognizer->isActive()*/) {
+			audio->play("startRecordingSound");
 			logger->startLogger("logData");
 		}
-		else if (logRawData && !motionRecognizer->isActive() && !hmm->isRecordingActive() && !hmm->isRecognitionActive()) {
-			Audio1::play(stopRecordingSound);
+		else if (logRawData /*&& !motionRecognizer->isActive()*/) {
+			audio->play("stopRecordingSound");
 			logger->endLogger();
 		}
 	}
@@ -56,7 +53,8 @@ namespace {
 
 	void init() {
 		logger = new Logger;
-		
+		math = math->getInstance();
+
 		inputController = inputController->getInstanceAndAppend({
 				{Kore::KeyCode::KeyL, record},
 				{Kore::KeyCode::KeyQ, Kore::System::stop},
@@ -90,6 +88,7 @@ namespace {
 		double deltaT = t - lastTime;
 		lastTime = t;
 
+		math->lastTime = lastTime;
 		inputController->update(deltaT);
 		currentLevel->update(deltaT);
 	}

@@ -18,11 +18,11 @@
 namespace {
 
 	// storage destination for recorded sensor data
-	const string safePath = "../../MachineLearningMotionRecognition/Recordings/";
+	const std::string safePath = "../../MachineLearningMotionRecognition/Recordings/";
 
 	// ID for the task currently / last recorded, and the task that is about to be recorded 
-	string taskCurrentlyRecording = "TestTask";
-	string taskNextToRecord = "nextTestTask";
+	std::string taskCurrentlyRecording = "TestTask";
+	std::string taskNextToRecord = "nextTestTask";
 
 	// whether recording or recognizing is currently in progress
 	bool currentlyRecording = false;
@@ -44,6 +44,9 @@ namespace {
 	Kore::Sound* standingSound;
 	Kore::Sound* walkingSound;
 
+	AudioManager* audio;
+	Avatar* avatar;
+
 	// Weka access through the Java Native Interface JNI
 	JavaVM *java_VirtualMachine;				// Pointer to the JVM (Java Virtual Machine)
 	JNIEnv *java_JNI;							// Pointer to native interface
@@ -52,23 +55,28 @@ namespace {
 }
 
 
-MachineLearningMotionRecognition::MachineLearningMotionRecognition(Logger& logger) : logger(logger) {
+MachineLearningMotionRecognition::MachineLearningMotionRecognition(Avatar* avatarReference) {
+	avatar = avatarReference;
+	logger = new Logger();
 
 	// Sound initiation
-	startRecordingSound = new Kore::Sound("sound/start.wav");
-	stopRecordingSound = new Kore::Sound("sound/stop.wav");
-	wrongSound = new Kore::Sound("sound/wrong.wav");
-	joggingSound = new Kore::Sound("sound/mlmr/jogging.wav");
-	kickSound = new Kore::Sound("sound/mlmr/kick.wav");
-	kickPunchSound = new Kore::Sound("sound/mlmr/kickPunch.wav");
-	lateralBoundingSound = new Kore::Sound("sound/mlmr/bounding.wav");
-	lungesSound = new Kore::Sound("sound/mlmr/lunges.wav");
-	punchSound = new Kore::Sound("sound/mlmr/punch.wav");
-	sittingSound = new Kore::Sound("sound/mlmr/sitting.wav");
-	squatsSound = new Kore::Sound("sound/mlmr/squats.wav");
-	standingSound = new Kore::Sound("sound/mlmr/standing.wav");
-	walkingSound = new Kore::Sound("sound/mlmr/walking.wav");
-
+	audio = audio->getInstanceAndAppend(
+		{
+			{"startRecordingSound", new Kore::Sound("sound/start.wav")},
+			{"stopRecordingSound", new Kore::Sound("sound/stop.wav")},
+			//{"wrongSound", new Kore::Sound("sound/wrong.wav")},
+			{"joggingSound", new Kore::Sound("sound/mlmr/jogging.wav")},
+			{"kickSound", new Kore::Sound("sound/mlmr/kick.wav")},
+			{"kickPunchSound", new Kore::Sound("sound/mlmr/kickPunch.wav")},
+			{"lateralBoundingSound", new Kore::Sound("sound/mlmr/bounding.wav")},
+			{"lungesSound", new Kore::Sound("sound/mlmr/lunges.wav")},
+			{"punchSound", new Kore::Sound("sound/mlmr/punch.wav")},
+			{"sittingSound", new Kore::Sound("sound/mlmr/sitting.wav")},
+			{"squatsSound", new Kore::Sound("sound/mlmr/squats.wav")},
+			{"standingSound", new Kore::Sound("sound/mlmr/standing.wav")},
+			{"walkingSound", new Kore::Sound("sound/mlmr/walking.wav")}
+		}
+	);
 
 	// log debugging information
 	if (operatingMode == RecordMovements) {
@@ -90,39 +98,48 @@ void outputClassifierResultFromWeka(JNIEnv*env, jobject o, jstring jStringResult
 
 	// play a sound for the predicted exercise
 	if (strcmp(charResult, "jogging") == 0) {
-		Kore::Audio1::play(joggingSound);
+		audio->play("joggingSound");
+		avatar->recognizedMotion(Avatar::Jogging);
 	}
 	else if (strcmp(charResult, "kick") == 0) {
-		Kore::Audio1::play(kickSound);
+		audio->play("kickSound");
+		avatar->recognizedMotion(Avatar::Kick);
 	}
 	else if (strcmp(charResult, "kickPunch") == 0) {
-		Kore::Audio1::play(kickPunchSound);
+		audio->play("kickPunchSound");
+		avatar->recognizedMotion(Avatar::KickPunch);
 	}
 	else if (strcmp(charResult, "lateralBounding") == 0) {
-		Kore::Audio1::play(lateralBoundingSound);
+		audio->play("lateralBoundingSound");
+		avatar->recognizedMotion(Avatar::LateralBounding);
 	}
 	else if (strcmp(charResult, "lunges") == 0) {
-		Kore::Audio1::play(lungesSound);
+		audio->play("lungesSound");
+		avatar->recognizedMotion(Avatar::Lunges);
 	}
 	else if (strcmp(charResult, "punch") == 0) {
-		Kore::Audio1::play(punchSound);
+		audio->play("punchSound");
+		avatar->recognizedMotion(Avatar::Punch);
 	}
 	else if (strcmp(charResult, "sitting") == 0) {
-		Kore::Audio1::play(sittingSound);
+		audio->play("sittingSound");
+		avatar->recognizedMotion(Avatar::Sitting);
 	}
 	else if (strcmp(charResult, "squats") == 0) {
-		Kore::Audio1::play(squatsSound);
+		audio->play("squatsSound");
+		avatar->recognizedMotion(Avatar::Squats);
 	}
 	else if (strcmp(charResult, "standing") == 0) {
-		Kore::Audio1::play(standingSound);
+		audio->play("standingSound");
+		avatar->recognizedMotion(Avatar::Standing);
 	}
 	else if (strcmp(charResult, "walking") == 0) {
-		Kore::Audio1::play(walkingSound);
+		audio->play("walkingSound");
+		avatar->recognizedMotion(Avatar::Walking);
 	}
 
 	//release the string to	avoid memory leak
 	(*env).ReleaseStringUTFChars(jStringResult, charResult);
-
 }
 
 
@@ -268,9 +285,9 @@ void MachineLearningMotionRecognition::startRecording(bool fullyCalibratedAvatar
 		sessionID++;
 
 		// determine file name and start recording
-		string fileNameString = safePath + currentTestSubjectID + "__" + taskCurrentlyRecording
+		std::string fileNameString = safePath + currentTestSubjectID + "__" + taskCurrentlyRecording
 			+ "__SID" + std::to_string(sessionID) + "_" + optionalFileTag;
-		logger.startMotionRecognitionLogger(fileNameString.c_str());
+		logger->startMotionRecognitionLogger(fileNameString.c_str());
 
 		// log start of new recording, and notify user via sound
 		Kore::log(Kore::LogLevel::Info, "started recording ID %i:   %s   (%s)",
@@ -287,7 +304,7 @@ void MachineLearningMotionRecognition::stopRecording() {
 
 		// update recording state
 		currentlyRecording = false;
-		logger.endMotionRecognitionLogger();
+		logger->endMotionRecognitionLogger();
 
 		// log end of recording, and notify user via sound
 		Kore::log(Kore::LogLevel::Info, "recording ID %i stopped:   %s   (%s)",
@@ -343,7 +360,7 @@ void MachineLearningMotionRecognition::processMovementData(
 
 	// when recording movements, forward the data to the logger
 	if (operatingMode == RecordMovements) {
-		logger.saveMotionRecognitionData(
+		logger->saveMotionRecognitionData(
 			tag, currentTestSubjectID.c_str(), taskCurrentlyRecording.c_str(),
 			rawPos, desPos, finalPos,
 			rawRot, desRot, finalRot,

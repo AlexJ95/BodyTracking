@@ -140,6 +140,8 @@ void TrainLevel::graphicsSetup()
 	//Load Avatar
 	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, true);
 
+	animator = new Animator(avatar->entity);
+
 	//create Pool od entitys
 	for (int i = 0; i < poolSize; i++)
 	{

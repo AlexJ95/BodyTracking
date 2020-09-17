@@ -1,8 +1,10 @@
 #pragma once
 
+#include "AnimatedEntity.h"
+#include "AudioManager.h"
 #include "Logger.h"
-#include "kMeans.h"
-#include "Markov.h"
+//#include "kMeans.h"
+//#include "Markov.h"
 #include <Kore/Input/Keyboard.h>
 #include <iostream>
 #include <jni.h>
@@ -32,31 +34,31 @@ private:
 	// use this setting to disable the MotionRecognizer 
 	// or to switch between recording and recognizing movements
 	enum MotionRecognitionMode { RecordMovements, RecognizeMovements, Off };
-	const MotionRecognitionMode operatingMode = Off;
+	const MotionRecognitionMode operatingMode = RecognizeMovements;
 
 	// ID of the currently active user, to be used for 
 	// data differentiation after recording movements
-	const string currentTestSubjectID = "TestSubjectName";
+	const std::string currentTestSubjectID = "TestSubjectName";
 
 	// the file name will be "user + task + session ID + optionalFileTag"
 	// The sessionID is incremented during runtime for each task. If you 
 	// need to restart a recording session, consider incrementing the 
 	// recordingID from the start, or to add an optionalFileTag
 	int sessionID = 0;
-	const string optionalFileTag = "";
+	const std::string optionalFileTag = "";
 
 	// task 00 is recorded with numpad 0, 01 with 1...
 	// stop recording with space bar
-	const string task_00 = "walking";
-	const string task_01 = "jogging";
-	const string task_02 = "squats";
-	const string task_03 = "lunges";
-	const string task_04 = "standing";
-	const string task_05 = "sitting";
-	const string task_06 = "lateralBounding";
-	const string task_07 = "kick";
-	const string task_08 = "punch";
-	const string task_09 = "kickPunch";
+	const std::string task_00 = "walking";
+	const std::string task_01 = "jogging";
+	const std::string task_02 = "squats";
+	const std::string task_03 = "lunges";
+	const std::string task_04 = "standing";
+	const std::string task_05 = "sitting";
+	const std::string task_06 = "lateralBounding";
+	const std::string task_07 = "kick";
+	const std::string task_08 = "punch";
+	const std::string task_09 = "kickPunch";
 
 
 	////////////////////////////////////////////////////////////////////
@@ -69,9 +71,8 @@ private:
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 
-
 	// responsible for recording incoming movement data
-	Logger& logger;
+	Logger* logger;
 
 	// Start recording incoming movement data
 	void startRecording(bool calibratedAvatar);
@@ -101,7 +102,7 @@ private:
 public:
 
 	// Create and initialize
-	MachineLearningMotionRecognition(Logger& logger);
+	MachineLearningMotionRecognition(Avatar* avatar);
 
 	// Forward key presses to allow local handling of inputs
 	// E.g., trigger recording of a specific task, or start recognition

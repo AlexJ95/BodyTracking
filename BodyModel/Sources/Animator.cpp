@@ -1,7 +1,8 @@
 #include "Animator.h"
 
-Animator::Animator() {
+Animator::Animator(Avatar* avatar) {
 	math = math->getInstance();
+	motionRecognizer = new MachineLearningMotionRecognition(avatar);
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
@@ -112,8 +113,62 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 		else if (endEffectorID == leftHand || endEffectorID == rightHand) {
 			setFixedOrientation(entity, entity->endEffector[endEffectorID]->getBoneIndex(), finalRot);
 		}
+
+		if (motionRecognizer->isProcessingMovementData() && !static_cast<Avatar*>(entity))
+		{
+			// if we are not using actual VR sensors, we cannot retrieve the velocity values and have to use defaults
+						// if we do use VR sensors, the actual velocity can be used
+			Kore::vec3 rawAngVel;
+			Kore::Quaternion desAngVel;
+			Kore::vec3 rawLinVel;
+			Kore::vec3 desLinVel;
+			Kore::vec3 rawPosition;
+			Kore::Quaternion rawRotation;
+
+			// actual VR hardware present
+#ifdef KORE_STEAMVR
+
+			VrPoseState sensorState;
+			// retrieve sensor or HMD state (data is the same, retrieval is slightly different)
+			if (endEffectorID == head) {
+				sensorState = VrInterface::getSensorState(0).pose;
+			}
+			else {
+				sensorState = VrInterface::getController(endEffector[endEffectorID]->getDeviceIndex());
+			}
+
+			// collect data
+			rawLinVel = sensorState.linearVelocity;
+			rawAngVel = sensorState.angularVelocity;
+			desLinVel = initTransInv * vec4(rawLinVel.x(), rawLinVel.y(), rawLinVel.z(), 1);
+			Kore::Quaternion rawAngVelQuat = toQuaternion(rawAngVel);
+			desAngVel = initRotInv.rotated(rawAngVelQuat);
+			rawPosition = sensorState.vrPose.position;
+			rawRotation = sensorState.vrPose.orientation;
+
+			// no actual VR hardware present
+#else
+	// these placeholder values are only used for testing with predetermined movement sets, not for recording new data
+			rawAngVel = Kore::vec3(1, 2, 3);
+			desAngVel = desRotation;
+			rawLinVel = Kore::vec3(7, 8, 9);
+			desLinVel = rawLinVel;
+			rawPosition = desPosition;
+			rawRotation = desRotation;
+#endif
+
+			// forward data
+			motionRecognizer->processMovementData(
+				entity->endEffector[endEffectorID]->getName(),
+				rawPosition, desPosition, finalPos,
+				rawRotation, desRotation, finalRot,
+				rawAngVel, desAngVel,
+				rawLinVel, desLinVel,
+				entity->meshObject->scale, math->lastTime);
+		}
 	}
 }
+
 
 void Animator::setDesiredPositionAndOrientation(AnimatedEntity* entity, int boneIndex, IKMode ikMode, Kore::vec3 desPosition, Kore::Quaternion desRotation) {
 	BoneNode* bone = getBoneWithIndex(entity, boneIndex);

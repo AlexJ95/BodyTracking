@@ -4,6 +4,7 @@
 #include "CustomMath.h"
 #include "AnimatedEntity.h"
 #include "Logger.h"
+#include "MachineLearningMotionRecognition.h"
 
 #ifdef KORE_STEAMVR
 #include <Kore/Vr/VrInterface.h>
@@ -21,15 +22,18 @@ class Animator
 	float currentUserHeight;
 #endif
 	CustomMath* math;
+	MachineLearningMotionRecognition* motionRecognizer;
 
 public :
-	Animator();
+	Animator(Avatar* avatar);
 
 	bool executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger);
 
 	void rigVrPose(Avatar* avatar);
 
 	void executeMovement(AnimatedEntity* entity, int endEffectorID); //moves a singular endeffector to desired attitude
+
+	void feedMovementRecognition();
 	
 	void setDesiredPositionAndOrientation(AnimatedEntity* entity, int boneIndex, IKMode ikMode, Kore::vec3 desPosition, Kore::Quaternion desRotation);
 

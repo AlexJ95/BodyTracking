@@ -15,7 +15,7 @@ public:
 	Kore::Quaternion rotation;
 	EndEffector** endEffector;
 	InverseKinematics* invKin;
-	bool activated=false;
+	bool activated = false;
 	bool beated = false;
 	bool calibrated;
 
