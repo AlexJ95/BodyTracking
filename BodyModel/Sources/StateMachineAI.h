@@ -51,7 +51,7 @@ public:
 	float maxDistanceToPlayer = 1.0f;
 	float limitPosX = 1.5;
 	bool died;
-
+	static int numberOfVictories;
 	enum class AIState { Attacking, Pursueing, Planning, Dying };
 	
 	AIState attacking	(float deltaT);

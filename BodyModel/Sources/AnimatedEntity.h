@@ -28,6 +28,7 @@ public:
 	void resetCurrentHeight();
 	bool isDead();
 	bool attackedSuccessfully = false;
+	string colorTag;
 
 	float getReached() const;
 	float getStucked() const;
@@ -46,6 +47,7 @@ public:
 	PlayerMovement lastMovement = Standing;
 	bool movementExpired = true;
 	float movementExpiration = 0;
+
 
 	std::vector<MeshObject*> viveObjects;
 	bool renderTrackerAndControllers;

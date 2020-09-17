@@ -34,6 +34,7 @@ void TrainLevel::gamePlay(double deltaT) {
 
 
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
+
 	if (form->gameStarted())
 	{
 		checkStation(deltaT);
@@ -41,8 +42,6 @@ void TrainLevel::gamePlay(double deltaT) {
 		checkHittingAvatar();
 		checkHittingEnemy();
 	}
-
-
 }
 
 void TrainLevel::updateFPS(double deltaT) {
@@ -290,62 +289,169 @@ void TrainLevel::checkHittingAvatar()
 
 		Kore::vec3 leftFootPos = enemy->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
 		Kore::vec3 rightFootPos = enemy->entity->meshObject->bones[rightFootBoneIndex]->getPosition();
+		Kore::vec3 leftHandPos = enemy->entity->meshObject->bones[leftHandBoneIndex]->getPosition();
+		Kore::vec3 rightHandPos = enemy->entity->meshObject->bones[rightHandBoneIndex]->getPosition();
 		 
-		Kore::vec3 dir_L = leftFootPos - avatar->entity->position;
-		Kore::vec3 dir_R = rightFootPos - avatar->entity->position;
+		Kore::vec3 dir_L_Foot = leftFootPos - avatar->entity->position;
+		Kore::vec3 dir_R_Foot = rightFootPos - avatar->entity->position;
+		Kore::vec3 dir_L_Hand = leftHandPos - avatar->entity->position;
+		Kore::vec3 dir_R_Hand = rightHandPos - avatar->entity->position;
 
-		dir_L.z() = 0;
-		dir_R.z() = 0;
+		dir_L_Foot.z() = 0;
+		dir_R_Foot.z() = 0;
+		dir_L_Hand.z() = 0;
+		dir_R_Hand.z() = 0;
 
-		float a = leftFootPos.z();
-		float b = dir_L.getLength();
-
-		if (leftFootPos.z() > hittingHeight & dir_L.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		if (leftFootPos.z() > hittingHeightFoot & dir_L_Foot.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
 		{
 			enemy->entity->attackedSuccessfully = true;
 			avatar->entity->hit();
 		}
-		else if (rightFootPos.z() > hittingHeight & dir_R.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		else if (rightFootPos.z() > hittingHeightFoot & dir_R_Foot.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
 		{
 			enemy->entity->attackedSuccessfully = true;
 			avatar->entity->hit();
 		}
-		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & enemy->entity->attackedSuccessfully)
+		else if (leftHandPos.z() > hittingHeightHand & dir_L_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		{
+			enemy->entity->attackedSuccessfully = true;
+			avatar->entity->hit();
+		}
+		else if (rightHandPos.z() > hittingHeightHand & dir_R_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		{
+			enemy->entity->attackedSuccessfully = true;
+			avatar->entity->hit();
+		}
+		else if (dir_L_Foot.getLength() > hittingRadius & dir_R_Foot.getLength() > hittingRadius & enemy->entity->attackedSuccessfully)
 		{
 			enemy->entity->attackedSuccessfully = false;
 		}
+
+
 	}
+}
+
+void TrainLevel::showAttackInUI(string colorTag)
+{
+	MainForm* mainForm = (MainForm*)form;
+
+	if (colorTag == "NinjaW")
+		mainForm->kindOfAttacking = "Punch, Kick or Punch-Kick";
+	else if(colorTag == "NinjaY")
+		mainForm->kindOfAttacking = "Punch or Kick";
+	else if (colorTag == "NinjaB")
+		mainForm->kindOfAttacking = "Punch or Punch-Kick";
+	else if (colorTag == "NinjaR")
+		mainForm->kindOfAttacking = "Kick or Punch-Kick";
+	else if (colorTag == "NinjaM")
+		mainForm->kindOfAttacking = "Kick";
+	else
+		mainForm->kindOfAttacking = NULL;
 }
 
 void TrainLevel::checkHittingEnemy()
 {
+	float crossValue = 100000;
+	float distance = 100000;
+	string colorTag = "";
+	bool allDead = true;
+
 	for (NonPlayerCharacter* enemy : enemies)
 	{
-		
+		Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(enemy->entity->position.x(), enemy->entity->position.y(), enemy->entity->position.z(), 1.0);
+		Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->entity->position.x(), avatar->entity->position.y(), avatar->entity->position.z(), 1.0);
+		Kore::vec3 playerToEntDir = (entityPosGlob - avatarPosGlob);
+
+		Kore::vec3 avatarDir =  math->camForward;
+		//avatarDir *= -1;
+
+		playerToEntDir.y() = 0;
+		avatarDir.y() = 0;
+		float currentDistance = playerToEntDir.getLength();
+		float currentCrossValue =Kore::abs( playerToEntDir.cross(avatarDir).y());
+		float skalarProdukt = playerToEntDir * avatarDir;
+
+		if (currentCrossValue < crossValue && enemy->entity->activated && skalarProdukt > 0) 
+		{
+			allDead = false;
+			crossValue = currentCrossValue;
+			distance = currentDistance;
+
+			if (distance < minAttackingDistance & crossValue < 0.5)
+				colorTag = enemy->entity->colorTag;
+			else
+				colorTag = "N";
+		}
+
+
+
+		//Kollision
 		Kore::vec3 leftFootPos = avatar->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
 		Kore::vec3 rightFootPos = avatar->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
+		Kore::vec3 leftHandPos = enemy->entity->meshObject->bones[leftHandBoneIndex]->getPosition();
+		Kore::vec3 rightHandPos = enemy->entity->meshObject->bones[rightHandBoneIndex]->getPosition();
 
-		Kore::vec3 dir_L = leftFootPos - enemy->entity->position;
-		Kore::vec3 dir_R = rightFootPos - enemy->entity->position;
+		Kore::vec3 dir_L_Foot = leftFootPos - enemy->entity->position;
+		Kore::vec3 dir_R_Foot = rightFootPos - enemy->entity->position;
+		Kore::vec3 dir_L_Hand = leftHandPos - avatar->entity->position;
+		Kore::vec3 dir_R_Hand = rightHandPos - avatar->entity->position;
 
-		dir_L.z() = 0;
-		dir_R.z() = 0;
+		dir_L_Foot.z() = 0;
+		dir_R_Foot.z() = 0;
+		dir_L_Hand.z() = 0;
+		dir_R_Hand.z() = 0;
 
-		if (avatar->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeight & dir_L.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
+		if (avatar->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeightFoot & dir_L_Foot.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
 		{
 			avatar->entity->attackedSuccessfully = true;
 			enemy->entity->hit();
+			
+			if (avatar->entity->lastMovement == Avatar::Kick && !avatar->entity->movementExpired)
+			{
+				((MainForm*)form)->highScore++;
+			}
 		}
-		else if (avatar->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeight & dir_R.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
+		else if (avatar->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeightFoot & dir_R_Foot.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
 		{
 			avatar->entity->attackedSuccessfully = true;
 			enemy->entity->hit();
+
+			if (avatar->entity->lastMovement == Avatar::Kick && !avatar->entity->movementExpired)
+			{
+				((MainForm*)form)->highScore++;
+			}
 		}
-		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & avatar->entity->attackedSuccessfully)
+		else if (avatar->entity->endEffector[leftHand]->getDesPosition().z() > hittingHeightHand & dir_L_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		{
+			avatar->entity->attackedSuccessfully = true;
+			enemy->entity->hit();
+
+			if (avatar->entity->lastMovement == Avatar::Punch && !avatar->entity->movementExpired)
+			{
+				((MainForm*)form)->highScore++;
+			}
+		}
+		else if (avatar->entity->endEffector[rightHand]->getDesPosition().z() > hittingHeightHand & dir_R_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		{
+			avatar->entity->attackedSuccessfully = true;
+			enemy->entity->hit();
+
+			if (avatar->entity->lastMovement == Avatar::Punch && !avatar->entity->movementExpired)
+			{
+				((MainForm*)form)->highScore++;
+			}
+		}
+		else if (dir_L_Foot.getLength() > hittingRadius & dir_R_Foot.getLength() > hittingRadius & avatar->entity->attackedSuccessfully)
 		{
 			avatar->entity->attackedSuccessfully = false;
 		}
 	}
+
+	if (allDead)
+		colorTag = "N";
+
+	if(colorTag != "")
+		showAttackInUI(colorTag);
 }
 
 

@@ -25,6 +25,9 @@ private:
 	int nanoSeconds = 300;
 	int maxNanoSeconds = 300;
 	bool switchCountDown = false;
+	bool showHighScore = false;
+	bool showKindOfAttacking = false;
+
 	
 
 public:
@@ -35,4 +38,6 @@ public:
 
 	//Loading Bar
 	float progress = 0.f;
+	int highScore = 0;
+	char* kindOfAttacking = NULL;
 };

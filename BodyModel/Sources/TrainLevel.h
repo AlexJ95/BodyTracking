@@ -34,7 +34,8 @@ public:
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
     int poolSize = 10;
-    float hittingHeight = 0.5;
+    float hittingHeightFoot = 0.5;
+    float hittingHeightHand = 1.0;
     float hittingRadius = 0.3;
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
@@ -49,8 +50,8 @@ public:
 	int tunnelCounter;
 
     void spawn(double deltaT);// , Kore::vec3 AirPlanePos);
+
 //  Stashed changes
-  
     int stationNr = 1;
     float stationLength = 30.0;
     bool stationComplete = false; 
@@ -59,9 +60,9 @@ public:
     void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
     Kore::vec3 airPlanePos;
     bool airplaneAtTheHeight = false;
-    void checkEnemyCollision();
-
-    
+    void checkEnemyCollision(); 
+    void showAttackInUI(string colorTag);
+    float minAttackingDistance = 3.0;
 
     Level::ALevelObject* createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot);
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
