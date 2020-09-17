@@ -40,6 +40,7 @@ void StateMachineAI::checkCollision(Kore::vec3 posOtherEnemy)
 // Implementation of the AI for the Trainlevel
 int StateMachineAI::beatedEnemyCount = 0;
 float StateMachineAI::lastDeadPos = 0.0;
+int CyborgAI::numberOfVictories = 0;
 
 CyborgAI::AIState CyborgAI::attacking(float deltaT)
 {
@@ -106,7 +107,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 
 		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
 	}
-	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 3.5)
+	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 1.5)
 		tooClose = false;
 
 	if (currentDistance > maxDistanceToPlayer | tooClose)
@@ -141,7 +142,6 @@ CyborgAI::AIState CyborgAI::dying(float deltaT)
 	lastDeadPos = entity->position.y();
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);  //Test
 	//inAnimation = animator->executeAnimation(entity, animationLibrary.at("Dying"), logger);
-	
 
 	if (inAnimation)
 	{
@@ -152,6 +152,7 @@ CyborgAI::AIState CyborgAI::dying(float deltaT)
 		entity->activated = false;
 		entity->beated = true;
 		beatedEnemyCount++;
+		numberOfVictories++;
 	}
 	return AIState::Planning;
 }

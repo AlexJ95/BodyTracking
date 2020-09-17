@@ -42,6 +42,9 @@ void Level::v()
 void Level::h()
 {
 }
+void Level::t()
+{
+}
 void Level::x()
 {
 }
@@ -70,6 +73,7 @@ Level::AnAnimatedEntity::AnAnimatedEntity(const char* meshFile, const char* text
 Level::AnAnimatedEntity::AnAnimatedEntity(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
 {
 	entity = new AnimatedEntity(reference->entity->meshObject, position, rotation);
+	entity->colorTag = reference->tag;
 }
 
 Level::TheAvatar::TheAvatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation, bool renderTrackerAndController, bool renderAxisForEndEffector)

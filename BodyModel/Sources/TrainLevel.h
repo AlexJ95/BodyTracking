@@ -7,12 +7,14 @@ class TrainLevel :
 {
 public:
     void update(double deltaT);
+    void gamePlay(double deltaT);
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
     void l();
     void r();
     void v();
     void h();
+	void t();
     void x();
     void y();
     void z();
@@ -27,26 +29,42 @@ public:
     Level::ALevelObject* objects[1];
     bool stationStarted = true;
 
+    bool gameStart;
+
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
-    int poolSize = 1;
-    float hittingHeight = 0.5;
+    int poolSize = 10;
+    float hittingHeightFoot = 0.5;
+    float hittingHeightHand = 1.0;
     float hittingRadius = 0.3;
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
+    float starttime;
     float time;
     int fps = 0;;
     float offsets;
+// Updated upstream
+    //void spawn(double deltaT);
+	
+	bool tunnelActivated;
+	int tunnelCounter;
 
-    void createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation);
-    void spawn(double deltaT);
-  
+    void spawn(double deltaT);// , Kore::vec3 AirPlanePos);
+
+//  Stashed changes
     int stationNr = 1;
-    float stationLength = 15.0;
+    float stationLength = 30.0;
     bool stationComplete = false; 
-    void checkStation(double deltaT);
-
-    void checkEnemyCollision();
+    int maxEnemyCount = 3;  //sollte 1 sein 2 nur zum testen
+    int currentEnemyCount = 0; 
+    void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
+    Kore::vec3 airPlanePos;
+    bool airplaneAtTheHeight = false;
+    void checkEnemyCollision(); 
+    void showAttackInUI(string colorTag);
+    void checkingMoving();
+    float minAttackingDistance = 3.0;
+    float camVelocity = 0.1;
 
     Level::ALevelObject* createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot);
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
@@ -59,4 +77,5 @@ public:
     void airplaneInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);
+    void createEnemy(Kore::Graphics4::VertexStructure entitySructure);
 };

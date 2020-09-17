@@ -16,17 +16,32 @@
 void TrainLevel::update(double deltaT)
 {
 	//code level-specific runtime logic here
-	updateBuilding(deltaT,20);
-	updateFPS(deltaT);
 	Level::update(deltaT);
 
+
+	if (gameStart) {
+		updateBuilding(deltaT, 20);
+		updateFPS(deltaT);		
+		starttime += deltaT;
+		if(starttime > 3.0f)
+			gamePlay(deltaT);
+		else starttime += deltaT;
+	}
+
+}
+
+void TrainLevel::gamePlay(double deltaT) {
+
+
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
-	if (!form->isFormShown())
+
+	if (form->gameStarted())
 	{
 		checkStation(deltaT);
 		checkEnemyCollision();
 		checkHittingAvatar();
 		checkHittingEnemy();
+		checkingMoving();
 	}
 }
 
@@ -36,7 +51,7 @@ void TrainLevel::updateFPS(double deltaT) {
 	if (time > 1.0f)
 	{
 		Kore::log(Kore::Info, "%d", fps);
-
+		Kore::log(Kore::Info, "Player Position is %f %f %f", avatar->entity->position.x(), avatar->entity->position.y(), avatar->entity->position.z());
 		fps = 0;
 		time = 0;
 	}
@@ -51,10 +66,35 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 				if (object->render->position.x() > -420)
 				{
 
-					if (object->render->tag == "car1")
+					if (object->render->tag == "car") {
+						object->render->position.x() -= deltaT * speed * 0.5f;
+						object->render->position.z() -= 0.01 * deltaT;
+					}
+					else if (object->render->tag == "car1") {
 						object->render->position.x() -= deltaT * speed * 2;
-					else if (object->render->tag == "airplane")
+						object->render->position.z() -= deltaT * speed * 0.01f;
+					}
+					else if (object->render->tag == "tunnelS") {
+						
+						//object->render->activated = true;
 						object->render->position.x() -= deltaT * speed * 3;
+						object->render->position.z() -= deltaT * speed * 0.02f;
+						
+					}
+					else if (object->render->tag == "airplane") {
+						speed *= 0.4;
+						object->render->position.x() -= deltaT * speed * 3;
+						if (object->render->position.x() < 0)
+							object->render->position.y() += deltaT * speed;
+						else if (object->render->position.y() > 15)
+						{
+							object->render->position.y() -= deltaT * speed;
+
+						}
+
+						airPlanePos = object->render->position;
+						
+					}
 					else {
 						object->render->position.x() -= deltaT * speed;
 						object->render->position.z() -= deltaT * speed * 0.0075f;
@@ -72,26 +112,43 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 					}
 					if (object->render->tag == "floorl") {
 						object->render->position.x() = 580;
-						object->render->position.z() = 11.5f;
+						object->render->position.z() = -3.0f;
 					}
 					if (object->render->tag == "houseR") {
 						object->render->position.x() = 454;
-						object->render->position.z() = 17.21;
+						object->render->position.z() = 20.21;
 					}
 					if (object->render->tag == "houseL") {
 						object->render->position.x() = 454;
-						object->render->position.z() = -8.79f;
+						object->render->position.z() = -14.0f;
 					}
 					if (object->render->tag == "car1") {
 						object->render->position.x() = 454;
-						object->render->position.z() = -5;
+						object->render->position.z() = -6;
 					}
 					if (object->render->tag == "car") {
 						object->render->position.x() = 454;
-						object->render->position.z() = 11;
+						object->render->position.z() = 12;
 					}
 					if (object->render->tag == "airplane") {
 						object->render->position.x() = 454;
+						object->render->position.y() = 50;
+					}
+					if (object->render->tag == "tunnelS") {
+						tunnelCounter++;
+						if (tunnelCounter == 9) {
+							tunnelCounter = 0;
+							
+							for (ALevelObject* object : environment) {
+								if (object->render->tag == "tunnelS") {
+									object->render->activated = false;
+									object->moveable = false;
+								}
+							}
+						}
+						object->render->position.x() = 454;
+						object->render->position.z() = 3;
+						
 					}
 						
 				}
@@ -105,6 +162,8 @@ void TrainLevel::init() {
 	Level::init();
 	form = new MainForm();
 	offsets = 1;
+	gameStart = true;
+	tunnelCounter = 8;
 }
 
 void TrainLevel::controlsSetup()
@@ -143,11 +202,8 @@ void TrainLevel::graphicsSetup()
 	animator = new Animator(avatar->entity);
 
 	//create Pool od entitys
-	for (int i = 0; i < poolSize; i++)
-	{
-		//Load Enemy
-		createEnemy(new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)), Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
-	}
+	//Load Enemy
+	createEnemy(entitySructure);
 
 	//Load Ground
 	groundInit(environmentSructure);
@@ -170,16 +226,22 @@ void TrainLevel::graphicsSetup()
 
 //////////////////////////////interaction Methods
 
-void TrainLevel::checkStation(double deltaT)
+void TrainLevel::checkStation(double deltaT)//, Kore::vec3 AirPlanePos)
 {
-	if (!stationComplete)
+	if (!stationComplete & currentEnemyCount < maxEnemyCount)// & airPlanePos.x() <= Kore::abs(avatar->entity->position.y() - stationLength))
 	{
-		spawn(deltaT);
+		spawn(deltaT);//, AirPlanePos);
 	}
 
-	if (StateMachineAI::beatedEnemyCount >= poolSize & !stationComplete)
+	if (StateMachineAI::beatedEnemyCount >= maxEnemyCount & !stationComplete)
 	{
 		stationComplete = true;
+		currentEnemyCount = 0;
+
+		if (maxEnemyCount < poolSize)
+			maxEnemyCount++;
+		else
+			maxEnemyCount = poolSize;
 	}
 	else if(stationComplete & avatar->entity->position.y() <= (StateMachineAI::lastDeadPos -  stationLength))
 	{
@@ -192,9 +254,10 @@ void TrainLevel::checkStation(double deltaT)
 		stationStarted=true;
 		stationNr++;
 	}
+	countDown += deltaT;
 }
 
-void TrainLevel::spawn(double deltaT)
+void TrainLevel::spawn(double deltaT)//, Kore::vec3 AirPlanePos)
 {
 
 	if (countDown > maxWaitintTime | (stationStarted & countDown > maxWaitintTime / 100.0))
@@ -205,19 +268,21 @@ void TrainLevel::spawn(double deltaT)
 		{
 			if (!(enemy->entity->beated) & !(enemy->entity->activated))
 			{
+				Kore::vec3 globAirPlanePos = locToGlob * Kore::vec4(airPlanePos.x(), airPlanePos.y(), airPlanePos.z(), 1.0);
 				float randomX_Pos = (float)(rand() % 2 - 1);
 				if (randomX_Pos == 0.0)
 					randomX_Pos += 0.1;
-				enemy->entity->position=Kore::vec3(randomX_Pos, (avatar->entity->position.y() - stationLength), 0.0f);
+				enemy->entity->position = Kore::vec3(randomX_Pos, (avatar->entity->position.y() - stationLength), 0.0f);
 				enemy->entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi);
 				countDown = 0.0;
 				enemy->ai->spawn();
+				currentEnemyCount++;
 				break;
 			}
 		}
 	}
 
-	countDown += deltaT;
+	
 }
 
 void TrainLevel::checkHittingAvatar()
@@ -227,85 +292,237 @@ void TrainLevel::checkHittingAvatar()
 
 		Kore::vec3 leftFootPos = enemy->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
 		Kore::vec3 rightFootPos = enemy->entity->meshObject->bones[rightFootBoneIndex]->getPosition();
+		Kore::vec3 leftHandPos = enemy->entity->meshObject->bones[leftHandBoneIndex]->getPosition();
+		Kore::vec3 rightHandPos = enemy->entity->meshObject->bones[rightHandBoneIndex]->getPosition();
 		 
-		Kore::vec3 dir_L = leftFootPos - avatar->entity->position;
-		Kore::vec3 dir_R = rightFootPos - avatar->entity->position;
+		Kore::vec3 dir_L_Foot = leftFootPos - avatar->entity->position;
+		Kore::vec3 dir_R_Foot = rightFootPos - avatar->entity->position;
+		Kore::vec3 dir_L_Hand = leftHandPos - avatar->entity->position;
+		Kore::vec3 dir_R_Hand = rightHandPos - avatar->entity->position;
 
-		dir_L.z() = 0;
-		dir_R.z() = 0;
+		dir_L_Foot.z() = 0;
+		dir_R_Foot.z() = 0;
+		dir_L_Hand.z() = 0;
+		dir_R_Hand.z() = 0;
 
-		float a = leftFootPos.z();
-		float b = dir_L.getLength();
-
-		if (leftFootPos.z() > hittingHeight & dir_L.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		if (leftFootPos.z() > hittingHeightFoot & dir_L_Foot.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
 		{
 			enemy->entity->attackedSuccessfully = true;
 			avatar->entity->hit();
 		}
-		else if (rightFootPos.z() > hittingHeight & dir_R.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		else if (rightFootPos.z() > hittingHeightFoot & dir_R_Foot.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
 		{
 			enemy->entity->attackedSuccessfully = true;
 			avatar->entity->hit();
 		}
-		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & enemy->entity->attackedSuccessfully)
+		else if (leftHandPos.z() > hittingHeightHand & dir_L_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		{
+			enemy->entity->attackedSuccessfully = true;
+			avatar->entity->hit();
+		}
+		else if (rightHandPos.z() > hittingHeightHand & dir_R_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		{
+			enemy->entity->attackedSuccessfully = true;
+			avatar->entity->hit();
+		}
+		else if (dir_L_Foot.getLength() > hittingRadius & dir_R_Foot.getLength() > hittingRadius & enemy->entity->attackedSuccessfully)
 		{
 			enemy->entity->attackedSuccessfully = false;
 		}
+
+
+	}
+}
+
+void TrainLevel::showAttackInUI(string colorTag)
+{
+	MainForm* mainForm = (MainForm*)form;
+
+	if (colorTag == "NinjaW")
+		mainForm->kindOfAttacking = "Punch, Kick or Punch-Kick";
+	else if(colorTag == "NinjaY")
+		mainForm->kindOfAttacking = "Punch or Kick";
+	else if (colorTag == "NinjaB")
+		mainForm->kindOfAttacking = "Punch or Punch-Kick";
+	else if (colorTag == "NinjaR")
+		mainForm->kindOfAttacking = "Kick or Punch-Kick";
+	else if (colorTag == "NinjaM")
+		mainForm->kindOfAttacking = "Kick";
+	else
+		mainForm->kindOfAttacking = NULL;
+}
+
+void TrainLevel::checkingMoving()
+{
+	if (avatar->entity->lastMovement == Avatar::Jogging && !avatar->entity->movementExpired)
+	{
+		Kore::vec3 dir = math->camForward;
+		math->cameraPos += dir * camVelocity;
 	}
 }
 
 void TrainLevel::checkHittingEnemy()
 {
+	float crossValue = 100000;
+	float distance = 100000;
+	string colorTag = "";
+	bool allDead = true;
+
 	for (NonPlayerCharacter* enemy : enemies)
 	{
-		
+		Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(enemy->entity->position.x(), enemy->entity->position.y(), enemy->entity->position.z(), 1.0);
+		Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->entity->position.x(), avatar->entity->position.y(), avatar->entity->position.z(), 1.0);
+		Kore::vec3 playerToEntDir = (entityPosGlob - avatarPosGlob);
+
+		Kore::vec3 avatarDir =  math->camForward;
+		//avatarDir *= -1;
+
+		playerToEntDir.y() = 0;
+		avatarDir.y() = 0;
+		float currentDistance = playerToEntDir.getLength();
+		float currentCrossValue =Kore::abs( playerToEntDir.cross(avatarDir).y());
+		float skalarProdukt = playerToEntDir * avatarDir;
+
+		if (currentCrossValue < crossValue && enemy->entity->activated && skalarProdukt > 0) 
+		{
+			allDead = false;
+			crossValue = currentCrossValue;
+			distance = currentDistance;
+
+			if (distance < minAttackingDistance & crossValue < 0.5)
+				colorTag = enemy->entity->colorTag;
+			else
+				colorTag = "N";
+		}
+
+
+
+		//Kollision
 		Kore::vec3 leftFootPos = avatar->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
 		Kore::vec3 rightFootPos = avatar->entity->meshObject->bones[leftFootBoneIndex]->getPosition();
+		Kore::vec3 leftHandPos = enemy->entity->meshObject->bones[leftHandBoneIndex]->getPosition();
+		Kore::vec3 rightHandPos = enemy->entity->meshObject->bones[rightHandBoneIndex]->getPosition();
 
-		Kore::vec3 dir_L = leftFootPos - enemy->entity->position;
-		Kore::vec3 dir_R = rightFootPos - enemy->entity->position;
+		Kore::vec3 dir_L_Foot = leftFootPos - enemy->entity->position;
+		Kore::vec3 dir_R_Foot = rightFootPos - enemy->entity->position;
+		Kore::vec3 dir_L_Hand = leftHandPos - avatar->entity->position;
+		Kore::vec3 dir_R_Hand = rightHandPos - avatar->entity->position;
 
-		dir_L.z() = 0;
-		dir_R.z() = 0;
+		dir_L_Foot.z() = 0;
+		dir_R_Foot.z() = 0;
+		dir_L_Hand.z() = 0;
+		dir_R_Hand.z() = 0;
 
-		if (avatar->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeight & dir_L.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
+		if (avatar->entity->endEffector[leftFoot]->getDesPosition().z() > hittingHeightFoot & dir_L_Foot.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
 		{
 			avatar->entity->attackedSuccessfully = true;
 			enemy->entity->hit();
+			
+			if (avatar->entity->lastMovement == Avatar::Kick && !avatar->entity->movementExpired)
+			{
+				((MainForm*)form)->highScore++;
+
+				if (enemy->entity->colorTag == "NinjaW" | enemy->entity->colorTag == "NinjaY"| enemy->entity->colorTag == "NinjaR" | enemy->entity->colorTag == "NinjaM")
+				{
+					((MainForm*)form)->highScore++;
+				}
+			}
 		}
-		else if (avatar->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeight & dir_R.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
+		else if (avatar->entity->endEffector[rightFoot]->getDesPosition().z() > hittingHeightFoot & dir_R_Foot.getLength() < hittingRadius & !avatar->entity->attackedSuccessfully)
 		{
 			avatar->entity->attackedSuccessfully = true;
 			enemy->entity->hit();
+
+			if (avatar->entity->lastMovement == Avatar::Kick && !avatar->entity->movementExpired)
+			{
+				((MainForm*)form)->highScore++;
+
+				if (enemy->entity->colorTag == "NinjaW" | enemy->entity->colorTag == "NinjaY" | enemy->entity->colorTag == "NinjaR" | enemy->entity->colorTag == "NinjaM")
+				{
+					((MainForm*)form)->highScore++;
+				}
+			}
 		}
-		else if (dir_L.getLength() > hittingRadius & dir_R.getLength() > hittingRadius & avatar->entity->attackedSuccessfully)
+		else if (avatar->entity->endEffector[leftHand]->getDesPosition().z() > hittingHeightHand & dir_L_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		{
+			avatar->entity->attackedSuccessfully = true;
+			enemy->entity->hit();
+
+			if (avatar->entity->lastMovement == Avatar::Punch && !avatar->entity->movementExpired)
+			{
+				((MainForm*)form)->highScore++;
+
+				if (enemy->entity->colorTag == "NinjaW" | enemy->entity->colorTag == "NinjaY" | enemy->entity->colorTag == "NinjaB")
+				{
+					((MainForm*)form)->highScore++;
+				}
+			}
+		}
+		else if (avatar->entity->endEffector[rightHand]->getDesPosition().z() > hittingHeightHand & dir_R_Hand.getLength() < hittingRadius & !enemy->entity->attackedSuccessfully)
+		{
+			avatar->entity->attackedSuccessfully = true;
+			enemy->entity->hit();
+
+			if (avatar->entity->lastMovement == Avatar::Punch && !avatar->entity->movementExpired)
+			{
+				((MainForm*)form)->highScore++;
+
+				if (enemy->entity->colorTag == "NinjaW" | enemy->entity->colorTag == "NinjaY" | enemy->entity->colorTag == "NinjaB")
+				{
+					((MainForm*)form)->highScore++;
+				}
+			}
+		}
+		else if (dir_L_Foot.getLength() > hittingRadius & dir_R_Foot.getLength() > hittingRadius & avatar->entity->attackedSuccessfully)
 		{
 			avatar->entity->attackedSuccessfully = false;
 		}
 	}
+
+	if (allDead)
+		colorTag = "N";
+
+	if(colorTag != "")
+		showAttackInUI(colorTag);
 }
 
 
 void TrainLevel::checkEnemyCollision()
 {
-	for (int i=0; i< poolSize; i++)
+	for (int i=0; i< maxEnemyCount; i++)
 	{
 		if (enemies[i]->entity->activated)
 		{
-			for (int k = 0; k < poolSize & i != k; k++)
+			for (int k = 0; k < maxEnemyCount & i != k; k++)
 			{
-				enemies[i]->ai->checkCollision(enemies[k]->entity->position);
+				if(!enemies[k]->entity->beated)
+					enemies[i]->ai->checkCollision(enemies[k]->entity->position);
+				else
+					enemies[i]->ai->checkCollision(Kore::vec3(1000.0,0.0,0.0));
 			}
 		}
 	}
 }
 ///////////////////////////////////////////////////////////////////
 
-void TrainLevel::createEnemy(AnAnimatedEntity* reference, Kore::vec3 position, Kore::Quaternion rotation)
+void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure)
 {
-	NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, position, rotation);
-	enemy->ai = new CyborgAI(enemy->entity, animator, avatar->entity);
-	enemies.emplace_back(enemy);
+	AnAnimatedEntity* reference;
+	for (int i = 0; i < poolSize; i++) {
+		switch (i) {		
+		case 4:reference = new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaM"; break;
+		case 1:reference = new AnAnimatedEntity("enemy/avatar_maleR.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaR"; break;
+		case 2:reference = new AnAnimatedEntity("enemy/avatar_maleB.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaB"; break;
+		case 3:reference = new AnAnimatedEntity("enemy/avatar_maleY.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaY"; break;
+		case 0:reference = new AnAnimatedEntity("enemy/avatar_maleW.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaW"; break;
+		default:reference = new AnAnimatedEntity("enemy/avatar_maleW.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaM"; break;
+		}
+		NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
+		enemy->ai = new CyborgAI(enemy->entity, animator, avatar->entity);
+		enemy->entity->activated = false;
+		enemies.emplace_back(enemy);
+	}
+	
 }
 
 Level::ALevelObject* TrainLevel::createNewObject(String pfad, String pfad2, VertexStructure vstruct,float scale, Kore::vec3 pos, Kore::Quaternion rot) {
@@ -328,7 +545,7 @@ void TrainLevel::skyInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	renderer->setLights(*sky->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
 	sky->moveable = false;	
 }
-
+//Old
 void TrainLevel::trainInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	ALevelObject* trainf = createNewObject("train/trainFront.ogex", "train/", environmentSructure, 1, Kore::vec3(40.8, -3, 0), Kore::Quaternion(3, 0, 2, 0));
 	trainf->moveable = false;
@@ -380,7 +597,7 @@ void TrainLevel::trainInit(Kore::Graphics4::VertexStructure environmentSructure,
 		ALevelObject* trainMiddle7 = createObjectCopy(trainMiddle1, Kore::vec3(trainMiddle1->render->position.x() + xoffset * 6, trainMiddle1->render->position.y(), trainMiddle1->render->position.z() + zoffset * 6), Kore::Quaternion(3, 0, yRot, 0));
 		ALevelObject* trainMiddle8 = createObjectCopy(trainMiddle1, Kore::vec3(trainMiddle1->render->position.x() + xoffset * 7, trainMiddle1->render->position.y(), trainMiddle1->render->position.z() + zoffset * 7), Kore::Quaternion(3, 0, yRot, 0));
 		ALevelObject* trainFront3 = createObjectCopy(trainBack, Kore::vec3(trainBack->render->position.x() + xoffset * 9 + 0.2, trainBack->render->position.y(), trainBack->render->position.z() + zoffset * 9), Kore::Quaternion(3, 0, yRot, 0));
-		trainMiddle22->moveable = false;
+		trainMiddle22->moveable = false;	
 		trainMiddle33->moveable = false;
 		trainMiddle4->moveable = false;
 		trainMiddle5->moveable = false;
@@ -426,10 +643,6 @@ void TrainLevel::groundInit(Kore::Graphics4::VertexStructure environmentSructure
 		//xoffset2 += 20;
 	}
 
-	for (int x = 0; x < 40; x++) {
-		//object = createObjectCopy(hfloor, Kore::vec3(hfloor->render->position.x() + xoffset2 * x, hfloor->render->position.y(), hfloor->render->position.z() + zoffset2 * x), hfloor->render->rotation);
-		//object->render->tag = "floorh";
-	}
 
 	for (int x = 0; x < 56; x++) {
 		object = createObjectCopy(lfloor, Kore::vec3(lfloor->render->position.x() + xoffset2 * x, lfloor->render->position.y(), lfloor->render->position.z() + zoffset2 * x), lfloor->render->rotation);
@@ -519,7 +732,7 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 		}
 	}
 }
-
+//Old
 void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure, bool placeholder) {
 	ALevelObject* houseL = createNewObject("houseL/hausL.ogex", "houseL/", environmentSructure, 1, Kore::vec3(-34.2, -3, 17), Kore::Quaternion(3, 0, 0, 0));
 	ALevelObject* houseS = createNewObject("houseS/haus.ogex", "houseS/", environmentSructure, 1, Kore::vec3(-26.5, -3, 17), Kore::Quaternion(3, 0, 0, 0));	
@@ -551,22 +764,68 @@ void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructu
 
 	ALevelObject* airplane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
 	airplane->render->tag = "airplane";
+	//airplane->render->activated = false;
 }
 
 void TrainLevel::carInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
-	ALevelObject* car = createNewObject("cars/car.ogex", "cars/", environmentSructure, 1, Kore::vec3(78, -2, 6), Kore::Quaternion(3, 0, 1, 0));
+	ALevelObject* car = createNewObject("cars/car.ogex", "cars/", environmentSructure, 1, Kore::vec3(78, -2, 5), Kore::Quaternion(3, 0, 1, 0));
 	car->render->tag = "car";
-	ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x(), car->render->position.y(), -car->render->position.z()), car->render->rotation);
-	object->render->rotation.z = 3;
+	ALevelObject* object = createObjectCopy(car, Kore::vec3(car->render->position.x()*2, car->render->position.y(), car->render->position.z()+3.5), car->render->rotation);
 	object->render->tag = "car1";
 
 }
 
 void TrainLevel::tunnelInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	
-	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(0, 0, 0), Kore::Quaternion(3, 0, 0, 0));
-	objects[0] = tunnel;
+	//float yRot = 1.995f;
+	float yRot = 1.996f;
+	//float xoffset = 16.0f;
+	float xoffset = 15.0f;
+	//float zoffset = 0.11f;
+	float zoffset = 0.1f;
+	float yoffset = 0.023;
+	//Right height = -11
+	//ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(0, -10, 0), Kore::Quaternion(3, 0, 0, 0));
+	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(454 - xoffset * 8, -10, 3 - zoffset * 8), Kore::Quaternion(3, 0, 0, 0));
+	//ALevelObject* trainBack = createNewObject("train/trainFront.ogex", "train/", environmentSructure, 1, Kore::vec3(7.2, -3, 0.08), Kore::Quaternion(3, 0, -0.005f, 0));
+	ALevelObject* tunnel2 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset, tunnel->render->position.y() + yoffset, tunnel->render->position.z() + zoffset), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel3 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 2, tunnel->render->position.y() + yoffset * 2, tunnel->render->position.z() + zoffset * 2), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel4 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 3, tunnel->render->position.y() + yoffset * 3, tunnel->render->position.z() + zoffset * 3), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel5 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 4, tunnel->render->position.y() + yoffset * 4, tunnel->render->position.z() + zoffset * 4), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel6 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 5, tunnel->render->position.y() + yoffset * 5, tunnel->render->position.z() + zoffset * 5), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel7 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 6, tunnel->render->position.y() + yoffset * 6, tunnel->render->position.z() + zoffset * 6), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel8 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 7, tunnel->render->position.y() + yoffset * 7, tunnel->render->position.z() + zoffset * 7), Kore::Quaternion(3, 0, yRot, 0));
+	ALevelObject* tunnel9 = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * 8, tunnel->render->position.y() + yoffset * 8, tunnel->render->position.z() + zoffset * 8), Kore::Quaternion(3, 0, yRot, 0));
+	tunnel2->render->activated = false;
+	tunnel3->render->activated = false;
+	tunnel4->render->activated = false;
+	tunnel5->render->activated = false;
+	tunnel6->render->activated = false;
+	tunnel7->render->activated = false;
+	tunnel8->render->activated = false;
+	tunnel9->render->activated = false;
+	tunnel->render->activated = false;
+	tunnel2->moveable = false;
+	tunnel3->moveable = false;
+	tunnel4->moveable = false;
+	tunnel5->moveable = false;
+	tunnel6->moveable = false;
+	tunnel7->moveable = false;
+	tunnel8->moveable = false;
+	tunnel9->moveable = false;
+	tunnel->moveable = false;
+	tunnel->render->tag = "tunnelS";
+	tunnel2->render->tag = "tunnelS";
+	tunnel3->render->tag = "tunnelS";
+	tunnel4->render->tag = "tunnelS";
+	tunnel5->render->tag = "tunnelS";
+	tunnel6->render->tag = "tunnelS";
+	tunnel7->render->tag = "tunnelS";
+	tunnel8->render->tag = "tunnelS";
+	tunnel9->render->tag = "tunnelS";
+	
+	//objects[0] = tunnel;
 }
 
 void TrainLevel::v()
@@ -588,6 +847,15 @@ void TrainLevel::r()
 {
 	objects[0]->render->position.z() -= offsets;
 	Kore::log(Kore::Info, "Z = %f", objects[0]->render->position.z());
+}
+void TrainLevel::t()
+{
+	for (ALevelObject* object : environment) {
+		if (object->render->tag == "tunnelS") {
+			object->moveable = true;
+			object->render->activated = true;
+		}
+	}
 }
 void TrainLevel::x()
 {

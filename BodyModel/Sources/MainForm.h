@@ -20,6 +20,15 @@ private:
 
 	//Loading Bar
 	bool show_loading_bar=false;
+	bool show_CountDown = false;
+	int countDown = 3;
+	int nanoSeconds = 300;
+	int maxNanoSeconds = 300;
+	bool switchCountDown = false;
+	bool showHighScore = false;
+	bool showKindOfAttacking = false;
+
+	
 
 public:
 	MainForm();
@@ -29,4 +38,6 @@ public:
 
 	//Loading Bar
 	float progress = 0.f;
+	int highScore = 0;
+	char* kindOfAttacking = NULL;
 };
