@@ -13,13 +13,7 @@ CustomMath* CustomMath::getInstance()
 	return instance;
 }
 
-CustomMath::CustomMath()
-{
-	camUp = Kore::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	camForward = Kore::vec4(0.0f, 0.0f, -1.0f, 0.0f);
-	camRight = Kore::vec4(-1.0f, 0.0f, 0.0f, 0.0f);
-	cameraPos = Kore::vec3(0, 0, 0);
-}
+CustomMath::CustomMath() { }
 
 Kore::mat4 CustomMath::getMirrorMatrix()
 {
@@ -74,6 +68,15 @@ void CustomMath::rotateCamera(int movementX, int movementY)
 	q2.rotate(q1);
 	Kore::mat4 mat = q2.matrix();
 	camForward = mat * camForward;
+}
+
+void CustomMath::moveCamera(bool w, bool a, bool s, bool d, float deltaT)
+{
+	// Move position of camera based on WASD keys
+	if (s) cameraPos -= camForward * (float)deltaT * cameraMoveSpeed;
+	if (w) cameraPos += camForward * (float)deltaT * cameraMoveSpeed;
+	if (a) cameraPos += camRight * (float)deltaT * cameraMoveSpeed;
+	if (d) cameraPos -= camRight * (float)deltaT * cameraMoveSpeed;
 }
 
 void CustomMath::initTransAndRot() {

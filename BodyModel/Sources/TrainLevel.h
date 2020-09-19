@@ -10,19 +10,14 @@ public:
     void gamePlay(double deltaT);
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
-    void l();
-    void r();
-    void v();
-    void h();
-	void t();
-    void x();
-    void y();
-    void z();
+
+    
     void init();
 
     void controlsSetup();
     void audioSetup();
     void graphicsSetup();
+
     void checkHittingAvatar();
     void checkHittingEnemy();
 
@@ -31,7 +26,7 @@ public:
 
     bool gameStart;
 
-    double maxWaitintTime = 5.0;
+    double maxWaitingTime = 5.0;
     double countDown = 0.0;
     int poolSize = 10;
     float hittingHeightFoot = 0.5;
@@ -39,10 +34,11 @@ public:
     float hittingRadius = 0.3;
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
-    float starttime;
+    float initialCountdown;
     float time;
     int fps = 0;;
     float offsets;
+
 // Updated upstream
     //void spawn(double deltaT);
 	
@@ -54,10 +50,14 @@ public:
 //  Stashed changes
     int stationNr = 1;
     float stationLength = 30.0;
-    bool stationComplete = false; 
+    bool stationComplete = false;
+    void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
+
+    //Enemy related variables
     int maxEnemyCount = 3;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0; 
-    void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
+    
+    //airplane stuff
     Kore::vec3 airPlanePos;
     bool airplaneAtTheHeight = false;
     void checkEnemyCollision(); 
@@ -66,8 +66,11 @@ public:
     float minAttackingDistance = 3.0;
     float camVelocity = 0.1;
 
+    void createEnemy(Kore::Graphics4::VertexStructure entitySructure);
+
     Level::ALevelObject* createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot);
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
+
     void skyInit(Kore::Graphics4::VertexStructure environmentSructure);
     void trainInit(Kore::Graphics4::VertexStructure environmentSructure);
 	void trainInit(Kore::Graphics4::VertexStructure environmentSructure, int trainLenght);
@@ -77,5 +80,14 @@ public:
     void airplaneInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);
-    void createEnemy(Kore::Graphics4::VertexStructure entitySructure);
+    
+    //Demo functions, to be deleted
+    void l();
+    void r();
+    void v();
+    void h();
+    void t();
+    void x();
+    void y();
+    void z();
 };

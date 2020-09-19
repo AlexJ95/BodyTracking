@@ -10,22 +10,10 @@ class CustomMath
 private:
 	static CustomMath* instance; //This class is designed to be a singleton
 public:
-	Kore::vec3 cameraPos;
-	Kore::vec4 camUp;
-	Kore::vec4 camForward;
-	Kore::vec4 camRight;
-
 	Kore::mat4 initTrans;
 	Kore::mat4 initTransInv;
 	Kore::Quaternion initRot;
 	Kore::Quaternion initRotInv;
-
-	Kore::mat4 vrProjectionMatrix;
-	Kore::mat4 vrViewMatrix;
-
-	bool hmdMode = false;
-
-	float lastTime;
 	
 	static CustomMath* getInstance(); // Get the singleton instance
 
@@ -42,6 +30,8 @@ public:
 	void setSetViewMatrixCoefficients(Kore::vec3 cameraPosition, Kore::vec4);
 
 	void rotateCamera(int movementX, int movementY);
+
+	void moveCamera(bool w, bool a, bool s, bool d, float deltaT);
 
 	void initTransAndRot(); // Initializes the quaternion initRot and matrix initTrans and their inverses
 

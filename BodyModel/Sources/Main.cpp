@@ -27,9 +27,6 @@ namespace {
 	Level* currentLevel;
 	UI3D* ui;
 	Kore::Window* window;
-	
-	double startTime;
-	double lastTime;
 
 	void record() {
 		logRawData = !logRawData;
@@ -48,7 +45,7 @@ namespace {
 	void rechts()	{ currentLevel->r(); }
 	void vorne()	{ currentLevel->v(); }
 	void hinten()	{ currentLevel->h(); }
-	void tunnel() { currentLevel->t(); }
+	void tunnel()	{ currentLevel->t(); }
 	void xachse()	{ currentLevel->x(); }
 	void yachse()	{ currentLevel->y(); }
 	void zachse()	{ currentLevel->z(); }
@@ -87,12 +84,14 @@ namespace {
 	}
 
 	void update() {
-		float t = (float)(Kore::System::time() - startTime);
+		double t = Kore::System::time() - startTime;
 		double deltaT = t - lastTime;
 		lastTime = t;
 
-		math->lastTime = lastTime;
 		inputController->update(deltaT);
+		Kore::vec3 currentPos = cameraPos;
+		Kore::vec4 currentForward = camForward;
+		double anyT = lastTime;
 		currentLevel->update(deltaT);
 	}
 }

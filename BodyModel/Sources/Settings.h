@@ -1,5 +1,8 @@
 #pragma once
 
+#include "pch.h"
+#include <Kore/Math/Quaternion.h>
+
 namespace {
 	const int numFiles = 7;
     const char* files[numFiles] = {"walking.csv", "lunges.csv", "squats.csv", "kicks.csv", "yoga1.csv", "yoga2.csv", "yoga3.csv"};
@@ -31,9 +34,22 @@ namespace {
 	const int height = 768;
 
 	const bool renderRoom = true;
-	const bool renderTrackerAndController = true;
-	const bool renderAxisForEndEffector = false;
 	const int numOfEndEffectors = 8;
 
 	bool firstPersonMonitor = false;
+
+	bool hmdMode = false;
+
+	double startTime;
+	double lastTime;
+
+	//Camera related stuff
+	float cameraMoveSpeed = 6.f;
+	Kore::vec3 cameraPos = Kore::vec3(0, 0, 0);
+	Kore::vec4 camUp = Kore::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	Kore::vec4 camForward = Kore::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+	Kore::vec4 camRight = Kore::vec4(-1.0f, 0.0f, 0.0f, 0.0f);
+
+	Kore::mat4 vrProjectionMatrix;
+	Kore::mat4 vrViewMatrix;
 }

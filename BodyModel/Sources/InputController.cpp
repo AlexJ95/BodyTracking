@@ -187,14 +187,5 @@ void InputController::init()
 
 void InputController::update(float deltaT)
 {
-	if (!ui->isUIshown())
-	{
-		// Move position of camera based on WASD keys
-		Kore::vec3 cameraPos = math->cameraPos;
-		if (S) cameraPos -= math->camForward * (float)deltaT * cameraMoveSpeed;
-		if (W) cameraPos += math->camForward * (float)deltaT * cameraMoveSpeed;
-		if (A) cameraPos += math->camRight * (float)deltaT * cameraMoveSpeed;
-		if (D) cameraPos -= math->camRight * (float)deltaT * cameraMoveSpeed;
-		math->cameraPos = cameraPos;
-	}
+	if (!ui->isUIshown()) math->moveCamera(W, A, S, D, deltaT);
 }

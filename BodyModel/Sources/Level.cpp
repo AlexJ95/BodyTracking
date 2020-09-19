@@ -18,8 +18,8 @@ void Level::update(double deltaT)
 
 void Level::init()
 {	
-	
-	for (ALevelObject* object : environment) objects.emplace_back(object->render);
+	std::vector<LevelObject*> objects;
+	for (ALevelObject* object : environment) objects.emplace_back(object->object);
 	std::vector<AnimatedEntity*> entities;
 	for (NonPlayerCharacter* entity : enemies) entities.emplace_back(entity->entity);
 	renderer->init(objects, entities, avatar->entity, animator);
@@ -30,39 +30,30 @@ void Level::setUI(UI3D* ui)
 {
 	renderer->ui = ui;
 }
-void Level::l()
+
+void Level::controlsSetup()
 {
+
 }
-void Level::r()
+
+void Level::audioSetup()
 {
+
 }
-void Level::v()
+
+void Level::graphicsSetup()
 {
-}
-void Level::h()
-{
-}
-void Level::t()
-{
-}
-void Level::x()
-{
-}
-void Level::y()
-{
-}
-void Level::z()
-{
+
 }
 
 Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation)
 {
-	render = new LevelObject(meshFile, textureFile, structure, scale, position, rotation);
+	object = new LevelObject(meshFile, textureFile, structure, scale, position, rotation);
 }
 
 Level::ALevelObject::ALevelObject(ALevelObject* reference, Kore::vec3 position, Kore::Quaternion rotation)
 {
-	render = new LevelObject(reference->render->meshObject, position, rotation);
+	object = new LevelObject(reference->object->meshObject, position, rotation);
 }
 
 Level::AnAnimatedEntity::AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation)

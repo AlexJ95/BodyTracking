@@ -91,6 +91,7 @@ void Avatar::recognizedMotion(PlayerMovement currentMovement)
 {
 	lastMovement = currentMovement;
 	movementExpiration = 5; //to be tweaked!!!1!1!!11!elf|
+	movementExpired = false;
 
 	//Insert logic for pro-active movements here or call subroutines here
 	//For example attacking or walking and jogging
@@ -98,13 +99,13 @@ void Avatar::recognizedMotion(PlayerMovement currentMovement)
 
 void AnimatedEntity::initializeEndeffectors()
 {
-	endEffector = new EndEffector * [numOfEndEffectors];
-	endEffector[head] = new EndEffector(headBoneIndex);
-	endEffector[hip] = new EndEffector(hipBoneIndex);
-	endEffector[leftHand] = new EndEffector(leftHandBoneIndex);
-	endEffector[leftForeArm] = new EndEffector(leftForeArmBoneIndex);
-	endEffector[rightHand] = new EndEffector(rightHandBoneIndex);
-	endEffector[rightForeArm] = new EndEffector(rightForeArmBoneIndex);
-	endEffector[leftFoot] = new EndEffector(leftFootBoneIndex);
-	endEffector[rightFoot] = new EndEffector(rightFootBoneIndex);
+	endEffector					= new EndEffector * [numOfEndEffectors];
+	endEffector[head]			= new EndEffector(headBoneIndex);
+	endEffector[hip]			= new EndEffector(hipBoneIndex);
+	endEffector[leftHand]		= new EndEffector(leftHandBoneIndex);
+	endEffector[leftForeArm]	= new EndEffector(leftForeArmBoneIndex);
+	endEffector[rightHand]		= new EndEffector(rightHandBoneIndex);
+	endEffector[rightForeArm]	= new EndEffector(rightForeArmBoneIndex);
+	endEffector[leftFoot]		= new EndEffector(leftFootBoneIndex);
+	endEffector[rightFoot]		= new EndEffector(rightFootBoneIndex);
 }

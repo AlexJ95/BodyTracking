@@ -291,8 +291,8 @@ void Renderer::animate(AnimatedEntity* entity)
 void Renderer::animate(Avatar* avatar)
 {
 	//animate((AnimatedEntity*) avatar);
-	if (renderTrackerAndController) renderAllVRDevices(avatar);
-	if (renderAxisForEndEffector) renderCSForEndEffector(avatar);
+	if (avatar->renderTrackerAndControllers) renderAllVRDevices(avatar);
+	if (avatar->renderAxisForEndEffectors) renderCSForEndEffector(avatar);
 }
 
 void Renderer::renderAllVRDevices(Avatar* avatar) {
@@ -371,6 +371,6 @@ void Renderer::renderCSForEndEffector(Avatar* avatar) {
 
 		Kore::mat4 M = Kore::mat4::Translation(endEffectorPos.x(), endEffectorPos.y(), endEffectorPos.z()) * endEffectorRot.matrix().Transpose();
 		Kore::Graphics4::setMatrix(entityGraphics->mLocation, M);
-		avatar->viveObjects[2]->render(entityGraphics->tex);
+		avatar->viveObjects[avatar->renderTrackerAndControllers? 2 : 0]->render(entityGraphics->tex);
 	}
 }

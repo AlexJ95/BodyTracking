@@ -164,7 +164,7 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 				rawRotation, desRotation, finalRot,
 				rawAngVel, desAngVel,
 				rawLinVel, desLinVel,
-				entity->meshObject->scale, math->lastTime);
+				entity->meshObject->scale, lastTime);
 		}
 	}
 }
