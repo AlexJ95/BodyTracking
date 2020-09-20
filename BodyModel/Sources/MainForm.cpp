@@ -149,137 +149,6 @@ void MainForm::drawForm()
 			show_loading_bar = false;
 			show_main_menu = false;
 			showingForm = false;
-			show_CountDown = true;
-			progress = 0;
-		}
-		//only for testing
-		progress += 0.01;
-		ImGui::End();
-	}else if (show_loading_bar)
-	{
-		ImGui::Begin("Loading...", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.1f);
-		ImGui::SetWindowSize("Loading...", ImVec2(200, 60), 0);
-		ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
-		ImGui::SetWindowPos(wPos);
-
-
-		ImVec2 pos = ImGui::GetCursorScreenPos();
-		float height = 20;
-		float width = ImGui::GetWindowWidth() - 2.f * (pos.x - ImGui::GetWindowPos().x);
-
-		ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + width * progress, pos.y + height), IM_COL32(0, 255, 0, 255));
-		ImGui::GetWindowDrawList()->AddRect(pos, ImVec2(pos.x + width, pos.y + height), IM_COL32(255, 50, 0, 255));
-		if (progress > 1.f)
-		{
-			show_loading_bar = false;
-			show_main_menu = false;
-			showingForm = false;
-			show_CountDown = true;
-			progress = 0;
-		}
-		//only for testing
-		progress += 0.01;
-		ImGui::End();
-	}
-	else if (show_CountDown)
-	{
-		ImGui::Begin("Count Down", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-		ImGui::SetWindowSize("Count Down", ImVec2(100, 50), 0);
-		ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
-		ImGui::SetWindowPos(wPos);
-		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f - ImGui::GetWindowSize().x * 0.01);
-		ImGui::SetCursorPosY(ImGui::GetWindowSize().y * 0.5f - ImGui::GetWindowSize().y * 0.1f);
-		//ImGui::Text((char*)countDown);
-		if (nanoSeconds > (maxNanoSeconds * (2.0 / 4.0)) && nanoSeconds <= (maxNanoSeconds * (3.0 / 4.0)) && !switchCountDown)
-		{
-			countDown--;
-			switchCountDown = true;
-		}
-		else if (nanoSeconds > (maxNanoSeconds * (1.0 / 4.0)) && nanoSeconds <= (maxNanoSeconds * (2.0 / 4.0)) && switchCountDown)
-		{
-			countDown--;
-			switchCountDown = false;
-		}
-		else if (nanoSeconds > 0 && nanoSeconds <= maxNanoSeconds * (1.0 / 7.0))
-		{
-			ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.28f);
-			ImGui::Text("Action!");
-		}
-		else if (nanoSeconds <= 0)
-		{
-			show_CountDown = false;
-			startGame = true;
-			showHighScore = true;
-			showKindOfAttacking = true;
-		}
-		else
-		{
-			std::string s = std::to_string(countDown);
-			ImGui::Text(s.c_str());
-		}
-
-
-		ImGui::End();
-		nanoSeconds--;
-	}
-	else if (showHighScore)
-	{
-		ImGui::Begin("Highscore", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-		ImGui::SetWindowSize("Highscore", ImVec2(100, 50), 0);
-		ImVec2 wPos(contentSize.x - ImGui::GetWindowWidth() - 20, ImGui::GetWindowHeight());
-		ImGui::SetWindowPos(wPos);
-		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f - ImGui::GetWindowSize().x * 0.01);
-		//ImGui::SetCursorPosY(ImGui::GetWindowSize().y * 0.5f - ImGui::GetWindowSize().y * 0.1f);
-
-		std::string s = std::to_string(highScore);
-		ImGui::Text(s.c_str());
-
-		ImGui::End();
-	}
-
-	if (kindOfAttacking != NULL && showKindOfAttacking)
-	{
-		ImGui::Begin("Attacking", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-		ImGui::SetWindowSize("Attacking", ImVec2(220, 50), 0);
-		ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, ImGui::GetWindowHeight() * 0.5f);
-		ImGui::SetWindowPos(wPos);
-		ImGui::SetCursorPosY(ImGui::GetWindowSize().y * 0.5f - ImGui::GetWindowSize().y * 0.1f);
-
-		ImGui::Text(kindOfAttacking);
-
-		ImGui::End();
-	}
-
-	////////////////////////////////////////////////////////////
-}
-void MainForm::displayLoading()
-{
-	ImGuiIO io = ImGui::GetIO();
-	ImVec2 contentSize = io.DisplaySize;
-	ImGui::SetNextWindowBgAlpha(alpha);
-
-	if (show_loading_bar)
-	{
-		ImGui::Begin("Loading...", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.1f);
-		ImGui::SetWindowSize("Loading...", ImVec2(200, 60), 0);
-		ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
-		ImGui::SetWindowPos(wPos);
-
-
-		ImVec2 pos = ImGui::GetCursorScreenPos();
-		float height = 20;
-		float width = ImGui::GetWindowWidth() - 2.f * (pos.x - ImGui::GetWindowPos().x);
-
-		ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + width * progress, pos.y + height), IM_COL32(0, 255, 0, 255));
-		ImGui::GetWindowDrawList()->AddRect(pos, ImVec2(pos.x + width, pos.y + height), IM_COL32(255, 50, 0, 255));
-		if (progress > 1.f)
-		{
-			show_loading_bar = false;
-			show_main_menu = false;
-			showingForm = false;
-			show_CountDown = true;
 			progress = 0;
 		}
 		//only for testing
@@ -353,5 +222,35 @@ void MainForm::displayLoading()
 
 		ImGui::End();
 	}
+
+	////////////////////////////////////////////////////////////
+}
+void MainForm::displayLoading()
+{
+	
+	show_loading_bar = true;
+	show_main_menu = true;
+	showingForm = true;
+
+	if (progress > 1.f)
+	{
+		show_loading_bar = false;
+		show_main_menu = false;
+		showingForm = false;
+		show_CountDown = true;
+	}
+	//only for testing
+	progress += 0.01;
+
+	if (nanoSeconds <= 0)
+	{
+		show_CountDown = false;
+		startGame = true;
+		showHighScore = true;
+		showKindOfAttacking = true;
+	}
+	nanoSeconds--;
+
+
 }	
 ;
