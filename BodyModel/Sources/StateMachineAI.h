@@ -52,12 +52,13 @@ public:
 	float limitPosX = 1.5;
 	bool died;
 	static int numberOfVictories;
-	enum class AIState { Attacking, Pursueing, Planning, Dying };
+	enum class AIState { Attacking, Pursueing, Planning, Dying,Landing };
 	
 	AIState attacking	(float deltaT);
 	AIState pursueing	(float deltaT);
 	AIState planning	(float deltaT);
 	AIState dying		(float deltaT);
+	AIState landing		(float deltaT);
 
 	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
 	

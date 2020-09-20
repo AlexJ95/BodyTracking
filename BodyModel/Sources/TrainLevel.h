@@ -11,12 +11,13 @@ public:
     void deleteRoom();
     void loadTrainLevel();
     void gamePlay(double deltaT);
-    void loadEnemy(float deltaT, int carriage);
+    void loadEnemies(float deltaT, int carriage);
     void loadEnemyRandom(float deltaT, int carriage);
-    void loadEnemy(float deltaT);
     void loadTunnel(int range);
+    void loadAirplane();
+    void loadEnemy(int range, Kore::vec3 pos);
+    void loadEnemy(int range, Kore::vec4 pos);
     void loadEnding();
-    void loadEnemy();
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
     void setPosition(ALevelObject* alo, float x, float y, float z);
@@ -85,7 +86,6 @@ public:
 	void trainInit(Kore::Graphics4::VertexStructure environmentSructure, int trainLenght);
     void groundInit(Kore::Graphics4::VertexStructure environmentSructure);
     void houseInit(Kore::Graphics4::VertexStructure environmentSructure);
-	void houseInit(Kore::Graphics4::VertexStructure environmentSructure, bool placeholder);
     void airplaneInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);

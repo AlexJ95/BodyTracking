@@ -180,6 +180,14 @@ CyborgAI::AIState CyborgAI::planning(float deltaT)
 	return AIState::Planning;
 }
 
+CyborgAI::AIState CyborgAI::landing(float deltaT) {
+
+
+	Kore::log(Kore::Info, "%f %f %f", entity->position.x(), entity->position.y(), entity->position.z());
+	entity->position.x() -= 1;
+
+	return AIState::Landing;
+}
 
 CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference) : StateMachineAI(enemyEntity, animatorReference, avatarReference)
 {
@@ -187,12 +195,13 @@ CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Ava
 		{(StateMachineAI::AIState) CyborgAI::AIState::Attacking,	reinterpret_cast<action>(&CyborgAI::attacking)},
 		{(StateMachineAI::AIState) CyborgAI::AIState::Pursueing,	reinterpret_cast<action>(&CyborgAI::pursueing)},
 		{(StateMachineAI::AIState) CyborgAI::AIState::Planning,		reinterpret_cast<action>(&CyborgAI::planning)},
-		{(StateMachineAI::AIState) CyborgAI::AIState::Dying,		reinterpret_cast<action>(&CyborgAI::dying)}
+		{(StateMachineAI::AIState) CyborgAI::AIState::Dying,		reinterpret_cast<action>(&CyborgAI::dying)},
+		{(StateMachineAI::AIState) CyborgAI::AIState::Landing,		reinterpret_cast<action>(&CyborgAI::landing)}
 	};
 	animationLibrary = {
 		{"Kicking", files[3]},
 		{"Walking", files[1]}
 		//{"Dying",files[...]}
 	};
-	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Planning;
+	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Landing;
 }

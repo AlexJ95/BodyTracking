@@ -31,7 +31,7 @@ void TrainLevel::update(double deltaT)
 
 	avatar->entity->position = Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
 
-	//avatar->entity->calibrated = true;
+	avatar->entity->calibrated = true;
 
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
@@ -78,7 +78,7 @@ void TrainLevel::loadTrainLevel() {
 void TrainLevel::gamePlay(double deltaT) {
 
 	if (avatar->entity->position.x() > 15.0f * currentCarriage &&  !enemyExist)
-				loadEnemy(deltaT,currentCarriage++);
+				loadEnemies(deltaT,currentCarriage++);
 
 	if (form->gameStarted())
 	{
@@ -92,18 +92,16 @@ void TrainLevel::gamePlay(double deltaT) {
 		loadEnding();
 }
 
-void TrainLevel::loadEnemy(float deltaT, int carriage) {
+void TrainLevel::loadEnemies(float deltaT, int carriage) {
 
-	Kore::log(Kore::Info, "make enemy");
-	int num = 1;
-
-	switch (num) {
-	case 0: checkStation(deltaT);
-	case 1: loadTunnel(carriage);
-	default: checkStation(deltaT);
+	Kore::log(Kore::Info, "make enemy %d", carriage);
+	switch (carriage) {
+	case 1: loadAirplane();	break;
+	case 2: loadTunnel(carriage);	break;
+	default: spawn(deltaT);
 	}
 
-	enemyExist = true;
+	
 }
 
 void TrainLevel::loadEnemyRandom(float deltaT, int carriage) {
@@ -112,12 +110,10 @@ void TrainLevel::loadEnemyRandom(float deltaT, int carriage) {
 	int num = 1;
 
 	switch (num) {
-	case 0: checkStation(deltaT);
-	case 1: loadTunnel(carriage);
+	case 0: checkStation(deltaT); break;
+	case 1: loadTunnel(carriage); break;
 	default: checkStation(deltaT);
 	}
-
-	enemyExist = true;
 }
 
 void TrainLevel::loadTunnel(int range) {
@@ -129,7 +125,29 @@ void TrainLevel::loadTunnel(int range) {
 			
 		}
 	}
+	enemyExist = true;
 }
+
+void TrainLevel::loadAirplane() {
+	Kore::log(Kore::Info, "call the airplane");
+	for (ALevelObject* object : environment) {
+		if (object->render->tag == "airplane") {
+			object->render->activated = true;
+		}
+	}
+}
+
+void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
+
+	Kore::log(Kore::Info, "drop the enemy");
+	NonPlayerCharacter* enemy = enemies[range];		
+	enemy->entity->position = pos;
+	enemy->entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi);		
+	enemy->ai->spawn();
+	enemy->entity->activated = true;
+	enemyExist = true;
+}
+
 
 void TrainLevel::loadEnding() {
 
@@ -173,6 +191,10 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 							enemyExist = false;					
 					}
 					else if (object->render->tag == "airplane") {
+
+						if (object->render->position.x() < avatar->entity->position.x() + 30 && object->render->position.x() > 0 && !enemyExist)
+							loadEnemy(currentCarriage,object->render->position);
+
 						object->render->position.x() -= deltaT * speed * 3;
 						if (object->render->position.x() < 0)
 							object->render->position.y() += deltaT * speed;
@@ -213,7 +235,8 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 						setPosition(object, 454, object->render->position.y(), 12.3f);
 					}
 					else if (object->render->tag == "airplane") {
-						setPosition(object, 454, 50.0f, object->render->position.z());
+						object->render->activated = false;
+						object->render->position = object->initPosition;
 					}
 					else if (object->render->tag == "tunnelS") {
 						object->render->activated = false;
@@ -226,7 +249,7 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 }
 
 void TrainLevel::setPosition(ALevelObject* alo ,float x, float y, float z) {
-	alo->render->position = Kore::vec4(x, y, z, 1.0f);
+	alo->render->position = Kore::vec3(x, y, z);
 }
 
 void TrainLevel::controlsSetup()
@@ -314,12 +337,10 @@ void TrainLevel::checkStation(double deltaT)//, Kore::vec3 AirPlanePos)
 		stationStarted = true;
 		stationNr++;
 	}
-	countDown += deltaT;
 }
 
 void TrainLevel::spawn(double deltaT)//, Kore::vec3 AirPlanePos)
 {
-
 	if (countDown > maxWaitintTime | (stationStarted & countDown > maxWaitintTime / 100.0))
 	{
 		stationStarted = false;
