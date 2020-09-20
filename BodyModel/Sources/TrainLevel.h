@@ -78,4 +78,6 @@ public:
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);
     void createEnemy(Kore::Graphics4::VertexStructure entitySructure);
+    void freeMemory(ALevelObject* alo);
+    void reIteratorVector();
 };
