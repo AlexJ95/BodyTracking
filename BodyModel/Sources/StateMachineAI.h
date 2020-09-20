@@ -53,13 +53,14 @@ public:
 	float fallinVelocity = 10.0;
 	bool died;
 	static int numberOfVictories;
-	enum class AIState { Attacking, Pursueing, Planning, Dying, Falling };
+	enum class AIState { Attacking, Pursueing, Planning, Dying, Falling, Landing};
 	
 	AIState attacking	(float deltaT);
 	AIState pursueing	(float deltaT);
 	AIState planning	(float deltaT);
 	AIState dying		(float deltaT);
-	AIState falling(float deltaT);
+	AIState falling		(float deltaT);
+	AIState landing		(float deltaT);
 
 	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
 	
