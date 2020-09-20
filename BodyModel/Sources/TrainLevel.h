@@ -11,6 +11,10 @@ public:
     void deleteRoom();
     void loadTrainLevel();
     void gamePlay(double deltaT);
+    void loadEnemy(float deltaT, int carriage);
+    void loadEnemy(float deltaT);
+    void loadTunnel(int range);
+    void loadEnemy();
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
     void t();
@@ -33,6 +37,8 @@ public:
     bool stationStarted = true;
 
     bool gameStart;
+    int currentCarriage = 1;
+    bool enemyExist = false;
 
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
@@ -58,7 +64,7 @@ public:
     int stationNr = 1;
     float stationLength = 30.0;
     bool stationComplete = false; 
-    int maxEnemyCount = 3;  //sollte 1 sein 2 nur zum testen
+    int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0; 
     void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
     Kore::vec3 airPlanePos;
