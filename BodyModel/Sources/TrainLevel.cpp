@@ -37,10 +37,11 @@ void TrainLevel::update(double deltaT)
 	}
 
 	if (gameStart) {
+		avatar->entity->position.x() += 1;
 		updateBuilding(deltaT, 20);
 		updateFPS(deltaT);		
 		starttime += deltaT;
-		if(starttime > 3.0f)
+		if(starttime > 10.0f)
 			gamePlay(deltaT);
 		else starttime += deltaT;
 	}
@@ -66,9 +67,8 @@ void TrainLevel::deleteRoom() {
 
 void TrainLevel::loadTrainLevel() {
 	for (ALevelObject* object : environment) {
-		object->render->activated = true;
-		if(object->render->tag == "train")
-			renderer->setLights(*object->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
+		if(object->render->tag != "tunnelS" && object->render->tag != "airplane")
+			object->render->activated = true;
 	}
 }
 
@@ -736,7 +736,7 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure,
 
 void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
-	ALevelObject* airplane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(78,50,0), Kore::Quaternion(3, 0, 1, 0));
+	ALevelObject* airplane = createNewObject("airplane/airplane.ogex", "airplane/", environmentSructure, 1, Kore::vec3(454,50,0), Kore::Quaternion(3, 0, 1, 0));
 	airplane->render->tag = "airplane";
 }
 
@@ -765,10 +765,9 @@ void TrainLevel::tunnelInit(Kore::Graphics4::VertexStructure environmentSructure
 }
 
 void TrainLevel::t()
-{
-	avatar->entity->calibrated = true;
-	//bjects[0]->render->position.x() += offsets;
-	//Kore::log(Kore::Info, "X = %f", objects[0]->render->position.x());
+{	
+	objects[0]->render->position.x() += offsets;
+	Kore::log(Kore::Info, "X = %f", objects[0]->render->position.x());
 }
 void TrainLevel::g()
 {
@@ -787,12 +786,14 @@ void TrainLevel::h()
 }
 void TrainLevel::x()
 {
+	avatar->entity->calibrated = true;
+	/*
 	for (ALevelObject* object : environment) {
 		if (object->render->tag == "tunnelS") {
 			object->render->moveable = true;
 			object->render->activated = true;
 		}
-	}
+	}*/
 }
 void TrainLevel::v()
 {
