@@ -207,7 +207,7 @@ void Renderer::setLights(LevelObject object, Kore::Graphics4::ConstantLocation l
 		lightPositions[i] = object.meshObject->M * light->position;
 
 		if (light->type == 0) {
-			lightPositions[i].w() = 1;
+			lightPositions[i].w() = 0;
 		}
 		else if (light->type == 1) {
 			lightPositions[i].w() = 1;
@@ -290,7 +290,7 @@ void Renderer::animate(AnimatedEntity* entity)
 //Subroutines specifically for the Avatar
 void Renderer::animate(Avatar* avatar)
 {
-	//animate((AnimatedEntity*) avatar);
+	animate((AnimatedEntity*) avatar);
 	if (renderTrackerAndController) renderAllVRDevices(avatar);
 	if (renderAxisForEndEffector) renderCSForEndEffector(avatar);
 }

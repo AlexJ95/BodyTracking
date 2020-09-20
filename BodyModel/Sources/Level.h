@@ -21,7 +21,6 @@ public:
 	{
 		//Relatively empty and redundant at the moment, however this space is supposed to hold all potential components for levelObject like new hazard or maybe collectible components
 		LevelObject* render;
-		bool moveable = true;
 		//Kore::vec3 position;
 		//Kore::Quaternion rotation;
 		ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation);
@@ -66,13 +65,13 @@ public:
 
 	virtual void init();
 	virtual void setUI(UI3D* ui);
-	virtual void l();
-	virtual void r();
-	virtual void v();
-	virtual void h();
-	virtual void t();
-	virtual void x();
-	virtual void y();
-	virtual void z();
+	virtual void t() = 0;
+	virtual void f() = 0;
+	virtual void g() = 0;
+	virtual void h() = 0;
+	virtual void x() = 0;
+	virtual void v() = 0;
+	virtual void b() = 0;
+	virtual void n() = 0;
 };
 
