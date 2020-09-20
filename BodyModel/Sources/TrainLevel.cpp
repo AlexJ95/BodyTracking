@@ -34,7 +34,7 @@ void TrainLevel::update(double deltaT)
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
 	else {	
-		form->displayLoading();
+			form->displayLoading();
 			gameStart = true; 
 			deleteRoom();
 			loadTrainLevel();
@@ -52,8 +52,38 @@ void TrainLevel::update(double deltaT)
 }
 
 void TrainLevel::updatePoints() {
-	
-	form->addHighScore(1);
+		switch (currentEnemy) {
+		case 0:
+			if ((avatar->entity->lastMovement == 5|| avatar->entity->lastMovement == 1 || avatar->entity->lastMovement == 2) && true)
+				form->addHighScore(2);
+			break;
+		case 1:
+			if ((avatar->entity->lastMovement == 5 || avatar->entity->lastMovement == 1) && true)
+				form->addHighScore(2);
+			else if((avatar->entity->lastMovement == 2) && true)
+				form->addHighScore(1);
+			break;
+
+		case 2:
+			if ((avatar->entity->lastMovement == 5 || avatar->entity->lastMovement == 2) && true)
+				form->addHighScore(2);
+			else if ((avatar->entity->lastMovement == 1) && true)
+				form->addHighScore(1);
+			break;
+		case 3:
+			if ((avatar->entity->lastMovement == 1 || avatar->entity->lastMovement == 2) && true)
+				form->addHighScore(2);
+			else if ((avatar->entity->lastMovement == 5) && true)
+				form->addHighScore(1);
+			break;
+		case 4:
+			if ((avatar->entity->lastMovement == 1) && true)
+				form->addHighScore(2);
+			else if ((avatar->entity->lastMovement == 5 || avatar->entity->lastMovement == 1) && true)
+				form->addHighScore(1);
+			break;
+
+		}
 }
 
 void TrainLevel::runCalibrationRoom() {
