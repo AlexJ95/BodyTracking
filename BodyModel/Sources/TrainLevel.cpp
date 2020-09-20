@@ -77,8 +77,8 @@ void TrainLevel::loadTrainLevel() {
 
 void TrainLevel::gamePlay(double deltaT) {
 
-	if (avatar->entity->position.x() > 15.0f * currentCarriage &&  !enemyExist)
-				loadEnemies(deltaT,currentCarriage++);
+	//if (avatar->entity->position.x() > 15.0f * currentCarriage &&  !enemyExist)
+	//			loadEnemies(deltaT,currentCarriage++);
 
 	if (form->gameStarted())
 	{
@@ -338,6 +338,7 @@ void TrainLevel::checkStation(double deltaT)//, Kore::vec3 AirPlanePos)
 		stationStarted = true;
 		stationNr++;
 	}
+	countDown += deltaT;
 }
 
 void TrainLevel::spawn(double deltaT)//, Kore::vec3 AirPlanePos)
