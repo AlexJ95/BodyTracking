@@ -29,9 +29,7 @@ void TrainLevel::update(double deltaT)
 	//code level-specific runtime logic here
 	Level::update(deltaT);
 
-	
-
-	avatar->entity->calibrated = true;
+	//avatar->entity->calibrated = true;
 
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
@@ -77,12 +75,13 @@ void TrainLevel::loadTrainLevel() {
 
 void TrainLevel::gamePlay(double deltaT) {
 
-	//if (avatar->entity->position.x() > 15.0f * currentCarriage &&  !enemyExist)
-	//			loadEnemies(deltaT,currentCarriage++);
+	if (avatar->entity->position.y() < -17.0f * currentCarriage &&  !enemyExist)
+				loadEnemies(deltaT,currentCarriage++);
 
-	if (form->gameStarted())
+	avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
+
+	if (form->gameStarted()&& enemyExist)
 	{
-		avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
 		checkStation(deltaT);
 		checkEnemyCollision();
 		checkHittingAvatar();
@@ -98,9 +97,17 @@ void TrainLevel::loadEnemies(float deltaT, int carriage) {
 
 	Kore::log(Kore::Info, "make enemy %d", carriage);
 	switch (carriage) {
-	case 1: loadAirplane();	break;
+	case 1: loadEnemy(0,avatar->entity->position);	break;
 	case 2: loadTunnel(carriage);	break;
-	default: spawn(deltaT);
+	case 3: loadEnemy(1, avatar->entity->position);	break;
+	case 4: loadTunnel(carriage);	break;
+	case 5: loadEnemy(2, avatar->entity->position);	break;
+	case 6: loadTunnel(carriage);	break;
+	case 7: loadEnemy(3, avatar->entity->position);	break;
+	case 8: loadTunnel(carriage);	break;
+	case 9: loadEnemy(4, avatar->entity->position);	break;
+
+	default: loadEnemy(0, avatar->entity->position); break;
 	}
 
 	
@@ -140,12 +147,13 @@ void TrainLevel::loadAirplane() {
 }
 
 void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
-	
+	enemyExist = true;
+	currentEnemy = range;
 }
 
 
 void TrainLevel::loadEnding() {
-
+	Kore::log(Kore::Info, "Game End");
 
 
 }
@@ -314,6 +322,7 @@ void TrainLevel::checkStation(double deltaT)//, Kore::vec3 AirPlanePos)
 	if (StateMachineAI::beatedEnemyCount >= maxEnemyCount & !stationComplete)
 	{
 		stationComplete = true;
+		enemyExist = false;
 		currentEnemyCount = 0;
 
 		if (maxEnemyCount < poolSize)
@@ -340,22 +349,25 @@ void TrainLevel::spawn(double deltaT)//, Kore::vec3 AirPlanePos)
 	if (countDown > maxWaitintTime | (stationStarted & countDown > maxWaitintTime / 100.0))
 	{
 		stationStarted = false;
-		
+		int i = 0;
 		for (NonPlayerCharacter* enemy : enemies)
 		{
-			if (!(enemy->entity->beated) & !(enemy->entity->activated))
-			{
-				Kore::vec3 globAirPlanePos = locToGlob * Kore::vec4(airPlanePos.x(), airPlanePos.y(), airPlanePos.z(), 1.0);
-				float randomX_Pos = (float)(rand() % 2 - 1);
-				if (randomX_Pos == 0.0)
-					randomX_Pos += 0.1;
-				enemy->entity->position = Kore::vec3(randomX_Pos, (avatar->entity->position.y() - stationLength), 0.0f);
-				enemy->entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi);
-				countDown = 0.0;
-				enemy->ai->spawn();
-				currentEnemyCount++;
-				break;
+			if (i == currentEnemy) {
+				if (!(enemy->entity->beated) & !(enemy->entity->activated))
+				{
+					Kore::vec3 globAirPlanePos = locToGlob * Kore::vec4(airPlanePos.x(), airPlanePos.y(), airPlanePos.z(), 1.0);
+					float randomX_Pos = (float)(rand() % 2 - 1);
+					if (randomX_Pos == 0.0)
+						randomX_Pos += 0.1;
+					enemy->entity->position = Kore::vec3(randomX_Pos, (avatar->entity->position.y() - stationLength), 0.0f);
+					enemy->entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi);
+					countDown = 0.0;
+					enemy->ai->spawn();
+					currentEnemyCount++;
+					break;
+				}
 			}
+			else i++;
 		}
 	}
 

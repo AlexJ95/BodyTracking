@@ -43,6 +43,7 @@ public:
     bool gameStart;
     int currentCarriage = 1;
     bool enemyExist = false;
+    int currentEnemy = 0;
 
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
@@ -66,7 +67,7 @@ public:
 
 //  Stashed changes
     int stationNr = 1;
-    float stationLength = 30.0;
+    float stationLength = 18.0;
     bool stationComplete = false; 
     int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0; 

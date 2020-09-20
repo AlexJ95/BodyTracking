@@ -29,7 +29,7 @@ namespace {
 	double startTime;
 	double lastTime;
 	double countTime;
-	float fps = 60;
+	float fps = 144;
 
 	void record() {
 		logRawData = !logRawData;
