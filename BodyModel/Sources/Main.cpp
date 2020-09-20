@@ -29,7 +29,7 @@ namespace {
 	double startTime;
 	double lastTime;
 	double countTime;
-	float fps = 144;
+	float fps = 60;
 
 	void record() {
 		logRawData = !logRawData;
@@ -51,6 +51,9 @@ namespace {
 	void v()	{ currentLevel->v(); }
 	void b()	{ currentLevel->b(); }
 	void n()	{ currentLevel->n(); }
+	void p() { currentLevel->loadTunnel(0); }
+	void signL() { currentLevel->triggerSignL(); }
+	void signR() { currentLevel->triggerSignR(); }
 
 	void init() {
 		logger = new Logger;
@@ -66,6 +69,9 @@ namespace {
 				{Kore::KeyCode::KeyX, x},
 				{Kore::KeyCode::KeyB, b},
 				{Kore::KeyCode::KeyN, n},
+				{Kore::KeyCode::KeyP, p},
+				{Kore::KeyCode::KeyI, signR},
+				{Kore::KeyCode::KeyU, signL},
 			});
 		inputController->setUI(ui);
 

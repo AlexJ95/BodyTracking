@@ -73,5 +73,8 @@ public:
 	virtual void v() = 0;
 	virtual void b() = 0;
 	virtual void n() = 0;
+	virtual void loadTunnel(int numb) = 0;
+	virtual void triggerSignL() = 0;
+	virtual void triggerSignR() = 0;
 };
 

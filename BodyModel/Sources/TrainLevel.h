@@ -21,7 +21,10 @@ public:
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
     void setPosition(ALevelObject* alo, float x, float y, float z);
-    void t();
+	//void triggerTunnel();
+	void triggerSignL();
+	void triggerSignR();
+	void t();
     void f();
     void g();
     void h();
@@ -84,6 +87,7 @@ public:
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
     void roomInit(Kore::Graphics4::VertexStructure environmentSructure);
     void skyInit(Kore::Graphics4::VertexStructure environmentSructure);
+	void signInit(Kore::Graphics4::VertexStructure environmentSructure);
 	void trainInit(Kore::Graphics4::VertexStructure environmentSructure, int trainLenght);
     void groundInit(Kore::Graphics4::VertexStructure environmentSructure);
     void houseInit(Kore::Graphics4::VertexStructure environmentSructure);
