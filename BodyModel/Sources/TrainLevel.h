@@ -7,6 +7,7 @@ class TrainLevel :
 {
 public:
     void update(double deltaT);
+    void updatePoints();
     void runCalibrationRoom();
     void deleteRoom();
     void loadTrainLevel();
@@ -16,7 +17,6 @@ public:
     void loadTunnel(int range);
     void loadAirplane();
     void loadEnemy(int range, Kore::vec3 pos);
-    void loadEnemy(int range, Kore::vec4 pos);
     void loadEnding();
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);

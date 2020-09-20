@@ -33,7 +33,9 @@ void TrainLevel::update(double deltaT)
 
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
-	else {	gameStart = true; 
+	else {	
+			form->displayLoading();
+			gameStart = true; 
 			deleteRoom();
 			loadTrainLevel();
 	}
@@ -47,6 +49,41 @@ void TrainLevel::update(double deltaT)
 		else starttime += deltaT;
 	}
 
+}
+
+void TrainLevel::updatePoints() {
+		switch (currentEnemy) {
+		case 0:
+			if ((avatar->entity->lastMovement == 5|| avatar->entity->lastMovement == 1 || avatar->entity->lastMovement == 2) && true)
+				form->addHighScore(2);
+			break;
+		case 1:
+			if ((avatar->entity->lastMovement == 5 || avatar->entity->lastMovement == 1) && true)
+				form->addHighScore(2);
+			else if((avatar->entity->lastMovement == 2) && true)
+				form->addHighScore(1);
+			break;
+
+		case 2:
+			if ((avatar->entity->lastMovement == 5 || avatar->entity->lastMovement == 2) && true)
+				form->addHighScore(2);
+			else if ((avatar->entity->lastMovement == 1) && true)
+				form->addHighScore(1);
+			break;
+		case 3:
+			if ((avatar->entity->lastMovement == 1 || avatar->entity->lastMovement == 2) && true)
+				form->addHighScore(2);
+			else if ((avatar->entity->lastMovement == 5) && true)
+				form->addHighScore(1);
+			break;
+		case 4:
+			if ((avatar->entity->lastMovement == 1) && true)
+				form->addHighScore(2);
+			else if ((avatar->entity->lastMovement == 5 || avatar->entity->lastMovement == 1) && true)
+				form->addHighScore(1);
+			break;
+
+		}
 }
 
 void TrainLevel::runCalibrationRoom() {
@@ -82,6 +119,7 @@ void TrainLevel::gamePlay(double deltaT) {
 
 	if (form->gameStarted()&& enemyExist)
 	{
+		updatePoints();
 		checkStation(deltaT);
 		checkEnemyCollision();
 		checkHittingAvatar();
@@ -167,6 +205,7 @@ void TrainLevel::triggerSignR()
 }
 
 void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
+	Kore::log(Kore::Info, "call the enemy");
 	enemyExist = true;
 	currentEnemy = range;
 }
@@ -174,8 +213,7 @@ void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
 
 void TrainLevel::loadEnding() {
 	Kore::log(Kore::Info, "Game End");
-
-
+	form->displayEnd();
 }
 
 void TrainLevel::updateFPS(double deltaT) {
