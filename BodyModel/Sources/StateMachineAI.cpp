@@ -21,9 +21,10 @@ void StateMachineAI::spawn()
 	//Kore::vec3 startPos((float)(rand() % 2-1), 0.0f ,0.0f);
 	//Kore::vec3 startPos(0.0f, 0.0f, 0.0f);
 	//entity->position = startPos;
-
+	entity->position.z() = 50;
 	entity->activated = true;
 	entity->resetCurrentHeight();
+	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Falling;
 }
 
 void StateMachineAI::checkCollision(Kore::vec3 posOtherEnemy)
@@ -41,6 +42,24 @@ void StateMachineAI::checkCollision(Kore::vec3 posOtherEnemy)
 int StateMachineAI::beatedEnemyCount = 0;
 float StateMachineAI::lastDeadPos = 0.0;
 int CyborgAI::numberOfVictories = 0;
+
+CyborgAI::AIState CyborgAI::falling(float deltaT)
+{
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);		//Test
+	//inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);
+
+	entity->position.z() -= fallinVelocity * deltaT;
+
+	if (entity->position.z() > 0)
+	{
+		return AIState::Falling;
+	}
+	else
+	{
+		entity->position.z() = 0.f;
+		return AIState::Planning;
+	}
+}
 
 CyborgAI::AIState CyborgAI::attacking(float deltaT)
 {
@@ -180,6 +199,10 @@ CyborgAI::AIState CyborgAI::planning(float deltaT)
 	return AIState::Planning;
 }
 
+CyborgAI::AIState CyborgAI::landing(float deltaT) {
+
+	return AIState::Landing;
+}
 
 CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference) : StateMachineAI(enemyEntity, animatorReference, avatarReference)
 {
@@ -188,13 +211,17 @@ CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Ava
 		{(StateMachineAI::AIState) CyborgAI::AIState::Attacking,	reinterpret_cast<action>(&CyborgAI::attacking)},
 		{(StateMachineAI::AIState) CyborgAI::AIState::Pursueing,	reinterpret_cast<action>(&CyborgAI::pursueing)},
 		{(StateMachineAI::AIState) CyborgAI::AIState::Planning,		reinterpret_cast<action>(&CyborgAI::planning)},
-		{(StateMachineAI::AIState) CyborgAI::AIState::Dying,		reinterpret_cast<action>(&CyborgAI::dying)}
+		{(StateMachineAI::AIState) CyborgAI::AIState::Landing,		reinterpret_cast<action>(&CyborgAI::landing)},
+		{(StateMachineAI::AIState) CyborgAI::AIState::Dying,		reinterpret_cast<action>(&CyborgAI::dying)},
+		{(StateMachineAI::AIState) CyborgAI::AIState::Falling,		reinterpret_cast<action>(&CyborgAI::falling)}
+		
 	};
 	animationLibrary =
 	{
 		{"Kicking", "verticalChop1.csv"},
 		{"Walking", files[1]}
 		//{"Dying",files[...]}
+		//{"Falling",files[...]}
 	};
 	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Planning;
 }

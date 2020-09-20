@@ -57,14 +57,14 @@ namespace {
 		inputController = inputController->getInstanceAndAppend({
 				{Kore::KeyCode::KeyL, record},
 				{Kore::KeyCode::KeyQ, Kore::System::stop},
-				{Kore::KeyCode::KeyF, links},
-				{Kore::KeyCode::KeyH, rechts},
-				{Kore::KeyCode::KeyV, vorne},
-				{Kore::KeyCode::KeyG, hinten},
-				{Kore::KeyCode::KeyT, tunnel},
-				{Kore::KeyCode::KeyX, xachse},
-				{Kore::KeyCode::KeyB, yachse},
-				{Kore::KeyCode::KeyN, zachse},
+				{Kore::KeyCode::KeyF, f},
+				{Kore::KeyCode::KeyH, h},
+				{Kore::KeyCode::KeyV, v},
+				{Kore::KeyCode::KeyG, g},
+				{Kore::KeyCode::KeyT, t},
+				{Kore::KeyCode::KeyX, x},
+				{Kore::KeyCode::KeyB, b},
+				{Kore::KeyCode::KeyN, n},
 			});
 		inputController->setUI(ui);
 
@@ -86,7 +86,9 @@ namespace {
 	void update() {
 		double t = Kore::System::time() - startTime;
 		double deltaT = t - lastTime;
-		lastTime = t;
+		lastTime = t;	
+		countTime += deltaT;
+		double diff = 1 / fps;
 
 		inputController->update(deltaT);
 		Kore::vec3 currentPos = cameraPos;
