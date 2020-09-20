@@ -182,10 +182,6 @@ CyborgAI::AIState CyborgAI::planning(float deltaT)
 
 CyborgAI::AIState CyborgAI::landing(float deltaT) {
 
-
-	Kore::log(Kore::Info, "%f %f %f", entity->position.x(), entity->position.y(), entity->position.z());
-	entity->position.x() -= 1;
-
 	return AIState::Landing;
 }
 
@@ -203,5 +199,5 @@ CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Ava
 		{"Walking", files[1]}
 		//{"Dying",files[...]}
 	};
-	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Landing;
+	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Planning;
 }

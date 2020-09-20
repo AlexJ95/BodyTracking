@@ -139,14 +139,7 @@ void TrainLevel::loadAirplane() {
 }
 
 void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
-
-	Kore::log(Kore::Info, "drop the enemy");
-	NonPlayerCharacter* enemy = enemies[range];		
-	enemy->entity->position = pos;
-	enemy->entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi);		
-	enemy->ai->spawn();
-	enemy->entity->activated = true;
-	enemyExist = true;
+	
 }
 
 
