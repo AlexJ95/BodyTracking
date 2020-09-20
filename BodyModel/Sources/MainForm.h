@@ -28,12 +28,16 @@ private:
 	bool showHighScore = false;
 	bool showKindOfAttacking = false;
 
+	bool showEnd = false;
+
 	
 
 public:
 	MainForm();
 	void drawForm();
 	void displayLoading();
+
+	void displayEnd();
 
 	std::vector<char*> levels;
 	int selectedLevel = 0;

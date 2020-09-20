@@ -149,6 +149,7 @@ void TrainLevel::loadAirplane() {
 }
 
 void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
+	Kore::log(Kore::Info, "call the enemy");
 	enemyExist = true;
 	currentEnemy = range;
 }
@@ -156,8 +157,7 @@ void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
 
 void TrainLevel::loadEnding() {
 	Kore::log(Kore::Info, "Game End");
-
-
+	form->displayEnd();
 }
 
 void TrainLevel::updateFPS(double deltaT) {

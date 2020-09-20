@@ -209,6 +209,19 @@ void MainForm::drawForm()
 
 		ImGui::End();
 	}
+	else if (showEnd) {
+
+	ImGui::Begin("End", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+	ImGui::SetWindowSize("End", ImVec2(400, 130), 0);
+	ImVec2 wPos(contentSize.x * 0.5f - ImGui::GetWindowWidth() * 0.5f, contentSize.y * 0.3f - ImGui::GetWindowHeight() * 0.5f);
+	ImGui::SetWindowPos(wPos);
+	ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.1f);
+
+	std::string s = "Thank you for playing\n This is a project from Sier Chen,\n Sanel Hasic,\n Alexander Jaeger,\n Hanjo Schnellbaecher.\n You have reach a max points of "+std::to_string(highScore);
+	ImGui::Text(s.c_str());
+
+	ImGui::End();
+	}
 
 	if (kindOfAttacking != NULL && showKindOfAttacking)
 	{
@@ -227,7 +240,6 @@ void MainForm::drawForm()
 }
 void MainForm::displayLoading()
 {
-	
 	show_loading_bar = true;
 	show_main_menu = true;
 	showingForm = true;
@@ -250,7 +262,9 @@ void MainForm::displayLoading()
 		showKindOfAttacking = true;
 	}
 	nanoSeconds--;
-
-
 }	
+void MainForm::displayEnd() {
+	showEnd = true;
+	showingForm = true;
+}
 ;
