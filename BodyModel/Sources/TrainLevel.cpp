@@ -82,6 +82,7 @@ void TrainLevel::gamePlay(double deltaT) {
 
 	if (form->gameStarted())
 	{
+		checkStation(deltaT);
 		checkEnemyCollision();
 		checkHittingAvatar();
 		checkHittingEnemy();
