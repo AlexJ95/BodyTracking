@@ -29,7 +29,7 @@ void TrainLevel::update(double deltaT)
 	//code level-specific runtime logic here
 	Level::update(deltaT);
 
-	avatar->entity->position = Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
+	
 
 	avatar->entity->calibrated = true;
 
@@ -82,6 +82,7 @@ void TrainLevel::gamePlay(double deltaT) {
 
 	if (form->gameStarted())
 	{
+		avatar->entity->position = locToGlob.Invert() * Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
 		checkStation(deltaT);
 		checkEnemyCollision();
 		checkHittingAvatar();
