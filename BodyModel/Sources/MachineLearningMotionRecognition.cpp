@@ -386,7 +386,8 @@ void MachineLearningMotionRecognition::processMovementData(
 	}
 }
 
-bool MachineLearningMotionRecognition::isActive() {
+bool MachineLearningMotionRecognition::isActive()
+{
 	return operatingMode != Off;
 }
 

@@ -183,14 +183,16 @@ CyborgAI::AIState CyborgAI::planning(float deltaT)
 
 CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference) : StateMachineAI(enemyEntity, animatorReference, avatarReference)
 {
-	stateToAction = {
+	stateToAction =
+	{
 		{(StateMachineAI::AIState) CyborgAI::AIState::Attacking,	reinterpret_cast<action>(&CyborgAI::attacking)},
 		{(StateMachineAI::AIState) CyborgAI::AIState::Pursueing,	reinterpret_cast<action>(&CyborgAI::pursueing)},
 		{(StateMachineAI::AIState) CyborgAI::AIState::Planning,		reinterpret_cast<action>(&CyborgAI::planning)},
 		{(StateMachineAI::AIState) CyborgAI::AIState::Dying,		reinterpret_cast<action>(&CyborgAI::dying)}
 	};
-	animationLibrary = {
-		{"Kicking", files[3]},
+	animationLibrary =
+	{
+		{"Kicking", "verticalChop1.csv"},
 		{"Walking", files[1]}
 		//{"Dying",files[...]}
 	};
