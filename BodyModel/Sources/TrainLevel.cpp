@@ -31,7 +31,10 @@ void TrainLevel::update(double deltaT)
 
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
-	else gameStart = true;
+	else {	gameStart = true; 
+			deleteRoom();
+			loadTrainLevel();
+	}
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);
@@ -46,8 +49,27 @@ void TrainLevel::update(double deltaT)
 
 void TrainLevel::runCalibrationRoom() {
 	for (ALevelObject* object : environment)
-		if(object->render->tag == "room")
+		if (object->render->tag == "room") {
 			object->render->activated = true;
+			renderer->setLights(*object->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
+		}
+}
+
+void TrainLevel::deleteRoom() {
+	for (ALevelObject* object : environment)
+		if (object->render->tag == "room")
+		{
+			object->render->activated = false;
+			freeMemory(object);
+		}
+}
+
+void TrainLevel::loadTrainLevel() {
+	for (ALevelObject* object : environment) {
+		object->render->activated = true;
+		if(object->render->tag == "train")
+			renderer->setLights(*object->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
+	}
 }
 
 void TrainLevel::gamePlay(double deltaT) {
@@ -567,7 +589,6 @@ Level::ALevelObject* TrainLevel::createObjectCopy(ALevelObject* object, Kore::ve
 
 void TrainLevel::roomInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	ALevelObject* room = createNewObject("sherlock_living_room/sherlock_living_room.ogex", "sherlock_living_room/", environmentSructure, 1, Kore::vec3(4, 0, 0), Kore::Quaternion(1, 2, 1, 0));
-	renderer->setLights(*room->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
 	room->render->tag = "room";
 	room->render->moveable = false;
 	ALevelObject* object = createObjectCopy(room, Kore::vec3(-2, 0, 0), Kore::Quaternion(1, 2, 3, 0));
@@ -577,7 +598,6 @@ void TrainLevel::roomInit(Kore::Graphics4::VertexStructure environmentSructure) 
 void TrainLevel::skyInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
 	ALevelObject* sky = createNewObject("skybox/skybox.ogex", "skybox/", environmentSructure, 1, Kore::vec3(0, 0, -75), Kore::Quaternion(3, 0, 1, 0));
-	//renderer->setLights(*sky->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
 	sky->render->moveable = false;
 }
 
@@ -744,27 +764,28 @@ void TrainLevel::tunnelInit(Kore::Graphics4::VertexStructure environmentSructure
 	}
 }
 
-void TrainLevel::v()
+void TrainLevel::t()
 {
-	objects[0]->render->position.x() += offsets;
-	Kore::log(Kore::Info, "X = %f", objects[0]->render->position.x());
+	avatar->entity->calibrated = true;
+	//bjects[0]->render->position.x() += offsets;
+	//Kore::log(Kore::Info, "X = %f", objects[0]->render->position.x());
 }
-void TrainLevel::h()
+void TrainLevel::g()
 {
 	objects[0]->render->position.x() -= offsets;
 	Kore::log(Kore::Info, "X = %f", objects[0]->render->position.x());
 }
-void TrainLevel::l()
+void TrainLevel::f()
 {
 	objects[0]->render->position.z() += offsets;
 	Kore::log(Kore::Info, "Z = %f", objects[0]->render->position.z());
 }
-void TrainLevel::r()
+void TrainLevel::h()
 {
 	objects[0]->render->position.z() -= offsets;
 	Kore::log(Kore::Info, "Z = %f", objects[0]->render->position.z());
 }
-void TrainLevel::t()
+void TrainLevel::x()
 {
 	for (ALevelObject* object : environment) {
 		if (object->render->tag == "tunnelS") {
@@ -773,17 +794,17 @@ void TrainLevel::t()
 		}
 	}
 }
-void TrainLevel::x()
+void TrainLevel::v()
 {
 	objects[0]->render->rotation.x += offsets;
 	Kore::log(Kore::Info, "Xr = %f", objects[0]->render->rotation.x);
 }
-void TrainLevel::y()
+void TrainLevel::b()
 {
 	objects[0]->render->rotation.y += offsets;
 	Kore::log(Kore::Info, "Yr = %f", objects[0]->render->rotation.y);
 }
-void TrainLevel::z()
+void TrainLevel::n()
 {
 	objects[0]->render->rotation.z += offsets;
 	Kore::log(Kore::Info, "Zr = %f", objects[0]->render->rotation.z);

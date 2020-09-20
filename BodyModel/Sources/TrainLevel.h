@@ -8,17 +8,19 @@ class TrainLevel :
 public:
     void update(double deltaT);
     void runCalibrationRoom();
+    void deleteRoom();
+    void loadTrainLevel();
     void gamePlay(double deltaT);
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
-    void l();
-    void r();
-    void v();
+    void t();
+    void f();
+    void g();
     void h();
-	void t();
-    void x();
-    void y();
-    void z();
+	void x();
+    void v();
+    void b();
+    void n();
     void init();
 
     void controlsSetup();
@@ -71,7 +73,6 @@ public:
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
     void roomInit(Kore::Graphics4::VertexStructure environmentSructure);
     void skyInit(Kore::Graphics4::VertexStructure environmentSructure);
-    void trainInit(Kore::Graphics4::VertexStructure environmentSructure);
 	void trainInit(Kore::Graphics4::VertexStructure environmentSructure, int trainLenght);
     void groundInit(Kore::Graphics4::VertexStructure environmentSructure);
     void houseInit(Kore::Graphics4::VertexStructure environmentSructure);

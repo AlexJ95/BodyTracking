@@ -41,14 +41,14 @@ namespace {
 		}
 	}
 
-	void links()	{ currentLevel->l(); }
-	void rechts()	{ currentLevel->r(); }
-	void vorne()	{ currentLevel->v(); }
-	void hinten()	{ currentLevel->h(); }
-	void tunnel() { currentLevel->t(); }
-	void xachse()	{ currentLevel->x(); }
-	void yachse()	{ currentLevel->y(); }
-	void zachse()	{ currentLevel->z(); }
+	void f()	{ currentLevel->f(); }
+	void h()	{ currentLevel->h(); }
+	void t()	{ currentLevel->t(); }
+	void g()	{ currentLevel->g(); }
+	void x()	{ currentLevel->x(); }
+	void v()	{ currentLevel->v(); }
+	void b()	{ currentLevel->b(); }
+	void n()	{ currentLevel->n(); }
 
 	void init() {
 		logger = new Logger;
@@ -56,14 +56,14 @@ namespace {
 		inputController = inputController->getInstanceAndAppend({
 				{Kore::KeyCode::KeyL, record},
 				{Kore::KeyCode::KeyQ, Kore::System::stop},
-				{Kore::KeyCode::KeyF, links},
-				{Kore::KeyCode::KeyH, rechts},
-				{Kore::KeyCode::KeyV, vorne},
-				{Kore::KeyCode::KeyG, hinten},
-				{Kore::KeyCode::KeyT, tunnel},
-				{Kore::KeyCode::KeyX, xachse},
-				{Kore::KeyCode::KeyB, yachse},
-				{Kore::KeyCode::KeyN, zachse},
+				{Kore::KeyCode::KeyF, f},
+				{Kore::KeyCode::KeyH, h},
+				{Kore::KeyCode::KeyV, v},
+				{Kore::KeyCode::KeyG, g},
+				{Kore::KeyCode::KeyT, t},
+				{Kore::KeyCode::KeyX, x},
+				{Kore::KeyCode::KeyB, b},
+				{Kore::KeyCode::KeyN, n},
 			});
 		inputController->setUI(ui);
 

@@ -29,30 +29,6 @@ void Level::setUI(UI3D* ui)
 {
 	renderer->ui = ui;
 }
-void Level::l()
-{
-}
-void Level::r()
-{
-}
-void Level::v()
-{
-}
-void Level::h()
-{
-}
-void Level::t()
-{
-}
-void Level::x()
-{
-}
-void Level::y()
-{
-}
-void Level::z()
-{
-}
 
 Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation)
 {
