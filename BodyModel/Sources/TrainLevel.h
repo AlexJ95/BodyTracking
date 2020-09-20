@@ -12,11 +12,14 @@ public:
     void loadTrainLevel();
     void gamePlay(double deltaT);
     void loadEnemy(float deltaT, int carriage);
+    void loadEnemyRandom(float deltaT, int carriage);
     void loadEnemy(float deltaT);
     void loadTunnel(int range);
+    void loadEnding();
     void loadEnemy();
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
+    void setPosition(ALevelObject* alo, float x, float y, float z);
     void t();
     void f();
     void g();

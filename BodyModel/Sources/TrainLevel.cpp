@@ -31,7 +31,8 @@ void TrainLevel::update(double deltaT)
 
 	avatar->entity->position = Kore::vec4(math->cameraPos.x(), math->cameraPos.y(), math->cameraPos.z(), 1.0);
 
-	avatar->entity->calibrated = true;
+	//avatar->entity->calibrated = true;
+
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
 	else {	gameStart = true; 
@@ -40,7 +41,7 @@ void TrainLevel::update(double deltaT)
 	}
 
 	if (gameStart) {
-		updateBuilding(deltaT, 20);
+		updateBuilding(deltaT, 50);
 		updateFPS(deltaT);		
 		starttime += deltaT;
 		if(starttime > 10.0f)
@@ -86,12 +87,30 @@ void TrainLevel::gamePlay(double deltaT) {
 		checkHittingEnemy();
 		checkingMoving();
 	}
+
+	if (!enemyExist && currentCarriage == 9)
+		loadEnding();
 }
 
 void TrainLevel::loadEnemy(float deltaT, int carriage) {
 
 	Kore::log(Kore::Info, "make enemy");
-	int num = 3;
+	int num = 1;
+
+	switch (num) {
+	case 0: checkStation(deltaT);
+	case 1: loadTunnel(carriage);
+	default: checkStation(deltaT);
+	}
+
+	enemyExist = true;
+}
+
+void TrainLevel::loadEnemyRandom(float deltaT, int carriage) {
+
+	Kore::log(Kore::Info, "make enemy");
+	int num = 1;
+
 	switch (num) {
 	case 0: checkStation(deltaT);
 	case 1: loadTunnel(carriage);
@@ -103,14 +122,19 @@ void TrainLevel::loadEnemy(float deltaT, int carriage) {
 
 void TrainLevel::loadTunnel(int range) {
 
+	Kore::log(Kore::Info, "make tunnel");
 	for (ALevelObject* object : environment) {
 		if (object->render->tag == "tunnelS") {
-			if(range-- > 0)
 			object->render->activated = true;
-
-			Kore::log(Kore::Info, "make tunnel %d" ,range);
+			
 		}
 	}
+}
+
+void TrainLevel::loadEnding() {
+
+
+
 }
 
 void TrainLevel::updateFPS(double deltaT) {
@@ -130,7 +154,7 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 	if (!form->isFormShown())
 	{
 		for (ALevelObject* object : environment)
-			if (object->render->moveable)
+			if (object->render->moveable && object->render->activated)
 				if (object->render->position.x() > -420)
 				{
 
@@ -168,52 +192,42 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 				}
 				else {
 					if (object->render->tag == "floor") {
-						object->render->position.x() = 580;
-						object->render->position.z() = 4.25f;
-					}
-					else if (object->render->tag == "floorh") {
-						object->render->position.x() = 580;
-						object->render->position.z() = 0.075f;
+						setPosition(object, 580, object->render->position.y(), 4.25f);
 					}
 					else if (object->render->tag == "floorl") {
-						object->render->position.x() = 580;
-						object->render->position.z() = -3.3f;
+						setPosition(object, 580, object->render->position.y(), -3.3f);
 					}
 					else if (object->render->tag == "floorr") {
-						object->render->position.x() = 580;
-						object->render->position.z() = 12.7f;
+						setPosition(object, 580, object->render->position.y(), 12.7f);
 					}
 					else if (object->render->tag == "houseR") {
-						object->render->position.x() = 454;
-						object->render->position.z() = 19.21;
+						setPosition(object, 454, object->render->position.y(), 19.21);
 					}
 					else if (object->render->tag == "houseL") {
-						object->render->position.x() = 454;
-						object->render->position.z() = -12.0f;
+						setPosition(object, 454, object->render->position.y(), -12.0f);
 					}
 					else if (object->render->tag == "car1") {
-						object->render->position.x() = 454;
-						object->render->position.z() = -2.6;
+						setPosition(object, 454, object->render->position.y(), -2.6f);
 					}
 					else if (object->render->tag == "car") {
-						object->render->position.x() = 454;
-						object->render->position.z() = 12.3;
+						setPosition(object, 454, object->render->position.y(), 12.3f);
 					}
 					else if (object->render->tag == "airplane") {
-						object->render->position.x() = 454;
-						object->render->position.y() = 50;
+						setPosition(object, 454, 50.0f, object->render->position.z());
 					}
 					else if (object->render->tag == "tunnelS") {
 						object->render->activated = false;
 						object->render->position = object->initPosition;
 					}
-					else object->render->position.x() = 454;
+					else setPosition(object, 454, object->render->position.y(), object->render->position.z());
 				}
 	}
 						
 }
 
-
+void TrainLevel::setPosition(ALevelObject* alo ,float x, float y, float z) {
+	alo->render->position = Kore::vec4(x, y, z, 1.0f);
+}
 
 void TrainLevel::controlsSetup()
 {
@@ -666,24 +680,21 @@ void TrainLevel::groundInit(Kore::Graphics4::VertexStructure environmentSructure
 	ALevelObject* floor = createNewObject("floor/floor.ogex", "floor/", environmentSructure, 1, Kore::vec3(-410, -3, -2.75), Kore::Quaternion(-1, 0, 0, 0));
 	floor->render->tag = "floor";
 	ALevelObject* lfloor = createNewObject("floor/lfloor.ogex", "floor/", environmentSructure, 1, Kore::vec3(-410, -2.19, -13), Kore::Quaternion(3, 0, 0.993f, 0));
-	ALevelObject* object = createObjectCopy(floor, Kore::vec3(floor->render->position.x(), floor->render->position.y(), -floor->render->position.z()), floor->render->rotation);
-	ALevelObject* rfloor = createNewObject("floor/lfloor.ogex", "floor/", environmentSructure, 1, Kore::vec3(-410, -2.19, 3), Kore::Quaternion(3, 0, 0.993, 0));
+	lfloor->render->tag = "floorr";
+	ALevelObject* rfloor = createNewObject("floor/lfloor.ogex", "floor/", environmentSructure, 1, Kore::vec3(-410, -2.19, 3), Kore::Quaternion(3, 0, 0.993f, 0));
+	rfloor->render->tag = "floorl";
+	ALevelObject* object;
 
 	float xoffset = 25.0f;
-	float xoffset2 = 18;
-	float zoffset2 = 0.175f;
 	float offsetZfloor = 0.175f;
 
-	for (int x = 0; x < 56; x++) {
-		
-		if (x < 40) {
-			object = createObjectCopy(floor,Kore::vec3(floor->render->position.x() + xoffset * x, floor->render->position.y(), floor->render->position.z() + offsetZfloor * x), floor->render->rotation);
-		}
+	float xoffset2 = 18;
+	float zoffset2 = 0.175f;
+	
+	for (int x = 0; x < 56; x++) {		
+		if (x < 40) object = createObjectCopy(floor,Kore::vec3(floor->render->position.x() + xoffset * x, floor->render->position.y(), floor->render->position.z() + offsetZfloor * x), floor->render->rotation);
 		object = createObjectCopy(rfloor, Kore::vec3(rfloor->render->position.x() + xoffset2 * x, rfloor->render->position.y(), rfloor->render->position.z() + zoffset2 * x), rfloor->render->rotation);
-		object->render->tag = "floorr";
-
-		object = createObjectCopy(lfloor, Kore::vec3(lfloor->render->position.x() + xoffset2 * x, lfloor->render->position.y(), lfloor->render->position.z() + zoffset2 * x), lfloor->render->rotation);
-		object->render->tag = "floorl";		
+		object = createObjectCopy(lfloor, Kore::vec3(lfloor->render->position.x() + xoffset2 * x, lfloor->render->position.y(), lfloor->render->position.z() + zoffset2 * x), lfloor->render->rotation);		
 	}
 }
 
@@ -691,7 +702,7 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 	//float xoffset = 7.7f;
 	float xoffset = 13;
 	float zoffset = 0.115f;
-	ALevelObject* houseL = createNewObject("houseL/hausL.ogex", "houseL/", environmentSructure, 1, Kore::vec3(-410, -10, 11), Kore::Quaternion(3, 0, 1.02, 0));
+	ALevelObject* houseL = createNewObject("houseL/hausL.ogex", "houseL/", environmentSructure, 1, Kore::vec3(-410, -10, 15), Kore::Quaternion(3, 0, 1.02, 0));
 	ALevelObject* houseS = createNewObject("houseS/haus.ogex", "houseS/", environmentSructure, 1, Kore::vec3(-402.3, -10, 15), Kore::Quaternion(3, 0, 1, 0));
 	ALevelObject* houseM = createNewObject("houseM/hausM.ogex", "houseM/", environmentSructure, 1, Kore::vec3(-394.6, -10, 14 + zoffset*2), Kore::Quaternion(3, 0, 0, 0));
 	ALevelObject* houseML = createNewObject("houseML/hausML.ogex", "houseML/", environmentSructure, 1, Kore::vec3(-386.9, -10, 14 + zoffset*3), Kore::Quaternion(3, 0, 0, 0));
@@ -701,7 +712,7 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 	for (int x = 0; x < 67; x++) {
 		randNumb = rand() % 4;
 		switch (randNumb) {
-		case 0:object = createObjectCopy(houseS, Kore::vec3(houseL->render->position.x() + xoffset*x, -3, houseL->render->position.z() + zoffset*x), houseL->render->rotation);break;
+		case 0:object = createObjectCopy(houseS, Kore::vec3(houseL->render->position.x() + xoffset*x, -3, houseL->render->position.z() + zoffset * x), houseL->render->rotation);break;
 		case 1:object = createObjectCopy(houseM, Kore::vec3(houseL->render->position.x() + xoffset * x, -3, houseL->render->position.z() + zoffset * x), houseL->render->rotation);break;
 		case 2:object = createObjectCopy(houseML, Kore::vec3(houseL->render->position.x() + xoffset * x, -3, houseL->render->position.z() + zoffset * x), houseL->render->rotation);break;
 		case 3:object = createObjectCopy(houseL, Kore::vec3(houseL->render->position.x() + xoffset * x, -3, houseL->render->position.z() + zoffset * x), houseL->render->rotation);break;
@@ -721,35 +732,6 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 	freeMemory(houseS);
 	freeMemory(houseM);
 	freeMemory(houseML);
-	freeMemory(object);
-
-}
-//Old
-void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure, bool placeholder) {
-	ALevelObject* houseL = createNewObject("houseL/hausL.ogex", "houseL/", environmentSructure, 1, Kore::vec3(-34.2, -3, 17), Kore::Quaternion(3, 0, 0, 0));
-	ALevelObject* houseS = createNewObject("houseS/haus.ogex", "houseS/", environmentSructure, 1, Kore::vec3(-26.5, -3, 17), Kore::Quaternion(3, 0, 0, 0));	
-	ALevelObject* houseM = createNewObject("houseM/hausM.ogex", "houseM/", environmentSructure, 1, Kore::vec3(-18.8, -3, 17), Kore::Quaternion(3, 0, 0, 0));
-	ALevelObject* houseML = createNewObject("houseML/hausML.ogex", "houseML/", environmentSructure, 1, Kore::vec3(-11.1, -3, 17), Kore::Quaternion(3, 0, 0, 0));
-	// Mirror
-	ALevelObject* object = createObjectCopy(houseL, Kore::vec3(houseL->render->position.x(), houseL->render->position.y(), -houseL->render->position.z()), houseL->render->rotation);
-	object = createObjectCopy(houseS, Kore::vec3(houseS->render->position.x(), houseS->render->position.y(), -houseS->render->position.z()), houseS->render->rotation);
-	object = createObjectCopy(houseM, Kore::vec3(houseM->render->position.x(), houseM->render->position.y(), -houseM->render->position.z()), houseM->render->rotation);
-	object = createObjectCopy(houseML, Kore::vec3(houseML->render->position.x(), houseML->render->position.y(), -houseML->render->position.z()), houseML->render->rotation);
-
-	float xoffset = 30.8f;
-	for (int i = 0; i < 5; i++) {
-		 object = createObjectCopy(houseL, Kore::vec3(houseL->render->position.x()+xoffset,houseL->render->position.y(),houseL->render->position.z()),houseL->render->rotation);
-		 object = createObjectCopy(houseL, Kore::vec3(houseL->render->position.x() + xoffset, houseL->render->position.y(), -houseL->render->position.z()), houseL->render->rotation);
-		 if (i < 4) {
-			 object = createObjectCopy(houseS, Kore::vec3(houseS->render->position.x() + xoffset, houseS->render->position.y(), houseS->render->position.z()), houseS->render->rotation);
-			 object = createObjectCopy(houseS, Kore::vec3(houseS->render->position.x() + xoffset, houseS->render->position.y(), -houseS->render->position.z()), houseS->render->rotation);
-			 object = createObjectCopy(houseM, Kore::vec3(houseM->render->position.x() + xoffset, houseM->render->position.y(), houseM->render->position.z()), houseM->render->rotation);
-			 object = createObjectCopy(houseM, Kore::vec3(houseM->render->position.x() + xoffset, houseM->render->position.y(), -houseM->render->position.z()), houseM->render->rotation);
-			 object = createObjectCopy(houseML, Kore::vec3(houseML->render->position.x() + xoffset, houseML->render->position.y(), houseML->render->position.z()), houseML->render->rotation);
-			 object = createObjectCopy(houseML, Kore::vec3(houseML->render->position.x() + xoffset, houseML->render->position.y(), -houseML->render->position.z()), houseML->render->rotation);
-		 }
-		xoffset += 30.8f;
-	}
 }
 
 void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructure) {
@@ -773,10 +755,10 @@ void TrainLevel::tunnelInit(Kore::Graphics4::VertexStructure environmentSructure
 	float xoffset = 15.0f;
 	float zoffset = 0.1f;
 	float yoffset = 0.023;
-	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(454 - xoffset, -10, 3 - zoffset), Kore::Quaternion(3, 0, 0, 0));
+	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(454 - xoffset*8, -10, 3 - zoffset*8), Kore::Quaternion(3, 0, 0, 0));
 	tunnel->render->tag = "tunnelS";
 	ALevelObject* object;
-	for (int i = 2; i < 9; i++) {
+	for (int i = 1; i < 9; i++) {
 		object = createObjectCopy(tunnel, Kore::vec3(tunnel->render->position.x() + xoffset * i, tunnel->render->position.y() + yoffset * i, tunnel->render->position.z() + zoffset * i), Kore::Quaternion(3, 0, yRot, 0));
 	}
 }
