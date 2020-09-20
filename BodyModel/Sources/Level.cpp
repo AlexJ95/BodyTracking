@@ -62,6 +62,9 @@ Level::ALevelObject::ALevelObject(const char* meshFile, const char* textureFile,
 Level::ALevelObject::ALevelObject(ALevelObject* reference, Kore::vec3 position, Kore::Quaternion rotation)
 {
 	render = new LevelObject(reference->render->meshObject, position, rotation);
+	render->activated = reference->render->activated;
+	render->moveable = reference->render->moveable;
+	render->tag = reference->render->tag;
 }
 
 Level::AnAnimatedEntity::AnAnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation)

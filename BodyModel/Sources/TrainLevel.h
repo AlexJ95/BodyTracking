@@ -68,6 +68,7 @@ public:
 
     Level::ALevelObject* createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot);
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
+    void roomInit(Kore::Graphics4::VertexStructure environmentSructure);
     void skyInit(Kore::Graphics4::VertexStructure environmentSructure);
     void trainInit(Kore::Graphics4::VertexStructure environmentSructure);
 	void trainInit(Kore::Graphics4::VertexStructure environmentSructure, int trainLenght);

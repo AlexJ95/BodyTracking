@@ -164,7 +164,7 @@ void TrainLevel::init() {
 	Level::init();
 	form = new MainForm();
 	offsets = 1;
-	gameStart = true;
+	gameStart = false;
 	tunnelCounter = 8;
 }
 
@@ -190,18 +190,19 @@ void TrainLevel::graphicsSetup()
 	const Kore::Graphics4::VertexStructure& entitySructure = renderer->entityGraphics->structure;
 	const Kore::Graphics4::VertexStructure& environmentSructure = renderer->environmentGraphics->structure;
 	
-	//Load Skybox
+	//Load Calibration
+	roomInit(environmentSructure);
 
+
+	//Load Skybox
 	skyInit(environmentSructure);
 
 	//Load Train
-	//trainInit(environmentSructure);
 	trainInit(environmentSructure, 3);
 
 	//Load Avatar
 	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, true);
 
-	//create Pool od entitys
 	//Load Enemy
 	createEnemy(entitySructure);
 
@@ -215,11 +216,9 @@ void TrainLevel::graphicsSetup()
 	airplaneInit(environmentSructure);
 
 	//Load Car
-
 	carInit(environmentSructure);
 
-	//Load Tunnel
-	
+	//Load Tunnel	
 	tunnelInit(environmentSructure);
 	
 }
@@ -519,6 +518,7 @@ void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure)
 		}
 		NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
 		enemy->ai = new CyborgAI(enemy->entity, animator, avatar->entity);
+		enemy->entity->activated = false;
 		enemies.emplace_back(enemy);
 	}
 	
@@ -554,10 +554,20 @@ Level::ALevelObject* TrainLevel::createObjectCopy(ALevelObject* object, Kore::ve
 	return newobject;
 }
 
+void TrainLevel::roomInit(Kore::Graphics4::VertexStructure environmentSructure) {
+	ALevelObject* room = createNewObject("sherlock_living_room/sherlock_living_room.ogex", "sherlock_living_room/", environmentSructure, 1, Kore::vec3(3, 0, 0), Kore::Quaternion(1, 2, 3, 0));
+	renderer->setLights(*room->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
+	room->render->moveable = false;
+	room->render->activated = true;
+	objects[0] = room;
+	ALevelObject* object = createObjectCopy(room, Kore::vec3(9, 0, 0), Kore::Quaternion(1, 2, 1, 0));
+
+}
+
 void TrainLevel::skyInit(Kore::Graphics4::VertexStructure environmentSructure) {
 
 	ALevelObject* sky = createNewObject("skybox/skybox.ogex", "skybox/", environmentSructure, 1, Kore::vec3(0, 0, -75), Kore::Quaternion(3, 0, 1, 0));
-	renderer->setLights(*sky->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
+	//renderer->setLights(*sky->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
 	sky->render->moveable = false;
 }
 
@@ -767,5 +777,4 @@ void TrainLevel::z()
 {
 	objects[0]->render->rotation.z += offsets;
 	Kore::log(Kore::Info, "Zr = %f", objects[0]->render->rotation.z);
-	objects[0]->render->activated = !objects[0]->render->activated;
 }
