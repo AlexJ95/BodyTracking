@@ -95,6 +95,7 @@ namespace {
 			countTime = countTime - diff;
 			inputController->update(diff);
 			currentLevel->update(diff);
+			
 		}
 	}
 }

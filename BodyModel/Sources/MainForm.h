@@ -33,6 +33,8 @@ private:
 public:
 	MainForm();
 	void drawForm();
+	void displayLoading();
+
 	std::vector<char*> levels;
 	int selectedLevel = 0;
 
@@ -40,4 +42,5 @@ public:
 	float progress = 0.f;
 	int highScore = 0;
 	char* kindOfAttacking = NULL;
+	
 };

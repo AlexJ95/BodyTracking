@@ -16,7 +16,6 @@ public:
     void loadTunnel(int range);
     void loadAirplane();
     void loadEnemy(int range, Kore::vec3 pos);
-    void loadEnemy(int range, Kore::vec4 pos);
     void loadEnding();
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);

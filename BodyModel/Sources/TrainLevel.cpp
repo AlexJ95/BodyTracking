@@ -33,7 +33,9 @@ void TrainLevel::update(double deltaT)
 
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
-	else {	gameStart = true; 
+	else {	
+			//renderer->ui->drawUI(renderer->form);
+			gameStart = true; 
 			deleteRoom();
 			loadTrainLevel();
 	}

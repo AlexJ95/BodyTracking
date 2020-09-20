@@ -14,6 +14,7 @@ protected:
 public:
 	Form();
 	void virtual drawForm();
+	void virtual displayLoading() = 0;
 	bool isFormShown();
 	bool gameStarted();
 };
