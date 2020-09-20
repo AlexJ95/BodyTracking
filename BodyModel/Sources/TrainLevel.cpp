@@ -12,12 +12,26 @@
 	
 	*/
 
+void TrainLevel::init() {
+	controlsSetup();
+	audioSetup();
+	graphicsSetup();
+	Level::init();
+	form = new MainForm();
+	offsets = 1;
+	gameStart = false;
+	tunnelCounter = 8;
+}
+
 
 void TrainLevel::update(double deltaT)
 {
 	//code level-specific runtime logic here
 	Level::update(deltaT);
 
+	if (!avatar->entity->calibrated)
+		runCalibrationRoom();
+	else gameStart = true;
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);
@@ -28,6 +42,12 @@ void TrainLevel::update(double deltaT)
 		else starttime += deltaT;
 	}
 
+}
+
+void TrainLevel::runCalibrationRoom() {
+	for (ALevelObject* object : environment)
+		if(object->render->tag == "room")
+			object->render->activated = true;
 }
 
 void TrainLevel::gamePlay(double deltaT) {
@@ -157,16 +177,7 @@ void TrainLevel::updateBuilding(double deltaT,double speed) {
 	}
 }
 
-void TrainLevel::init() {
-	controlsSetup();
-	audioSetup();
-	graphicsSetup();
-	Level::init();
-	form = new MainForm();
-	offsets = 1;
-	gameStart = false;
-	tunnelCounter = 8;
-}
+
 
 void TrainLevel::controlsSetup()
 {
@@ -201,7 +212,7 @@ void TrainLevel::graphicsSetup()
 	trainInit(environmentSructure, 3);
 
 	//Load Avatar
-	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, true);
+	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
 
 	//Load Enemy
 	createEnemy(entitySructure);
@@ -555,12 +566,11 @@ Level::ALevelObject* TrainLevel::createObjectCopy(ALevelObject* object, Kore::ve
 }
 
 void TrainLevel::roomInit(Kore::Graphics4::VertexStructure environmentSructure) {
-	ALevelObject* room = createNewObject("sherlock_living_room/sherlock_living_room.ogex", "sherlock_living_room/", environmentSructure, 1, Kore::vec3(3, 0, 0), Kore::Quaternion(1, 2, 3, 0));
+	ALevelObject* room = createNewObject("sherlock_living_room/sherlock_living_room.ogex", "sherlock_living_room/", environmentSructure, 1, Kore::vec3(4, 0, 0), Kore::Quaternion(1, 2, 1, 0));
 	renderer->setLights(*room->render, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
+	room->render->tag = "room";
 	room->render->moveable = false;
-	room->render->activated = true;
-	objects[0] = room;
-	ALevelObject* object = createObjectCopy(room, Kore::vec3(9, 0, 0), Kore::Quaternion(1, 2, 1, 0));
+	ALevelObject* object = createObjectCopy(room, Kore::vec3(-2, 0, 0), Kore::Quaternion(1, 2, 3, 0));
 
 }
 

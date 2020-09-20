@@ -7,6 +7,7 @@ class TrainLevel :
 {
 public:
     void update(double deltaT);
+    void runCalibrationRoom();
     void gamePlay(double deltaT);
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);

@@ -290,7 +290,7 @@ void Renderer::animate(AnimatedEntity* entity)
 //Subroutines specifically for the Avatar
 void Renderer::animate(Avatar* avatar)
 {
-	//animate((AnimatedEntity*) avatar);
+	animate((AnimatedEntity*) avatar);
 	if (renderTrackerAndController) renderAllVRDevices(avatar);
 	if (renderAxisForEndEffector) renderCSForEndEffector(avatar);
 }
