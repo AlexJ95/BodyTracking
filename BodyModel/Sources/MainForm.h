@@ -39,6 +39,8 @@ public:
 
 	void displayEnd();
 
+	void addHighScore(int score);
+
 	std::vector<char*> levels;
 	int selectedLevel = 0;
 

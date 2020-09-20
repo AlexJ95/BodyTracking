@@ -7,6 +7,7 @@ class TrainLevel :
 {
 public:
     void update(double deltaT);
+    void updatePoints();
     void runCalibrationRoom();
     void deleteRoom();
     void loadTrainLevel();

@@ -51,6 +51,11 @@ void TrainLevel::update(double deltaT)
 
 }
 
+void TrainLevel::updatePoints() {
+	
+	form->addHighScore(1);
+}
+
 void TrainLevel::runCalibrationRoom() {
 	for (ALevelObject* object : environment)
 		if (object->render->tag == "room") {
@@ -84,6 +89,7 @@ void TrainLevel::gamePlay(double deltaT) {
 
 	if (form->gameStarted()&& enemyExist)
 	{
+		updatePoints();
 		checkStation(deltaT);
 		checkEnemyCollision();
 		checkHittingAvatar();

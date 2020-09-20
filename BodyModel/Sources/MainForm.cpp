@@ -267,4 +267,7 @@ void MainForm::displayEnd() {
 	showEnd = true;
 	showingForm = true;
 }
+void MainForm::addHighScore(int score) {
+	highScore += score;
+}
 ;
