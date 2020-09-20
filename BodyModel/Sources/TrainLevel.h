@@ -11,8 +11,16 @@ public:
     void deleteRoom();
     void loadTrainLevel();
     void gamePlay(double deltaT);
+    void loadEnemies(float deltaT, int carriage);
+    void loadEnemyRandom(float deltaT, int carriage);
+    void loadTunnel(int range);
+    void loadAirplane();
+    void loadEnemy(int range, Kore::vec3 pos);
+    void loadEnemy(int range, Kore::vec4 pos);
+    void loadEnding();
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
+    void setPosition(ALevelObject* alo, float x, float y, float z);
     void t();
     void f();
     void g();
@@ -33,6 +41,8 @@ public:
     bool stationStarted = true;
 
     bool gameStart;
+    int currentCarriage = 1;
+    bool enemyExist = false;
 
     double maxWaitintTime = 5.0;
     double countDown = 0.0;
@@ -58,7 +68,7 @@ public:
     int stationNr = 1;
     float stationLength = 30.0;
     bool stationComplete = false; 
-    int maxEnemyCount = 3;  //sollte 1 sein 2 nur zum testen
+    int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0; 
     void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
     Kore::vec3 airPlanePos;
@@ -76,7 +86,6 @@ public:
 	void trainInit(Kore::Graphics4::VertexStructure environmentSructure, int trainLenght);
     void groundInit(Kore::Graphics4::VertexStructure environmentSructure);
     void houseInit(Kore::Graphics4::VertexStructure environmentSructure);
-	void houseInit(Kore::Graphics4::VertexStructure environmentSructure, bool placeholder);
     void airplaneInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);

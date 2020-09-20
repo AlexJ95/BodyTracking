@@ -28,6 +28,8 @@ namespace {
 	
 	double startTime;
 	double lastTime;
+	double countTime;
+	float fps = 60;
 
 	void record() {
 		logRawData = !logRawData;
@@ -85,10 +87,15 @@ namespace {
 	void update() {
 		float t = (float)(Kore::System::time() - startTime);
 		double deltaT = t - lastTime;
-		lastTime = t;
+		lastTime = t;	
+		countTime += deltaT;
+		double diff = 1 / fps;
 
-		inputController->update(deltaT);
-		currentLevel->update(deltaT);
+		if (countTime > diff) {
+			countTime = countTime - diff;
+			inputController->update(diff);
+			currentLevel->update(diff);
+		}
 	}
 }
 
