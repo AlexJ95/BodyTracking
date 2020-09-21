@@ -82,5 +82,8 @@ public:
 	virtual void x() {}
 	virtual void y() {}
 	virtual void z() {}
+	virtual void loadTunnel(int numb) = 0;
+	virtual void triggerSignL() = 0;
+	virtual void triggerSignR() = 0;
 };
 

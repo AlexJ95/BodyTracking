@@ -30,8 +30,7 @@ class InputController
 	// Keyboard and Mouse controls
 	bool rotate = false;
 	bool W = false, A = false, S = false, D = false, T = false;
-	
-	
+
 public:
 	static InputController* getInstance(); // Get the singleton instance
 	static InputController* getInstanceAndAppend(std::map<Kore::KeyCode, void(*)()> callbackArray); // Get the singleton instance

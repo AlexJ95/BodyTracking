@@ -41,7 +41,7 @@ void TrainLevel::update(double deltaT)
 	}
 
 	if (gameStart) {
-		updateBuilding(deltaT, 50);
+		updateBuilding(deltaT, 20);
 		updateFPS(deltaT);		
 		starttime += deltaT;
 		if(starttime > 10.0f)
@@ -104,7 +104,7 @@ void TrainLevel::deleteRoom() {
 
 void TrainLevel::loadTrainLevel() {
 	for (ALevelObject* object : environment) {
-		if(object->object->tag != "tunnelS" && object->object->tag != "airplane")
+		if(object->object->tag != "tunnelS" && object->object->tag != "airplane" && object->object->tag != "signr" && object->object->tag != "tunnell")
 			object->object->activated = true;
 	}
 }
@@ -183,6 +183,26 @@ void TrainLevel::loadAirplane() {
 	}
 }
 
+void TrainLevel::triggerSignL()
+{
+	for (ALevelObject* object : environment) {
+		if (object->object->tag == "signl") {
+			object->object->moveable = true;
+			object->object->activated = true;
+		}
+	}
+}
+
+void TrainLevel::triggerSignR()
+{
+	for (ALevelObject* object : environment) {
+		if (object->object->tag == "signr") {
+			object->object->moveable = true;
+			object->object->activated = true;
+		}
+	}
+}
+
 void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
 	Kore::log(Kore::Info, "call the enemy");
 	enemyExist = true;
@@ -219,7 +239,7 @@ void TrainLevel::updateBuilding(double deltaT, double speed)
 
 					if (object->object->tag == "car") {
 						object->object->position.x() -= deltaT * speed * 1.5f;
-						object->object->position.z() -= 0.23 * deltaT;
+						object->object->position.z() -= 0.35 * deltaT;
 					}
 					else if (object->object->tag == "car1") {
 						object->object->position.x() -= deltaT * speed * 4;
@@ -278,6 +298,18 @@ void TrainLevel::updateBuilding(double deltaT, double speed)
 					else if (object->object->tag == "airplane") {
 						object->object->activated = false;
 						object->object->position = object->initPosition;
+					}
+					if (object->object->tag == "signl") {
+						object->object->position.x() = 400;
+						object->object->position.z() = 138.25;
+						object->object->activated = false;
+						object->object->moveable = false;
+					}
+					if (object->object->tag == "signr") {
+						object->object->position.x() = 400;
+						object->object->position.z() = 140.75;
+						object->object->activated = false;
+						object->object->moveable = false;
 					}
 					else if (object->object->tag == "tunnelS") {
 						object->object->activated = false;
@@ -345,6 +377,9 @@ void TrainLevel::graphicsSetup()
 
 	//Load Tunnel	
 	tunnelInit(environmentSructure);
+
+	//Load Signs
+	signInit(environmentSructure);
 }
 
 //////////////////////////////interaction Methods
@@ -764,7 +799,7 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 	//float xoffset = 7.7f;
 	float xoffset = 13;
 	float zoffset = 0.115f;
-	ALevelObject* houseL = createNewObject("houseL/hausL.ogex", "houseL/", environmentSructure, 1, Kore::vec3(-410, -10, 15), Kore::Quaternion(3, 0, 1.02, 0));
+	ALevelObject* houseL = createNewObject("houseL/hausL.ogex", "houseL/", environmentSructure, 1, Kore::vec3(-410, -10, 11), Kore::Quaternion(3, 0, 1.02, 0));
 	ALevelObject* houseS = createNewObject("houseS/haus.ogex", "houseS/", environmentSructure, 1, Kore::vec3(-402.3, -10, 15), Kore::Quaternion(3, 0, 1, 0));
 	ALevelObject* houseM = createNewObject("houseM/hausM.ogex", "houseM/", environmentSructure, 1, Kore::vec3(-394.6, -10, 14 + zoffset*2), Kore::Quaternion(3, 0, 0, 0));
 	ALevelObject* houseML = createNewObject("houseML/hausML.ogex", "houseML/", environmentSructure, 1, Kore::vec3(-386.9, -10, 14 + zoffset*3), Kore::Quaternion(3, 0, 0, 0));
@@ -818,12 +853,27 @@ void TrainLevel::tunnelInit(Kore::Graphics4::VertexStructure environmentSructure
 	float xoffset = 15.0f;
 	float zoffset = 0.1f;
 	float yoffset = 0.023;
-	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(454 - xoffset*8, -10, 3 - zoffset*8), Kore::Quaternion(3, 0, 0, 0));
+	ALevelObject* tunnel = createNewObject("tunnel/tunnelNew.ogex", "tunnel/", environmentSructure, 1, Kore::vec3(454 - xoffset*8, -11, 3 - zoffset*8), Kore::Quaternion(3, 0, 0, 0));
 	tunnel->object->tag = "tunnelS";
 	ALevelObject* object;
 	for (int i = 1; i < 9; i++) {
 		object = createObjectCopy(tunnel, Kore::vec3(tunnel->object->position.x() + xoffset * i, tunnel->object->position.y() + yoffset * i, tunnel->object->position.z() + zoffset * i), Kore::Quaternion(3, 0, yRot, 0));
 	}
+}
+
+void TrainLevel::signInit(Kore::Graphics4::VertexStructure environmentSructure) {
+
+	ALevelObject* signl = createNewObject("sign/sign3.ogex", "sign/", environmentSructure, 0.01, Kore::vec3(400, -2.18, 138.25), Kore::Quaternion(0, 2, 0, 0));
+	signl->object->tag = "signl";
+	signl->object->activated = false;
+	signl->object->moveable = false;
+
+	ALevelObject* signr = createNewObject("sign/sign3.ogex", "sign/", environmentSructure, -0.01, Kore::vec3(400, -2.18, 140.75), Kore::Quaternion(2, 0, 0, 0));
+
+	//object = createObjectCopy(sign, Kore::vec3(sign->object->position.x(), sign->object->position.y(), sign->object->position.z()), sign->object->rotation);
+	signr->object->tag = "signr";
+	signr->object->activated = false;
+	signr->object->moveable = false;
 }
 
 void TrainLevel::t()
