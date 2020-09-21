@@ -47,9 +47,11 @@ namespace {
 	//void g()	{ currentLevel->g(); }
 	void x()	{ currentLevel->x(); }
 	void v()	{ currentLevel->v(); }
-	//void b()	{ currentLevel->b(); }
-	//void n()	{ currentLevel->n(); }
-	//void p()	{ currentLevel->loadTunnel(0); }
+	void b()	{ currentLevel->b(); }
+	void n()	{ currentLevel->n(); }
+	void p() { currentLevel->loadTunnel(0); }
+	void signL() { currentLevel->triggerSignL(); }
+	void signR() { currentLevel->triggerSignR(); }
 
 	void init() {
 		logger = new Logger;
@@ -64,8 +66,11 @@ namespace {
 				//{Kore::KeyCode::KeyG, g},
 				{Kore::KeyCode::KeyT, t},
 				{Kore::KeyCode::KeyX, x},
-				//{Kore::KeyCode::KeyB, b},
-				//{Kore::KeyCode::KeyN, n}
+				{Kore::KeyCode::KeyB, b},
+				{Kore::KeyCode::KeyN, n},
+				{Kore::KeyCode::KeyP, p},
+				{Kore::KeyCode::KeyI, signR},
+				{Kore::KeyCode::KeyU, signL},
 			});
 		inputController->setUI(ui);
 
