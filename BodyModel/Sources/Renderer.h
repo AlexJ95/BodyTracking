@@ -22,6 +22,8 @@ using namespace Kore::Graphics4;
 
 class Renderer
 {	
+private:
+	static Renderer* instance;
 public:
 	struct EnvironmentGraphics {
 		TextureUnit tex;
@@ -82,6 +84,7 @@ public:
 	std::vector<AnimatedEntity*> animatedEntities;
 	Avatar* avatar;
 	UI3D* ui;
+	Renderer* getInstance();
 	Renderer();
 
 	void init(std::vector<LevelObject*> objects, std::vector<AnimatedEntity*> entities, Avatar* avatar, Animator* anim);

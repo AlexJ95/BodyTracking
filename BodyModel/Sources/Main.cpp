@@ -97,6 +97,8 @@ namespace {
 		countTime += deltaT;
 		double diff = 1 / fps;
 
+		currentLevel->renderer->update(deltaT);		
+
 		if (countTime > diff) {
 		countTime = countTime - diff;
 		inputController->update(diff);
@@ -104,6 +106,7 @@ namespace {
 		Kore::vec4 currentForward = camForward;
 		double anyT = lastTime;
 		currentLevel->update(diff);
+		
 		}
 	}
 }

@@ -43,7 +43,7 @@ namespace {
 	double startTime;
 	double lastTime;
 	double countTime;
-	float fps = 59;
+	float fps = 100;
 
 	//Camera related stuff
 	float cameraMoveSpeed = 6.0f;
@@ -54,4 +54,5 @@ namespace {
 
 	Kore::mat4 vrProjectionMatrix;
 	Kore::mat4 vrViewMatrix;
+
 }

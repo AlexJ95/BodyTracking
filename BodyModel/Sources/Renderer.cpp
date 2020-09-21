@@ -1,8 +1,17 @@
 
 #include "Renderer.h"
 
+Renderer* Renderer::instance;
+
+Renderer* Renderer::getInstance()
+{
+	return instance;
+}
+
 Renderer::Renderer()
 {
+	if (!instance)
+		instance = this;
 	environmentGraphics = new EnvironmentGraphics;
 	entityGraphics = new EntityGraphics;
 	math = math->getInstance();
