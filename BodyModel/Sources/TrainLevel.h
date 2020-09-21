@@ -16,22 +16,13 @@ public:
     void loadEnemyRandom(float deltaT, int carriage);
     void loadTunnel(int range);
     void loadAirplane();
+    void loadSign();
     void loadEnemy(int range, Kore::vec3 pos);
     void loadEnding();
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
     void setPosition(ALevelObject* alo, float x, float y, float z);
-	//void triggerTunnel();
-	void triggerSignL();
-	void triggerSignR();
-	void t();
-    void f();
-    void g();
-    void h();
 	void x();
-    void v();
-    void b();
-    void n();
     void init();
 
     void controlsSetup();
@@ -46,6 +37,7 @@ public:
 
     bool gameStart;
     int currentCarriage = 1;
+    bool enemySpawn = false;
     bool enemyExist = false;
     int currentEnemy = 0;
 
@@ -73,7 +65,7 @@ public:
 
 //  Stashed changes
     int stationNr = 1;
-    float stationLength = 18.0;
+    float stationLength = 16.0;
     bool stationComplete = false; 
     int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0;

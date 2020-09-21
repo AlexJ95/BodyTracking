@@ -83,8 +83,6 @@ void CustomMath::moveCamera(bool w, bool a, bool s, bool d, float deltaT)
 Kore::vec3 CustomMath::getCameraPos() { return cameraPos; }
 
 void CustomMath::initTransAndRot() {
-
-	log(Kore::Info, "calibrate");
 	initRot = Kore::Quaternion(0, 0, 0, 1);
 	initRot.rotate(Kore::Quaternion(Kore::vec3(1, 0, 0), -Kore::pi / 2.0));
 	initRot.rotate(Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi / 2.0));

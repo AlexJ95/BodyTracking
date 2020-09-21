@@ -42,17 +42,7 @@ namespace {
 		}
 	}
 
-	//void f()	{ currentLevel->f(); }
-	//void h()	{ currentLevel->h(); }
-	//void t()	{ currentLevel->t(); }
-	//void g()	{ currentLevel->g(); }
 	void x()	{ currentLevel->x(); }
-	//void v()	{ currentLevel->v(); }
-	//void b()	{ currentLevel->b(); }
-	//void n()	{ currentLevel->n(); }
-	void p() { currentLevel->loadTunnel(0); }
-	void signL() { currentLevel->triggerSignL(); }
-	void signR() { currentLevel->triggerSignR(); }
 
 	void init() {
 		logger = new Logger;
@@ -61,17 +51,7 @@ namespace {
 		inputController = inputController->getInstanceAndAppend({
 				{Kore::KeyCode::KeyL, record},
 				{Kore::KeyCode::KeyQ, Kore::System::stop},
-				//{Kore::KeyCode::KeyF, f},
-				//{Kore::KeyCode::KeyH, h},
-				//{Kore::KeyCode::KeyV, v},
-				//{Kore::KeyCode::KeyG, g},
-				//{Kore::KeyCode::KeyT, t},
 				{Kore::KeyCode::KeyX, x},
-				//{Kore::KeyCode::KeyB, b},
-				//{Kore::KeyCode::KeyN, n},
-				{Kore::KeyCode::KeyP, p},
-				{Kore::KeyCode::KeyI, signR},
-				{Kore::KeyCode::KeyU, signL},
 			});
 		inputController->setUI(ui);
 

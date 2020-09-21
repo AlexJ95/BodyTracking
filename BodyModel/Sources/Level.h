@@ -73,17 +73,8 @@ public:
 	virtual void audioSetup();
 	virtual void graphicsSetup();
 
-	// to be removed (?)
-	virtual void l() {}
-	virtual void r() {}
-	virtual void v() {}
-	virtual void h() {}
-	virtual void t() {}
 	virtual void x() {}
-	virtual void y() {}
-	virtual void z() {}
-	virtual void loadTunnel(int numb) = 0;
-	virtual void triggerSignL() = 0;
-	virtual void triggerSignR() = 0;
+
+
 };
 

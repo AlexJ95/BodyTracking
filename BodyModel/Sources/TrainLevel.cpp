@@ -39,16 +39,14 @@ void TrainLevel::update(double deltaT)
 			deleteRoom();
 			loadTrainLevel();
 	}
+
 	Kore::vec3 pos = CustomMath::getInstance()->getCameraPos();
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);
-		updateFPS(deltaT);		
-		starttime += deltaT;
-		if(starttime > 3.0f)
-			gamePlay(deltaT);
-		else initialCountdown += deltaT;
+		//updateFPS(deltaT);		
+		gamePlay(deltaT);
 	}
 }
 
@@ -106,18 +104,18 @@ void TrainLevel::deleteRoom() {
 
 void TrainLevel::loadTrainLevel() {
 	for (ALevelObject* object : environment) {
-		if(object->object->tag != "tunnelS" && object->object->tag != "airplane" && object->object->tag != "signr" && object->object->tag != "tunnell")
+		if(object->object->tag != "tunnelS" && object->object->tag != "airplane" && object->object->tag != "signr" && object->object->tag != "tunnell" && object->object->tag != "signl" && object->object->tag != "signr")
 			object->object->activated = true;
 	}
 }
 
 void TrainLevel::gamePlay(double deltaT) {
-
+	Kore::log(Kore::Info, "Enemy Spawn with Color of %d for Wagon %d Enemyexist %d  enemySpawn %d", currentEnemy, currentCarriage, enemyExist, enemySpawn);
 	if (avatar->entity->position.y() < -16.0f * currentCarriage &&  !enemyExist)
 				loadEnemies(deltaT,currentCarriage++);
 
 
-	if (form->gameStarted()&& enemyExist)
+	if (form->gameStarted()&& enemySpawn)
 	{
 		updatePoints();
 		checkStation(deltaT);
@@ -127,7 +125,7 @@ void TrainLevel::gamePlay(double deltaT) {
 		checkingMoving();
 	}
 
-	if (!enemyExist && currentCarriage == 9)
+	if (!enemyExist && currentCarriage == 11)
 		loadEnding();
 }
 
@@ -135,17 +133,16 @@ void TrainLevel::loadEnemies(float deltaT, int carriage) {
 
 	Kore::log(Kore::Info, "make enemy %d", carriage);
 	switch (carriage) {
-	case 1: loadEnemy(0,avatar->entity->position);	break;
-	case 2: loadTunnel(carriage);	break;
+	case 1: loadEnemy(0, avatar->entity->position);	break; 
+	case 2: loadSign(); break;
 	case 3: loadEnemy(1, avatar->entity->position);	break;
 	case 4: loadTunnel(carriage);	break;
 	case 5: loadEnemy(2, avatar->entity->position);	break;
-	case 6: loadTunnel(carriage);	break;
+	case 6: loadSign();  break;
 	case 7: loadEnemy(3, avatar->entity->position);	break;
 	case 8: loadTunnel(carriage);	break;
 	case 9: loadEnemy(4, avatar->entity->position);	break;
-
-	default: loadEnemy(0, avatar->entity->position); break;
+	default: break;
 	}
 
 	
@@ -184,29 +181,19 @@ void TrainLevel::loadAirplane() {
 	}
 }
 
-void TrainLevel::triggerSignL()
-{
+void TrainLevel::loadSign() {
+	Kore::log(Kore::Info, "make a sigh");
 	for (ALevelObject* object : environment) {
-		if (object->object->tag == "signl") {
-			object->object->moveable = true;
+		if (object->object->tag == "signl"|| object->object->tag == "signr") {
 			object->object->activated = true;
 		}
 	}
+	enemyExist = true;
 }
-
-void TrainLevel::triggerSignR()
-{
-	for (ALevelObject* object : environment) {
-		if (object->object->tag == "signr") {
-			object->object->moveable = true;
-			object->object->activated = true;
-		}
-	}
-}
-
 void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
 	Kore::log(Kore::Info, "call the enemy");
-	enemyExist = true;
+	loadAirplane();
+	enemySpawn = true;
 	currentEnemy = range;
 }
 
@@ -230,7 +217,7 @@ void TrainLevel::updateFPS(double deltaT) {
 
 
 void TrainLevel::updateBuilding(double deltaT, double speed)
-{	
+{
 	if (!form->isFormShown())
 	{
 		for (ALevelObject* object : environment)
@@ -239,35 +226,28 @@ void TrainLevel::updateBuilding(double deltaT, double speed)
 				{
 
 					if (object->object->tag == "car") {
-						object->object->position.x() -= deltaT * speed * 1.5f;
-						object->object->position.z() -= 0.35 * deltaT;
+						object->object->position.x() -= deltaT * speed * 1.25f;
+						object->object->position.z() -= 0.35f * deltaT;
 					}
 					else if (object->object->tag == "car1") {
-						object->object->position.x() -= deltaT * speed * 4;
+						object->object->position.x() -= deltaT * speed * 4.0f;
 						object->object->position.z() -= deltaT * speed * 0.03f;
 					}
 					else if (object->object->tag == "tunnelS") {
-						object->object->position.x() -= deltaT * speed * 3;
+						object->object->position.x() -= deltaT * speed * 3.0f;
 						object->object->position.z() -= deltaT * speed * 0.02f;
 						if (object->object->position.x() < 0)
 							enemyExist = false;					
 					}
 					else if (object->object->tag == "airplane") {
-
-						if (object->object->position.x() < avatar->entity->position.x() + 30 && object->object->position.x() > 0 && !enemyExist)
-							loadEnemy(currentCarriage,object->object->position);
-
-						object->object->position.x() -= deltaT * speed * 3;
+						object->object->position.x() -= deltaT * speed * 6;
+						airPlanePos = object->object->position;					
+					}
+					else if(object->object->tag == "signl" || object->object->tag == "signr") {
+						object->object->position.x() -= deltaT * speed * 2;
+						object->object->position.z() -= deltaT * speed * 0.0075f * 2;
 						if (object->object->position.x() < 0)
-							object->object->position.y() += deltaT * speed;
-						else if (object->object->position.y() > 15)
-						{
-							object->object->position.y() -= deltaT * speed;
-
-						}
-
-						airPlanePos = object->object->position;
-						
+							enemyExist = false;
 					}
 					else {
 						object->object->position.x() -= deltaT * speed;
@@ -299,18 +279,12 @@ void TrainLevel::updateBuilding(double deltaT, double speed)
 					else if (object->object->tag == "airplane") {
 						object->object->activated = false;
 						object->object->position = object->initPosition;
-					}
-					if (object->object->tag == "signl") {
-						object->object->position.x() = 400;
-						object->object->position.z() = 138.25;
+					}else if (object->object->tag == "signl") {
 						object->object->activated = false;
-						object->object->moveable = false;
-					}
-					if (object->object->tag == "signr") {
-						object->object->position.x() = 400;
-						object->object->position.z() = 140.75;
+						object->object->position = object->initPosition;
+					}else if (object->object->tag == "signr") {
 						object->object->activated = false;
-						object->object->moveable = false;
+						object->object->position = object->initPosition;
 					}
 					else if (object->object->tag == "tunnelS") {
 						object->object->activated = false;
@@ -389,13 +363,14 @@ void TrainLevel::checkStation(double deltaT)//, Kore::vec3 AirPlanePos)
 {
 	if (!stationComplete & currentEnemyCount < maxEnemyCount)// & airPlanePos.x() <= Kore::abs(avatar->entity->position.y() - stationLength))
 	{
-		spawn(deltaT);//, AirPlanePos);
+		spawn(deltaT);//, AirPlanePos);		
 	}
 
 	if (StateMachineAI::beatedEnemyCount >= maxEnemyCount & !stationComplete)
 	{
 		stationComplete = true;
 		enemyExist = false;
+		enemySpawn = false;
 		currentEnemyCount = 0;
 
 		if (maxEnemyCount < poolSize)
@@ -426,8 +401,10 @@ void TrainLevel::spawn(double deltaT)//, Kore::vec3 AirPlanePos)
 		for (NonPlayerCharacter* enemy : enemies)
 		{
 			if (i == currentEnemy) {
+				
 				if (!(enemy->entity->beated) & !(enemy->entity->activated))
 				{
+					enemyExist = true;
 					Kore::vec3 globAirPlanePos = locToGlob * Kore::vec4(airPlanePos.x(), airPlanePos.y(), airPlanePos.z(), 1.0);
 					float randomX_Pos = (float)(rand() % 2 - 1);
 					if (randomX_Pos == 0.0)
@@ -437,10 +414,10 @@ void TrainLevel::spawn(double deltaT)//, Kore::vec3 AirPlanePos)
 					countDown = 0.0;
 					enemy->ai->spawn();
 					currentEnemyCount++;
-					break;
+					
 				}
 			}
-			else i++;
+			i++;
 		}
 	}
 }
@@ -866,60 +843,13 @@ void TrainLevel::signInit(Kore::Graphics4::VertexStructure environmentSructure) 
 
 	ALevelObject* signl = createNewObject("sign/sign3.ogex", "sign/", environmentSructure, 0.01, Kore::vec3(400, -2.18, 138.25), Kore::Quaternion(0, 2, 0, 0));
 	signl->object->tag = "signl";
-	signl->object->activated = false;
-	signl->object->moveable = false;
 
-	ALevelObject* signr = createNewObject("sign/sign3.ogex", "sign/", environmentSructure, -0.01, Kore::vec3(400, -2.18, 140.75), Kore::Quaternion(2, 0, 0, 0));
-
-	//object = createObjectCopy(sign, Kore::vec3(sign->object->position.x(), sign->object->position.y(), sign->object->position.z()), sign->object->rotation);
+	ALevelObject* signr = createNewObject("sign/sign3.ogex", "sign/", environmentSructure, -0.01, Kore::vec3(415, -2.18, 140.75), Kore::Quaternion(2, 0, 0, 0));
 	signr->object->tag = "signr";
-	signr->object->activated = false;
-	signr->object->moveable = false;
 }
 
-void TrainLevel::t()
-{	
-	objects[0]->object->position.x() += offsets;
-	Kore::log(Kore::Info, "X = %f", objects[0]->object->position.x());
-}
-void TrainLevel::g()
-{
-	objects[0]->object->position.x() -= offsets;
-	Kore::log(Kore::Info, "X = %f", objects[0]->object->position.x());
-}
-void TrainLevel::f()
-{
-	objects[0]->object->position.z() += offsets;
-	Kore::log(Kore::Info, "Z = %f", objects[0]->object->position.z());
-}
-void TrainLevel::h()
-{
-	objects[0]->object->position.z() -= offsets;
-	Kore::log(Kore::Info, "Z = %f", objects[0]->object->position.z());
-}
 void TrainLevel::x()
 {
 	avatar->entity->calibrated = true;
-	/*
-	for (ALevelObject* object : environment) {
-		if (object->object->tag == "tunnelS") {
-			object->object->moveable = true;
-			object->object->activated = true;
-		}
-	}*/
 }
-void TrainLevel::v()
-{
-	objects[0]->object->rotation.x += offsets;
-	Kore::log(Kore::Info, "Xr = %f", objects[0]->object->rotation.x);
-}
-void TrainLevel::b()
-{
-	objects[0]->object->rotation.y += offsets;
-	Kore::log(Kore::Info, "Yr = %f", objects[0]->object->rotation.y);
-}
-void TrainLevel::n()
-{
-	objects[0]->object->rotation.z += offsets;
-	Kore::log(Kore::Info, "Zr = %f", objects[0]->object->rotation.z);
-}
+

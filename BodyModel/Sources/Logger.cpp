@@ -211,7 +211,7 @@ bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::v
 		
 		if (std::ifstream(filename)) {
 			logDataReader.open(filename);
-			log(Kore::Info, "Read data from %s", filename);		
+			//log(Kore::Info, "Read data from %s", filename);		
 			// Skip header
 			logDataReader >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag;
 		} else {
