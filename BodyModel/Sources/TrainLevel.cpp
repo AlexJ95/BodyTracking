@@ -26,26 +26,23 @@ void TrainLevel::init() {
 
 void TrainLevel::update(double deltaT)
 {
+	freeMemory();
+	//updateFPS(deltaT);
 	//write level-specific runtime logic here
 	Level::update(deltaT);
-
-	//avatar->entity->calibrated = true;
-
+	
+	
+	
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
-	else {	
-			form->displayLoading();
-			gameStart = true; 
-			deleteRoom();
-			loadTrainLevel();
-	}
+	else if (!loaded)
+		loadTrainLevel();
 
 	Kore::vec3 pos = CustomMath::getInstance()->getCameraPos();
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
 
 	if (gameStart) {
-		updateBuilding(deltaT, 20);
-		//updateFPS(deltaT);		
+		updateBuilding(deltaT, 20);	
 		gamePlay(deltaT);
 	}
 }
@@ -90,7 +87,6 @@ void TrainLevel::runCalibrationRoom() {
 		if (object->object->tag == "room") {
 			object->object->activated = true;
 		}
-
 }
 
 void TrainLevel::deleteRoom() {
@@ -98,23 +94,24 @@ void TrainLevel::deleteRoom() {
 		if (object->object->tag == "room")
 		{
 			object->object->activated = false;
-			freeMemory(object);
+			object->del = true;
 		}
 }
 
 void TrainLevel::loadTrainLevel() {
-	for (ALevelObject* object : environment) {
-		if(object->object->tag != "tunnelS" && object->object->tag != "airplane" && object->object->tag != "signr" && object->object->tag != "tunnell" && object->object->tag != "signl" && object->object->tag != "signr")
-			object->object->activated = true;
-	}
+		form->displayLoading();
+		gameStart = true;
+		deleteRoom();
+
+		for (ALevelObject* object : environment) {
+			if (object->object->tag != "tunnelS" && object->object->tag != "airplane" && object->object->tag != "signr" && object->object->tag != "tunnell" && object->object->tag != "signl" && object->object->tag != "signr" && object->object->tag != "room")
+				object->object->activated = true;
+		}
 }
 
 void TrainLevel::gamePlay(double deltaT) {
-	Kore::log(Kore::Info, "Enemy Spawn with Color of %d for Wagon %d Enemyexist %d  enemySpawn %d", currentEnemy, currentCarriage, enemyExist, enemySpawn);
 	if (avatar->entity->position.y() < -16.0f * currentCarriage &&  !enemyExist)
 				loadEnemies(deltaT,currentCarriage++);
-
-
 	if (form->gameStarted()&& enemySpawn)
 	{
 		updatePoints();
@@ -124,13 +121,13 @@ void TrainLevel::gamePlay(double deltaT) {
 		checkHittingEnemy();
 		checkingMoving();
 	}
-
 	if (!enemyExist && currentCarriage == 11)
 		loadEnding();
 }
 
 void TrainLevel::loadEnemies(float deltaT, int carriage) {
 
+	loaded = true;
 	Kore::log(Kore::Info, "make enemy %d", carriage);
 	switch (carriage) {
 	case 1: loadEnemy(0, avatar->entity->position);	break; 
@@ -201,11 +198,13 @@ void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
 void TrainLevel::loadEnding() {
 	Kore::log(Kore::Info, "Game End");
 	form->displayEnd();
+	gameStart = false;
 }
 
 void TrainLevel::updateFPS(double deltaT) {
 	fps++;
 	time += deltaT;
+
 	if (time > 1.0f)
 	{
 		Kore::log(Kore::Info, "%d", fps);
@@ -226,12 +225,14 @@ void TrainLevel::updateBuilding(double deltaT, double speed)
 				{
 
 					if (object->object->tag == "car") {
-						object->object->position.x() -= deltaT * speed * 1.25f;
-						object->object->position.z() -= 0.35f * deltaT;
+						object->object->position.x() -= deltaT * speed * 0.75f;
+						if(object->object->position.z() > 6.5f)
+						object->object->position.z() -= deltaT * 0.02f;
+						else object->object->position.z() += deltaT * 0.001f;
 					}
 					else if (object->object->tag == "car1") {
-						object->object->position.x() -= deltaT * speed * 4.0f;
-						object->object->position.z() -= deltaT * speed * 0.03f;
+						object->object->position.x() -= deltaT * speed * 2.0f;
+						object->object->position.z() -= deltaT * speed * 0.02f;
 					}
 					else if (object->object->tag == "tunnelS") {
 						object->object->position.x() -= deltaT * speed * 3.0f;
@@ -274,7 +275,7 @@ void TrainLevel::updateBuilding(double deltaT, double speed)
 						setPosition(object, 454, object->object->position.y(), -2.6f);
 					}
 					else if (object->object->tag == "car") {
-						setPosition(object, 454, object->object->position.y(), 12.3f);
+						setPosition(object, 454, object->object->position.y(), 10.3f);
 					}
 					else if (object->object->tag == "airplane") {
 						object->object->activated = false;
@@ -660,10 +661,15 @@ void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure)
 	
 }
 
-void TrainLevel::freeMemory(ALevelObject* alo) {
-	environment.erase(environment.begin()+alo->object->iterator);
-	delete alo;
-	alo = nullptr;
+void TrainLevel::freeMemory() {
+	for (ALevelObject* object : environment) {
+		if (object->del) {
+			environment.erase(environment.begin() + object->object->iterator);
+			delete object;
+			object = nullptr;
+			break;
+		}
+	}
 	reIteratorVector();
 }
 
@@ -803,10 +809,10 @@ void TrainLevel::houseInit(Kore::Graphics4::VertexStructure environmentSructure)
 		object->object->tag = "houseL";
 	}
 
-	freeMemory(houseL);
-	freeMemory(houseS);
-	freeMemory(houseM);
-	freeMemory(houseML);
+	houseL->del = true;
+	houseS->del = true;
+	houseM->del = true;
+	houseML->del = true;
 }
 
 void TrainLevel::airplaneInit(Kore::Graphics4::VertexStructure environmentSructure) {

@@ -46,7 +46,7 @@ namespace {
 	float fps = 100;
 
 	//Camera related stuff
-	float cameraMoveSpeed = 6.0f;
+	float cameraMoveSpeed = 50.0f;
 	Kore::vec3 cameraPos = Kore::vec3(0, 0, 0);
 	Kore::vec4 camUp = Kore::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	Kore::vec4 camForward = Kore::vec4(0.0f, 0.0f, -1.0f, 0.0f);

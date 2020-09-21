@@ -34,7 +34,7 @@ public:
 
     Level::ALevelObject* objects[1];
     bool stationStarted = true;
-
+    bool loaded = false;
     bool gameStart;
     int currentCarriage = 1;
     bool enemySpawn = false;
@@ -65,7 +65,7 @@ public:
 
 //  Stashed changes
     int stationNr = 1;
-    float stationLength = 16.0;
+    float stationLength = 15.0;
     bool stationComplete = false; 
     int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0;
@@ -81,6 +81,8 @@ public:
     float camVelocity = 0.1;
 
     void createEnemy(Kore::Graphics4::VertexStructure entitySructure);
+
+    void freeMemory();
 
     Level::ALevelObject* createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot);
     Level::ALevelObject* createObjectCopy(ALevelObject* object, Kore::vec3 pos, Kore::Quaternion rot);
