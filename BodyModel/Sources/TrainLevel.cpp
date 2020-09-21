@@ -1,17 +1,6 @@
 ﻿#include "TrainLevel.h"
 #include "MainForm.h"
 
-/*
-	ALevelObject* object->moveable		: set Object should move or not, still object in window
-				  object->activated		: set Object should object or not, still moveable	
-				  object->object->tag	: set object with a tag, for compare
-	
-	ALevelObjects are saved in environment;
-	NonPlayerCharacters are saved in enemies;
-
-	
-	*/
-
 void TrainLevel::init() {
 	controlsSetup();
 	audioSetup();
@@ -22,7 +11,60 @@ void TrainLevel::init() {
 	gameStart = false;
 	tunnelCounter = 8;
 }
+void TrainLevel::controlsSetup()
+{
+	input = input->getInstance();
+}
+void TrainLevel::audioSetup()
+{
+	audio = audio->getInstanceAndAppend({
+		{"Hier koennte Ihre Werbung stehen!", new Kore::Sound("sound/start.wav")}
+		});
+}
+void TrainLevel::graphicsSetup() {
+	//Load Shaders
+	renderer->loadEnvironmentShader("shader_basic_shading.vert", "shader_basic_shading.frag");
+	renderer->loadEntityShader("shader.vert", "shader.frag");
 
+	//Set graphics variables
+	const Kore::Graphics4::VertexStructure& entitySructure = renderer->entityGraphics->structure;
+	const Kore::Graphics4::VertexStructure& environmentSructure = renderer->environmentGraphics->structure;
+
+	//Load Calibration
+	roomInit(environmentSructure);
+
+	//Load Skybox
+	skyInit(environmentSructure);
+
+	//Load Train
+	trainInit(environmentSructure, 3);
+
+	//Load Avatar
+	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
+
+	//Load Enemy
+	createEnemy(entitySructure);
+
+	//Load Ground
+	groundInit(environmentSructure);
+
+	//Load Houses
+	houseInit(environmentSructure);
+
+	//Load Airplane
+	airplaneInit(environmentSructure);
+
+	//Load Car
+	carInit(environmentSructure);
+
+	//Load Tunnel	
+	tunnelInit(environmentSructure);
+
+	//Load Signs
+	signInit(environmentSructure);
+}
+
+// updates
 void TrainLevel::update(double deltaT){
 	freeMemory();
 	//updateFPS(deltaT);
@@ -187,6 +229,7 @@ void TrainLevel::updatePoints() {
 		}
 }
 
+// Scene change
 void TrainLevel::runCalibrationRoom() {
 	for (ALevelObject* object : environment)
 		if (object->object->tag == "room") {
@@ -286,59 +329,6 @@ void TrainLevel::loadEnding() {
 // Help function
 void TrainLevel::setPosition(ALevelObject* alo ,float x, float y, float z) {
 	alo->object->position = Kore::vec3(x, y, z);
-}
-
-void TrainLevel::controlsSetup()
-{
-	input = input->getInstance();
-}
-void TrainLevel::audioSetup()
-{
-	audio = audio->getInstanceAndAppend({
-		{"Hier koennte Ihre Werbung stehen!", new Kore::Sound("sound/start.wav")}
-		});
-}
-void TrainLevel::graphicsSetup(){
-	//Load Shaders
-	renderer->loadEnvironmentShader("shader_basic_shading.vert", "shader_basic_shading.frag");
-	renderer->loadEntityShader("shader.vert", "shader.frag");
-	
-	//Set graphics variables
-	const Kore::Graphics4::VertexStructure& entitySructure = renderer->entityGraphics->structure;
-	const Kore::Graphics4::VertexStructure& environmentSructure = renderer->environmentGraphics->structure;
-	
-	//Load Calibration
-	roomInit(environmentSructure);
-
-	//Load Skybox
-	skyInit(environmentSructure);
-
-	//Load Train
-	trainInit(environmentSructure, 3);
-
-	//Load Avatar
-	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
-
-	//Load Enemy
-	createEnemy(entitySructure);
-
-	//Load Ground
-	groundInit(environmentSructure);
-
-	//Load Houses
-	houseInit(environmentSructure);
-
-	//Load Airplane
-	airplaneInit(environmentSructure);
-
-	//Load Car
-	carInit(environmentSructure);
-
-	//Load Tunnel	
-	tunnelInit(environmentSructure);
-
-	//Load Signs
-	signInit(environmentSructure);
 }
 
 //////////////////////////////interaction Methods
@@ -629,7 +619,7 @@ void TrainLevel::reIteratorVector() {
 
 }
 
-// Init 
+// Graphic Init 
 void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure) {
 	AnAnimatedEntity* reference;
 	for (int i = 0; i < poolSize; i++) {
