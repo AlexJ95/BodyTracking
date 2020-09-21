@@ -27,6 +27,7 @@ namespace {
 	Level* currentLevel;
 	UI3D* ui;
 	Kore::Window* window;
+	
 
 	void record() {
 		logRawData = !logRawData;
@@ -93,12 +94,17 @@ namespace {
 		double t = Kore::System::time() - startTime;
 		double deltaT = t - lastTime;
 		lastTime = t;
+		countTime += deltaT;
+		double diff = 1 / fps;
 
-		inputController->update(deltaT);
+		if (countTime > diff) {
+		countTime = countTime - diff;
+		inputController->update(diff);
 		Kore::vec3 currentPos = cameraPos;
 		Kore::vec4 currentForward = camForward;
 		double anyT = lastTime;
-		currentLevel->update(deltaT);
+		currentLevel->update(diff);
+		}
 	}
 }
 
