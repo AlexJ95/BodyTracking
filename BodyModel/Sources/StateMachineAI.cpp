@@ -45,7 +45,8 @@ int CyborgAI::numberOfVictories = 0;
 
 CyborgAI::AIState CyborgAI::falling(float deltaT)
 {
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);		//Test
+	log(Kore::Info, "Falling");
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);		//Test
 	//inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);
 
 	entity->position.z() -= fallinVelocity * deltaT;
@@ -63,6 +64,7 @@ CyborgAI::AIState CyborgAI::falling(float deltaT)
 
 CyborgAI::AIState CyborgAI::attacking(float deltaT)
 {
+	log(Kore::Info, "Attacking");
 	if (!inAnimation) 
 		switch (rand() % 3) {
 		case 0:
@@ -70,12 +72,15 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 		case 1:
 			currentAnimation = "HorizontalSweep";
 		case 2:
-			currentAnimation = "Kick";
+			currentAnimation = "Kicking";
 		default:
-			currentAnimation = "Kick";
+			currentAnimation = "Kicking";
 		}
+
+	log(Kore::Info, "Animation picked %S " ,currentAnimation);
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
 
+	log(Kore::Info, "Animation Played");
 	if (avatar->movementExpired || (avatar->lastMovement != Avatar::LateralBounding)) avatar->hit(); //Example of movement recognition-implementation
 
 	//TODO: Implement Action/Reaction table as in the Google tables sheet (Use placeholder movements for enemies for now?)
@@ -95,6 +100,7 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 
 CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 {
+	log(Kore::Info, "pursueing");
 	Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->position.x(), avatar->position.y(), avatar->position.z(), 1.0);
 	avatarPosGlob.y() = 0;
 	Kore::vec3 dirBetweenEnemys = entity->position - currentPosOtherEnemy;
@@ -171,6 +177,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 
 CyborgAI::AIState CyborgAI::dying(float deltaT)
 {
+	log(Kore::Info, "dying");
 	lastDeadPos = entity->position.y();
 	if (!inAnimation) currentAnimation = rand() % 2 == 1? "Dying1" : "Dying2";
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
@@ -191,6 +198,7 @@ CyborgAI::AIState CyborgAI::dying(float deltaT)
 
 CyborgAI::AIState CyborgAI::planning(float deltaT)
 {
+	log(Kore::Info, "planning");
 	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
 	Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->position.x(), avatar->position.y(), avatar->position.z(), 1.0);
 	Kore::vec3 entToPlayerDir = (avatarPosGlob - entityPosGlob);

@@ -113,7 +113,7 @@ void TrainLevel::loadTrainLevel() {
 
 void TrainLevel::gamePlay(double deltaT) {
 
-	if (avatar->entity->position.y() < -1.0f * currentCarriage &&  !enemyExist)
+	if (avatar->entity->position.y() < -16.0f * currentCarriage &&  !enemyExist)
 				loadEnemies(deltaT,currentCarriage++);
 
 

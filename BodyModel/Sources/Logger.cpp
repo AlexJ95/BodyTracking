@@ -211,12 +211,9 @@ bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::v
 		
 		if (std::ifstream(filename)) {
 			logDataReader.open(filename);
-			log(Kore::Info, "Read data from %s", filename);
-			
+			log(Kore::Info, "Read data from %s", filename);		
 			// Skip header
 			logDataReader >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag >> tag;
-
-			log(Kore::Info, "Skip Header %s", filename);
 		} else {
 			log(Kore::Info, "Could not find file %s", filename);
 		}
@@ -225,14 +222,10 @@ bool Logger::readData(const int numOfEndEffectors, const char* filename, Kore::v
 	// Read lines
 	for (int i = 0; i < numOfEndEffectors; ++i) {
 		
-		log(Kore::Info, "Frist Lane %d", i);
 		logDataReader >> tag >> posX >> posY >> posZ >> rotX >> rotY >> rotZ >> rotW >> scale;
-		
-		
+				
 		rawPos[i] = Kore::vec3(posX, posY, posZ); 
-		log(Kore::Info, "RawPos %d %d", i, numOfEndEffectors);
 		rawRot[i] = Kore::Quaternion(rotX, rotY, rotZ, rotW);
-		log(Kore::Info, "RawRot %d %d", i, numOfEndEffectors);
 
 		if (logDataReader.eof()) {
 			logDataReader.close();

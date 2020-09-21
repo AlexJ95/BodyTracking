@@ -1,7 +1,7 @@
 #include "Animator.h"
 
 Animator::Animator(Avatar* avatar) {
-	math = math->CustomMath::getInstance();
+	math = CustomMath::getInstance();
 	motionRecognizer = new MachineLearningMotionRecognition(avatar);
 }
 
@@ -217,11 +217,8 @@ void Animator::resetPositionAndRotation(AnimatedEntity* entity) {
 
 void Animator::calibrate(AnimatedEntity* entity, BoneNode* bones[numOfEndEffectors])
 {
-	log(Kore::Info, "calibrate");
-	
 	CustomMath::getInstance()->initTransAndRot();
 
-	log(Kore::Info, "init sucess");
 	for (int i = 0; i < numOfEndEffectors; ++i) {
 		Kore::vec3 desPosition = entity->endEffector[i]->getDesPosition();
 		Kore::Quaternion desRotation = entity->endEffector[i]->getDesRotation();
@@ -327,7 +324,7 @@ void Animator::assignControllerAndTracker(Avatar* avatar)
 void Animator::resetAvatarPose(Avatar* avatar)
 {
 	avatar->calibrated = false;
-	math->initTransAndRot();
+	CustomMath::getInstance()->initTransAndRot();
 	resetPositionAndRotation(avatar);
 	setSize(avatar);
 }
