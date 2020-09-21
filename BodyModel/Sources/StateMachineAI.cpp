@@ -63,7 +63,18 @@ CyborgAI::AIState CyborgAI::falling(float deltaT)
 
 CyborgAI::AIState CyborgAI::attacking(float deltaT)
 {
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Kicking"), logger);
+	if (!inAnimation) 
+		switch (rand() % 3) {
+		case 0:
+			currentAnimation = "VerticalChop";
+		case 1:
+			currentAnimation = "HorizontalSweep";
+		case 2:
+			currentAnimation = "Kick";
+		default:
+			currentAnimation = "Kick";
+		}
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
 
 	if (avatar->movementExpired || (avatar->lastMovement != Avatar::LateralBounding)) avatar->hit(); //Example of movement recognition-implementation
 
@@ -75,6 +86,7 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 	}
 	else if (entity->isDead())
 	{
+		inAnimation = false;
 		return AIState::Dying;
 	}
 	return AIState::Dying; //Test
@@ -151,6 +163,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 	}
 	else if (entity->isDead())
 	{
+		inAnimation = false;
 		return AIState::Dying;
 	}
 	return AIState::Planning;
@@ -159,8 +172,8 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 CyborgAI::AIState CyborgAI::dying(float deltaT)
 {
 	lastDeadPos = entity->position.y();
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);  //Test
-	//inAnimation = animator->executeAnimation(entity, animationLibrary.at("Dying"), logger);
+	if (!inAnimation) currentAnimation = rand() % 2 == 1? "Dying1" : "Dying2";
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
 
 	if (inAnimation)
 	{
@@ -218,10 +231,14 @@ CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Ava
 	};
 	animationLibrary =
 	{
-		{"Kicking", "verticalChop1.csv"},
-		{"Walking", files[1]}
-		//{"Dying",files[...]}
-		//{"Falling",files[...]}
+		{"VerticalChop",	files[7]},
+		{"Kicking",			files[8]},
+		{"HorizontalSweep",	files[9]},
+		{"Walking",			files[1]},
+		{"Dying1",			files[12]},
+		{"Dying2",			files[13]},
+		{"Landing",			files[11]},
+		{"Falling",			files[10]}
 	};
 	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Planning;
 }

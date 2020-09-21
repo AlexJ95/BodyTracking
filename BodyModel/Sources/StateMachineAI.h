@@ -10,6 +10,7 @@ protected:
 	AnimatedEntity* entity;
 	Avatar* avatar;
 	Logger* logger;
+	string currentAnimation;
 	bool inAnimation;
 	Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 

@@ -55,6 +55,7 @@ public:
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
     float initialCountdown;
+    float starttime;
     float time;
     int fps = 0;;
     float offsets;
@@ -72,7 +73,8 @@ public:
     float stationLength = 18.0;
     bool stationComplete = false; 
     int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
-    int currentEnemyCount = 0; 
+    int currentEnemyCount = 0;
+    void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
     
     //airplane stuff
     Kore::vec3 airPlanePos;
@@ -95,7 +97,6 @@ public:
     void airplaneInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);
-    void createEnemy(Kore::Graphics4::VertexStructure entitySructure);
     void freeMemory(ALevelObject* alo);
     void reIteratorVector();
 };
