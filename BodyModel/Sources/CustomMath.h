@@ -33,6 +33,8 @@ public:
 
 	void moveCamera(bool w, bool a, bool s, bool d, float deltaT);
 
+	Kore::vec3 getCameraPos();
+
 	void initTransAndRot(); // Initializes the quaternion initRot and matrix initTrans and their inverses
 
 	void init();

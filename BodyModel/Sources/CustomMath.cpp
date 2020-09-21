@@ -1,5 +1,6 @@
 
 #include "CustomMath.h"
+#include <Kore\Log.h>
 
 // Variables to mirror the room and the avatar
 Kore::vec3 mirrorOver(6.057f, 0.0f, 0.04f);
@@ -79,7 +80,11 @@ void CustomMath::moveCamera(bool w, bool a, bool s, bool d, float deltaT)
 	if (d) cameraPos -= camRight * (float)deltaT * cameraMoveSpeed;
 }
 
+Kore::vec3 CustomMath::getCameraPos() { return cameraPos; }
+
 void CustomMath::initTransAndRot() {
+
+	log(Kore::Info, "calibrate");
 	initRot = Kore::Quaternion(0, 0, 0, 1);
 	initRot.rotate(Kore::Quaternion(Kore::vec3(1, 0, 0), -Kore::pi / 2.0));
 	initRot.rotate(Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi / 2.0));

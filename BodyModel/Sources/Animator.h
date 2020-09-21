@@ -21,10 +21,12 @@ class Animator
 #ifdef KORE_STEAMVR
 	float currentUserHeight;
 #endif
+
+
 	CustomMath* math;
 	MachineLearningMotionRecognition* motionRecognizer;
 
-public :
+public:
 	Animator(Avatar* avatar);
 
 	bool executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger);

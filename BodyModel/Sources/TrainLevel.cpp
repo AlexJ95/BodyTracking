@@ -39,12 +39,14 @@ void TrainLevel::update(double deltaT)
 			deleteRoom();
 			loadTrainLevel();
 	}
+	Kore::vec3 pos = CustomMath::getInstance()->getCameraPos();
+	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);
 		updateFPS(deltaT);		
 		starttime += deltaT;
-		if(starttime > 10.0f)
+		if(starttime > 3.0f)
 			gamePlay(deltaT);
 		else initialCountdown += deltaT;
 	}
@@ -111,10 +113,9 @@ void TrainLevel::loadTrainLevel() {
 
 void TrainLevel::gamePlay(double deltaT) {
 
-	if (avatar->entity->position.y() < -17.0f * currentCarriage &&  !enemyExist)
+	if (avatar->entity->position.y() < -1.0f * currentCarriage &&  !enemyExist)
 				loadEnemies(deltaT,currentCarriage++);
 
-	avatar->entity->position = locToGlob.Invert() * Kore::vec4(cameraPos.x(), cameraPos.y(), cameraPos.z(), 1.0);
 
 	if (form->gameStarted()&& enemyExist)
 	{
