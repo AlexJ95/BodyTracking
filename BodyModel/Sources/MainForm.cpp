@@ -209,7 +209,8 @@ void MainForm::drawForm()
 
 		ImGui::End();
 	}
-	else if (showEnd) {
+	
+	if (showEnd) {
 
 	ImGui::Begin("End", 0, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 	ImGui::SetWindowSize("End", ImVec2(400, 130), 0);

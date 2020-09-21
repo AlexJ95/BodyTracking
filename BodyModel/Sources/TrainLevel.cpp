@@ -30,9 +30,7 @@ void TrainLevel::update(double deltaT)
 	//updateFPS(deltaT);
 	//write level-specific runtime logic here
 	Level::update(deltaT);
-	
-	
-	
+
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
 	else if (!loaded)
@@ -144,7 +142,6 @@ void TrainLevel::loadEnemies(float deltaT, int carriage) {
 
 	
 }
-
 void TrainLevel::loadEnemyRandom(float deltaT, int carriage) {
 
 	Kore::log(Kore::Info, "make enemy");
@@ -156,7 +153,6 @@ void TrainLevel::loadEnemyRandom(float deltaT, int carriage) {
 	default: checkStation(deltaT);
 	}
 }
-
 void TrainLevel::loadTunnel(int range) {
 
 	Kore::log(Kore::Info, "make tunnel");
@@ -168,7 +164,6 @@ void TrainLevel::loadTunnel(int range) {
 	}
 	enemyExist = true;
 }
-
 void TrainLevel::loadAirplane() {
 	Kore::log(Kore::Info, "call the airplane");
 	for (ALevelObject* object : environment) {
@@ -177,7 +172,6 @@ void TrainLevel::loadAirplane() {
 		}
 	}
 }
-
 void TrainLevel::loadSign() {
 	Kore::log(Kore::Info, "make a sigh");
 	for (ALevelObject* object : environment) {
@@ -193,11 +187,12 @@ void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
 	enemySpawn = true;
 	currentEnemy = range;
 }
-
-
 void TrainLevel::loadEnding() {
 	Kore::log(Kore::Info, "Game End");
+
+	form->drawForm();
 	form->displayEnd();
+	
 	gameStart = false;
 }
 
