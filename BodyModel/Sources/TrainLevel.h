@@ -8,6 +8,8 @@ class TrainLevel :
 public:
     void update(double deltaT);
     void updatePoints();
+    void updateAudio(double deltaT);
+    void updateAudio();
     void runCalibrationRoom();
     void deleteRoom();
     void loadTrainLevel();
@@ -49,15 +51,12 @@ public:
     float hittingRadius = 0.3;
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
-    float initialCountdown;
+    double musicCountdown = 6;
     float starttime;
     float time;
     int fps = 0;;
     float offsets;
-
-// Updated upstream
-    //void spawn(double deltaT);
-	
+    
 	bool tunnelActivated;
 	int tunnelCounter;
 
@@ -95,6 +94,5 @@ public:
     void airplaneInit(Kore::Graphics4::VertexStructure environmentSructure);
     void carInit(Kore::Graphics4::VertexStructure environmentSructure);
     void tunnelInit(Kore::Graphics4::VertexStructure environmentSructure);
-    void freeMemory(ALevelObject* alo);
     void reIteratorVector();
 };

@@ -23,7 +23,7 @@ void StateMachineAI::spawn()
 	//entity->position = startPos;
 	entity->position.z() = 50;
 	entity->activated = true;
-	entity->resetCurrentHeight();
+	//entity->resetCurrentHeight();
 	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Falling;
 }
 
@@ -142,8 +142,9 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 1.5)
 		tooClose = false;
 
-	if (currentDistance > maxDistanceToPlayer | tooClose)
+	if (currentDistance > maxDistanceToPlayer || tooClose)
 	{
+		
 		entity->position += dTrans * (locToGlob.Invert() * Kore::vec4(prevDir.x(), prevDir.y(), prevDir.z(), 1.0));
 
 		if (entity->position.x() > limitPosX)
@@ -155,6 +156,8 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 			entity->position.x() = -limitPosX;
 		}
 	}
+
+
 
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);
 

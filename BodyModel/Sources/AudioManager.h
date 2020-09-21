@@ -24,4 +24,5 @@ public:
 	AudioManager(std::map<std::string, Kore::Sound*> sounds);
 
 	void play(std::string soundName);
+	Kore::Sound* getSound(std::string soundName);
 };

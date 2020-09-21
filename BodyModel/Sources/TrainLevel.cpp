@@ -17,8 +17,10 @@ void TrainLevel::controlsSetup()
 }
 void TrainLevel::audioSetup()
 {
+	Kore::Sound* sound = new Kore::Sound("sound/trains.wav");
+	sound->setVolume(0.1f);
 	audio = audio->getInstanceAndAppend({
-		{"Hier koennte Ihre Werbung stehen!", new Kore::Sound("sound/start.wav")}
+		{"traindrivingsound", sound}
 		});
 }
 void TrainLevel::graphicsSetup() {
@@ -70,6 +72,7 @@ void TrainLevel::update(double deltaT){
 	//updateFPS(deltaT);
 	//write level-specific runtime logic here
 	Level::update(deltaT);
+	
 
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
@@ -85,6 +88,9 @@ void TrainLevel::update(double deltaT){
 	}
 }
 void TrainLevel::gamePlay(double deltaT) {
+
+	updateAudio(deltaT);
+
 	if (avatar->entity->position.y() < -16.0f * currentCarriage && !enemyExist)
 		loadEnemies(deltaT, currentCarriage++);
 	if (form->gameStarted() && enemySpawn)
@@ -227,6 +233,16 @@ void TrainLevel::updatePoints() {
 			break;
 
 		}
+}
+void TrainLevel::updateAudio(double deltaT) {
+
+	//log(Kore::Info, "%d " ,audio->getSound("traindriveingsound")->size);
+	musicCountdown += deltaT;
+
+	if (musicCountdown > 5.7f) {
+		musicCountdown -= 5.7f;
+		audio->play("traindrivingsound");
+	}
 }
 
 // Scene change

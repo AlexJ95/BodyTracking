@@ -33,3 +33,8 @@ void AudioManager::play(std::string soundName)
 {
 	Kore::Audio1::play(soundLibrary.find(soundName)->second);
 }
+
+Kore::Sound* AudioManager::getSound(std::string soundName) {
+
+	return soundLibrary.find(soundName)->second;
+}
