@@ -189,10 +189,7 @@ void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
 }
 void TrainLevel::loadEnding() {
 	Kore::log(Kore::Info, "Game End");
-
-	form->drawForm();
-	form->displayEnd();
-	
+	form->displayEnd();	
 	gameStart = false;
 }
 
