@@ -77,7 +77,7 @@ namespace {
 		countTime += deltaT;
 		double diff = 1 / fps;
 
-		currentLevel->renderer->update(deltaT);		
+		currentLevel->renderer->update(deltaT);
 
 		if (countTime > diff) {
 		countTime = countTime - diff;

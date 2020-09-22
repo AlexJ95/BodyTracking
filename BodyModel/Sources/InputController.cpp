@@ -190,5 +190,6 @@ void InputController::update(float deltaT)
 	if (!ui->isUIshown()) math->moveCamera(W, A, S, D, deltaT);
 
 	if(!ui->isUIshown() && (avatar->lastMovement == 9)) math->moveCamera(true, false, false, false, deltaT);
+	if (!ui->isUIshown() && (avatar->lastMovement == 9)) math->moveCamera(true, false, false, false, deltaT);
 	
 }

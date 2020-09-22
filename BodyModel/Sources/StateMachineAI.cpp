@@ -66,13 +66,13 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 	if (!inAnimation) 
 		switch (rand() % 3) {
 		case 0:
-			currentAnimation = "VerticalChop";
+			currentAnimation = "VerticalChop"; break;
 		case 1:
-			currentAnimation = "HorizontalSweep";
+			currentAnimation = "HorizontalSweep"; break;
 		case 2:
-			currentAnimation = "Kicking";
+			currentAnimation = "Kicking"; break;
 		default:
-			currentAnimation = "Kicking";
+			currentAnimation = "Kicking"; break;
 		}
 
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
@@ -90,8 +90,8 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 		inAnimation = false;
 		return AIState::Dying;
 	}
-	return AIState::Dying; //Test
-	//return AIState::Planning;
+	//return AIState::Dying; //Test
+	return AIState::Planning;
 }
 
 CyborgAI::AIState CyborgAI::pursueing(float deltaT)

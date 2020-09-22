@@ -17,7 +17,7 @@ void TrainLevel::controlsSetup()
 }
 void TrainLevel::audioSetup()
 {
-	Kore::Sound* sound = new Kore::Sound("sound/trains.wav");
+	Kore::Sound* sound = new Kore::Sound("sound/train.wav");
 	sound->setVolume(0.1f);
 	audio = audio->getInstanceAndAppend({
 		{"traindrivingsound", sound}
@@ -68,6 +68,7 @@ void TrainLevel::graphicsSetup() {
 
 // updates
 void TrainLevel::update(double deltaT){
+
 	freeMemory();
 	//updateFPS(deltaT);
 	//write level-specific runtime logic here
@@ -81,6 +82,8 @@ void TrainLevel::update(double deltaT){
 
 	Kore::vec3 pos = CustomMath::getInstance()->getCameraPos();
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
+
+
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);	
