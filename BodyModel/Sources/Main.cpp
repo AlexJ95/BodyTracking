@@ -34,17 +34,20 @@ namespace {
 		
 		if (!logRawData /*&& !motionRecognizer->isActive()*/) {
 			audio->play("startRecordingSound");
-			logger->startLogger("logData");
+			//logger->startLogger("logData");
 		}
 		else if (logRawData /*&& !motionRecognizer->isActive()*/) {
 			audio->play("stopRecordingSound");
-			logger->endLogger();
+			//logger->endLogger();
 		}
 	}
 
 	void x()	{ currentLevel->x(); }
 
 	void init() {
+#ifdef KORE_STEAMVR
+		Kore::VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
+#endif
 		logger = new Logger;
 		math = math->getInstance();
 
@@ -69,10 +72,6 @@ namespace {
 		currentLevel = new TrainLevel();
 		currentLevel->init();
 		currentLevel->setUI(ui);
-
-#ifdef KORE_STEAMVR
-		Kore::VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
-#endif
 	}
 
 	void update() {
@@ -82,17 +81,16 @@ namespace {
 		countTime += deltaT;
 		double diff = 1 / fps;
 
+		inputController->update(deltaT);
+		currentLevel->update(deltaT);
 		currentLevel->renderer->update(deltaT);
-
-		if (countTime > diff) {
-		countTime = countTime - diff;
-		inputController->update(diff);
-		Kore::vec3 currentPos = cameraPos;
-		Kore::vec4 currentForward = camForward;
-		double anyT = lastTime;
-		currentLevel->update(diff);
 		
-		}
+		/*
+		if (countTime > diff) {
+			countTime = countTime - diff;
+			inputController->update(diff);
+			currentLevel->update(diff);
+		}*/
 	}
 }
 

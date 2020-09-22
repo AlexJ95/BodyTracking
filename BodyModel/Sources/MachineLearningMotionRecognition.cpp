@@ -62,19 +62,19 @@ MachineLearningMotionRecognition::MachineLearningMotionRecognition(Avatar* avata
 	// Sound initiation
 	audio = audio->getInstanceAndAppend(
 		{
-			{"startRecordingSound", new Kore::Sound("sound/start.wav")},
-			{"stopRecordingSound", new Kore::Sound("sound/stop.wav")},
-			//{"wrongSound", new Kore::Sound("sound/wrong.wav")},
-			{"joggingSound", new Kore::Sound("sound/mlmr/jogging.wav")},
-			{"kickSound", new Kore::Sound("sound/mlmr/kick.wav")},
-			{"kickPunchSound", new Kore::Sound("sound/mlmr/kickPunch.wav")},
-			{"lateralBoundingSound", new Kore::Sound("sound/mlmr/bounding.wav")},
-			{"lungesSound", new Kore::Sound("sound/mlmr/lunges.wav")},
-			{"punchSound", new Kore::Sound("sound/mlmr/punch.wav")},
-			{"sittingSound", new Kore::Sound("sound/mlmr/sitting.wav")},
-			{"squatsSound", new Kore::Sound("sound/mlmr/squats.wav")},
-			{"standingSound", new Kore::Sound("sound/mlmr/standing.wav")},
-			{"walkingSound", new Kore::Sound("sound/mlmr/walking.wav")}
+			{"startRecordingSound",		new Kore::Sound("sound/start.wav")},
+			{"stopRecordingSound",		new Kore::Sound("sound/stop.wav")},
+			//{"wrongSound",				new Kore::Sound("sound/wrong.wav")},
+			{"joggingSound",			new Kore::Sound("sound/mlmr/jogging.wav")},
+			{"kickSound",				new Kore::Sound("sound/mlmr/kick.wav")},
+			{"kickPunchSound",			new Kore::Sound("sound/mlmr/kickPunch.wav")},
+			{"lateralBoundingSound",	new Kore::Sound("sound/mlmr/bounding.wav")},
+			{"lungesSound",				new Kore::Sound("sound/mlmr/lunges.wav")},
+			{"punchSound",				new Kore::Sound("sound/mlmr/punch.wav")},
+			{"sittingSound",			new Kore::Sound("sound/mlmr/sitting.wav")},
+			{"squatsSound",				new Kore::Sound("sound/mlmr/squats.wav")},
+			{"standingSound",			new Kore::Sound("sound/mlmr/standing.wav")},
+			{"walkingSound",			new Kore::Sound("sound/mlmr/walking.wav")}
 		}
 	);
 
@@ -287,7 +287,7 @@ void MachineLearningMotionRecognition::startRecording(bool fullyCalibratedAvatar
 		// determine file name and start recording
 		std::string fileNameString = safePath + currentTestSubjectID + "__" + taskCurrentlyRecording
 			+ "__SID" + std::to_string(sessionID) + "_" + optionalFileTag;
-		logger->startMotionRecognitionLogger(fileNameString.c_str());
+		//logger->startMotionRecognitionLogger(fileNameString.c_str());
 
 		// log start of new recording, and notify user via sound
 		Kore::log(Kore::LogLevel::Info, "started recording ID %i:   %s   (%s)",
@@ -304,7 +304,7 @@ void MachineLearningMotionRecognition::stopRecording() {
 
 		// update recording state
 		currentlyRecording = false;
-		logger->endMotionRecognitionLogger();
+		//logger->endMotionRecognitionLogger();
 
 		// log end of recording, and notify user via sound
 		Kore::log(Kore::LogLevel::Info, "recording ID %i stopped:   %s   (%s)",
@@ -359,7 +359,7 @@ void MachineLearningMotionRecognition::processMovementData(
 	float scale, double time) {
 	/*
 	// when recording movements, forward the data to the logger
-	if (operatingMode == RecordMovements) {
+	/*if (operatingMode == RecordMovements) {
 		logger->saveMotionRecognitionData(
 			tag, currentTestSubjectID.c_str(), taskCurrentlyRecording.c_str(),
 			rawPos, desPos, finalPos,
@@ -369,7 +369,7 @@ void MachineLearningMotionRecognition::processMovementData(
 			scale, time);
 	}
 	// when recognizing movements, forward the data to the (Java-based) Weka Helper
-	else if (operatingMode == RecognizeMovements) {
+	else*/ if (operatingMode == RecognizeMovements) {
 		if (currentlyRecognizing) {
 
 			if (tag == "rForeArm" || tag == "lLeg" || tag == "lForeArm" || tag == "rLeg"

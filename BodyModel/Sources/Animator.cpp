@@ -2,7 +2,7 @@
 
 Animator::Animator(Avatar* avatar) {
 	math = math->getInstance();
-	//motionRecognizer = new MachineLearningMotionRecognition(avatar);
+	motionRecognizer = new MachineLearningMotionRecognition(avatar);
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
@@ -26,7 +26,6 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 		BoneNode* bones[numOfEndEffectors];
 		for (int i = 0; i < numOfEndEffectors; i++) bones[i] = getBoneWithIndex(entity, entity->endEffector[i]->getBoneIndex());
 		calibrate(entity, bones);
-		entity->calibrated = true;
 	}
 	
 	for (int i = 0; i < numOfEndEffectors; ++i) executeMovement(entity, i);
@@ -131,18 +130,18 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 			VrPoseState sensorState;
 			// retrieve sensor or HMD state (data is the same, retrieval is slightly different)
 			if (endEffectorID == head) {
-				sensorState = VrInterface::getSensorState(0).pose;
+				sensorState = Kore::VrInterface::getSensorState(0).pose;
 			}
 			else {
-				sensorState = VrInterface::getController(endEffector[endEffectorID]->getDeviceIndex());
+				sensorState = Kore::VrInterface::getController(entity->endEffector[endEffectorID]->getDeviceIndex());
 			}
 
 			// collect data
 			rawLinVel = sensorState.linearVelocity;
 			rawAngVel = sensorState.angularVelocity;
-			desLinVel = initTransInv * vec4(rawLinVel.x(), rawLinVel.y(), rawLinVel.z(), 1);
-			Kore::Quaternion rawAngVelQuat = toQuaternion(rawAngVel);
-			desAngVel = initRotInv.rotated(rawAngVelQuat);
+			desLinVel = math->initTransInv * Kore::vec4(rawLinVel.x(), rawLinVel.y(), rawLinVel.z(), 1);
+			Kore::Quaternion rawAngVelQuat = math->toQuaternion(rawAngVel);
+			desAngVel = math->initRotInv.rotated(rawAngVelQuat);
 			rawPosition = sensorState.vrPose.position;
 			rawRotation = sensorState.vrPose.orientation;
 
@@ -235,6 +234,7 @@ void Animator::calibrate(AnimatedEntity* entity, BoneNode* bones[numOfEndEffecto
 		entity->endEffector[i]->setOffsetPosition((Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * targetRot.matrix().Transpose()).Invert() * Kore::mat4::Translation(targetPos.x(), targetPos.y(), targetPos.z()) * Kore::vec4(0, 0, 0, 1));
 		entity->endEffector[i]->setOffsetRotation((desRotation.invert()).rotated(targetRot));
 	}
+	entity->calibrated = true;
 }
 
 #ifdef KORE_STEAMVR
