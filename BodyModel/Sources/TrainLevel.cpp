@@ -18,7 +18,8 @@ void TrainLevel::controlsSetup()
 void TrainLevel::audioSetup()
 {
 	Kore::Sound* sound = new Kore::Sound("sound/train.wav");
-	sound->setVolume(0.1f);
+	sound->setVolume(0.05f);
+	sound->length = 4.8f;
 	audio = audio->getInstanceAndAppend({
 		{"traindrivingsound", sound}
 		});
@@ -238,14 +239,8 @@ void TrainLevel::updatePoints() {
 		}
 }
 void TrainLevel::updateAudio(double deltaT) {
-
 	//log(Kore::Info, "%d " ,audio->getSound("traindriveingsound")->size);
-	musicCountdown += deltaT;
-
-	if (musicCountdown > 5.7f) {
-		musicCountdown -= 5.7f;
-		audio->play("traindrivingsound");
-	}
+		audio->play("traindrivingsound",deltaT);
 }
 
 // Scene change

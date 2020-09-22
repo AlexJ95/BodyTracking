@@ -10,18 +10,37 @@
 #include <string>
 #include <map>
 
+
+
 class AudioManager
 {
+	struct Wav
+	{
+		bool isPlayed;
+		float soundLength;
+		float currentSoundLength;
+		Wav(float musicLength);
+	};
+
 	static AudioManager* instance;
 
-	std::map<std::string, Kore::Sound*> soundLibrary;
+	std::map<std::string,Kore::Sound*> soundLibrary;
+	std::map<std::string, Wav*> isPlaying;
 
 public:
+	
+
 	AudioManager* getInstance();
 	AudioManager* getInstanceAndAppend(std::map<std::string, Kore::Sound*> sounds);
 
 	AudioManager();
 	AudioManager(std::map<std::string, Kore::Sound*> sounds);
+
+	void play(std::string soundName, double deltaT);
+
+	void waitEnd(std::string soundName, float deltaT);
+
+	void waitEnd(std::string soundName, double deltaT);
 
 	void play(std::string soundName);
 	Kore::Sound* getSound(std::string soundName);

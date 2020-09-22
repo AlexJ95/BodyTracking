@@ -72,7 +72,7 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 		case 2:
 			currentAnimation = "Kicking"; break;
 		default:
-			currentAnimation = "Kicking"; break;
+			currentAnimation = "VerticalChop"; break;
 		}
 
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
