@@ -1,8 +1,8 @@
 #include "Animator.h"
 
 Animator::Animator(Avatar* avatar) {
-	math = CustomMath::getInstance();
-	motionRecognizer = new MachineLearningMotionRecognition(avatar);
+	math = math->getInstance();
+	//motionRecognizer = new MachineLearningMotionRecognition(avatar);
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
@@ -87,13 +87,13 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 		// Transform desired position/rotation to the character local coordinate system
 		if (isnan(locRotInv.x))
 		{
-			desPosition = CustomMath::getInstance()->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
-			desRotation = CustomMath::getInstance()->initRotInv.rotated(desRotation);
+			desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+			desRotation = math->initRotInv.rotated(desRotation);
 		}
 		else
 		{
-			desPosition = locTransInv * CustomMath::getInstance()->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
-			desRotation = locRotInv.rotated(CustomMath::getInstance()->initRotInv.rotated(desRotation));
+			desPosition = locTransInv * math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+			desRotation = locRotInv.rotated(math->initRotInv.rotated(desRotation));
 		}
 
 
@@ -217,15 +217,15 @@ void Animator::resetPositionAndRotation(AnimatedEntity* entity) {
 
 void Animator::calibrate(AnimatedEntity* entity, BoneNode* bones[numOfEndEffectors])
 {
-	CustomMath::getInstance()->initTransAndRot();
+	math->initTransAndRot();
 
 	for (int i = 0; i < numOfEndEffectors; ++i) {
 		Kore::vec3 desPosition = entity->endEffector[i]->getDesPosition();
 		Kore::Quaternion desRotation = entity->endEffector[i]->getDesRotation();
 
 		// Transform desired position/rotation to the character local coordinate system
-		desPosition = CustomMath::getInstance()->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
-		desRotation = CustomMath::getInstance()->initRotInv.rotated(desRotation);
+		desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+		desRotation = math->initRotInv.rotated(desRotation);
 
 		// Get actual position/rotation of the character skeleton
 		//BoneNode* bone = animator->getBoneWithIndex(avatar, avatar->endEffector[i]->getBoneIndex());
@@ -324,7 +324,7 @@ void Animator::assignControllerAndTracker(Avatar* avatar)
 void Animator::resetAvatarPose(Avatar* avatar)
 {
 	avatar->calibrated = false;
-	CustomMath::getInstance()->initTransAndRot();
+	math->initTransAndRot();
 	resetPositionAndRotation(avatar);
 	setSize(avatar);
 }

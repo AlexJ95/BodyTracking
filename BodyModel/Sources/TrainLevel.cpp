@@ -44,7 +44,8 @@ void TrainLevel::graphicsSetup() {
 
 	//Load Avatar
 	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
-
+	
+	animator = new Animator(avatar->entity);
 	//Load Enemy
 	createEnemy(entitySructure);
 
@@ -81,7 +82,7 @@ void TrainLevel::update(double deltaT){
 	else if (!loaded)
 		loadTrainLevel();
 
-	Kore::vec3 pos = CustomMath::getInstance()->getCameraPos();
+	Kore::vec3 pos = math->getCameraPos();
 	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
 
 
