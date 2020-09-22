@@ -57,7 +57,7 @@ namespace {
 
 MachineLearningMotionRecognition::MachineLearningMotionRecognition(Avatar* avatarReference) {
 	avatar = avatarReference;
-	logger = new Logger();
+	//logger = new Logger();
 
 	// Sound initiation
 	audio = audio->getInstanceAndAppend(
@@ -262,7 +262,7 @@ bool MachineLearningMotionRecognition::isCurrentlyRecognizing() {
 
 
 void MachineLearningMotionRecognition::startRecording(bool fullyCalibratedAvatar) {
-
+	/*
 	// do not start recording, if avatar is not fully calibrated
 	if (!fullyCalibratedAvatar) {
 		Kore::log(Kore::LogLevel::Warning,
@@ -294,11 +294,11 @@ void MachineLearningMotionRecognition::startRecording(bool fullyCalibratedAvatar
 			sessionID, taskCurrentlyRecording.c_str(), currentTestSubjectID.c_str());
 		Kore::Audio1::play(startRecordingSound);
 	}
-
+	*/
 }
 
 void MachineLearningMotionRecognition::stopRecording() {
-
+	/*
 	// can only stop recording if one is actually in progress
 	if (currentlyRecording) {
 
@@ -319,7 +319,7 @@ void MachineLearningMotionRecognition::stopRecording() {
 			"You tried to stop recording while no recording was in progress !!! \n   Last recording was %s",
 			taskCurrentlyRecording.c_str());
 		Kore::Audio1::play(wrongSound);
-	}
+	}*/
 }
 
 void MachineLearningMotionRecognition::startRecognition() {
@@ -357,7 +357,7 @@ void MachineLearningMotionRecognition::processMovementData(
 	Kore::vec3 rawAngVel, Kore::Quaternion desAngVel,
 	Kore::vec3 rawLinVel, Kore::vec3 desLinVel,
 	float scale, double time) {
-
+	/*
 	// when recording movements, forward the data to the logger
 	if (operatingMode == RecordMovements) {
 		logger->saveMotionRecognitionData(
@@ -383,7 +383,7 @@ void MachineLearningMotionRecognition::processMovementData(
 					(jdouble)1, (jdouble)time);
 			}
 		}
-	}
+	}*/
 }
 
 bool MachineLearningMotionRecognition::isActive()

@@ -43,10 +43,12 @@ int CyborgAI::numberOfVictories = 0;
 CyborgAI::AIState CyborgAI::falling(float deltaT)
 {
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);		
+	
 
 	entity->position.z() -= fallinVelocity * deltaT;
 
 	//if the current enemy lands at the train, it begins the pathfinding
+	
 	if (entity->position.z() > 0)
 	{
 		return AIState::Falling;
@@ -54,6 +56,8 @@ CyborgAI::AIState CyborgAI::falling(float deltaT)
 	else
 	{
 		entity->position.z() = 0.f;
+		inAnimation = false;
+		logger->fileReadClose();
 		return AIState::Planning;
 	}
 }
@@ -154,8 +158,6 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 			entity->position.x() = -limitPosX;
 		}
 	}
-
-
 
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);
 

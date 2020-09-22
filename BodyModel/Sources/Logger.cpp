@@ -32,9 +32,10 @@ void Logger::startLogger(const char* filename) {
 
 void Logger::endLogger() {
 	logdataWriter.close();
-	
 	log(Kore::Info, "Stop logging");
 }
+
+void Logger::fileReadClose() { logDataReader.close(); }
 
 void Logger::saveData(const char* tag, Kore::vec3 rawPos, Kore::Quaternion rawRot, float scale) {
 	// Save position and rotation
