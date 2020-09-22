@@ -9,6 +9,7 @@
 class AnimatedEntity
 {
 private:
+	//currentHeight is the current life energy of the enemies
 	float currentHeight;
 public:
 	Kore::vec3 position;
@@ -19,7 +20,8 @@ public:
 	bool beated = false;
 	bool calibrated;
 
-	float strength = 1.0;	//strength=1.0 -> mit einem Schlag ist di Entity tod
+	//strength controls the highest value substracted of currentHeight by calling hit()
+	float strength = 1.0;	
 	MeshObject* meshObject;
 	AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
 	AnimatedEntity(MeshObject* meshReference, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
@@ -28,6 +30,7 @@ public:
 	void resetCurrentHeight();
 	bool isDead();
 	bool attackedSuccessfully = false;
+	//colorTag contains the string with the color of the attacked enemy, this is needed for showing the next attack in the gui on the top
 	string colorTag;
 
 	float getReached() const;

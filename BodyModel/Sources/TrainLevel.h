@@ -43,12 +43,18 @@ public:
     bool enemyExist = false;
     int currentEnemy = 0;
 
+    //time between activating two enemies
     double maxWaitingTime = 5.0;
     double countDown = 0.0;
+
+    //the maximal instances of enemies in the pool-list
     int poolSize = 10;
+    //threshholds for the collision detection
     float hittingHeightFoot = 0.5;
     float hittingHeightHand = 1.0;
     float hittingRadius = 0.3;
+
+    //used for the transformation of the position of the enemies to the world coordinate system
     Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
 
     double musicCountdown = 6;

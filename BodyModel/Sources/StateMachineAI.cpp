@@ -18,15 +18,13 @@ StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorRe
 
 void StateMachineAI::spawn()
 {
-	//Kore::vec3 startPos((float)(rand() % 2-1), 0.0f ,0.0f);
-	//Kore::vec3 startPos(0.0f, 0.0f, 0.0f);
-	//entity->position = startPos;
+	//set the start height 
 	entity->position.z() = 50;
 	entity->activated = true;
-	//entity->resetCurrentHeight();
 	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Falling;
 }
 
+//check for collision between the current enemy and the other enemies 
 void StateMachineAI::checkCollision(Kore::vec3 posOtherEnemy)
 {
 	float distanceBetweeenEnemys = (entity->position - posOtherEnemy).getLength();
@@ -38,18 +36,17 @@ void StateMachineAI::checkCollision(Kore::vec3 posOtherEnemy)
 }
 
 
-// Implementation of the AI for the Trainlevel
 int StateMachineAI::beatedEnemyCount = 0;
 float StateMachineAI::lastDeadPos = 0.0;
 int CyborgAI::numberOfVictories = 0;
 
 CyborgAI::AIState CyborgAI::falling(float deltaT)
 {
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);		//Test
-	//inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);		
 
 	entity->position.z() -= fallinVelocity * deltaT;
 
+	//if the current enemy lands at the train, it begins the pathfinding
 	if (entity->position.z() > 0)
 	{
 		return AIState::Falling;
@@ -79,7 +76,6 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 
 	if (avatar->movementExpired || (avatar->lastMovement != Avatar::LateralBounding)) avatar->hit(); //Example of movement recognition-implementation
 
-	//TODO: Implement Action/Reaction table as in the Google tables sheet (Use placeholder movements for enemies for now?)
 
 	if (inAnimation && !entity->isDead())
 	{
@@ -90,10 +86,12 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 		inAnimation = false;
 		return AIState::Dying;
 	}
-	//return AIState::Dying; //Test
+
 	return AIState::Planning;
 }
 
+//We calculate the direction vectors between the current enemy and other enemies but also between the current enemy and the avatar. 
+//With these direction vectors we calculate the radians  based on tha scalar products. With the cross product we decide which direction the rotation has. 
 CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 {
 	Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->position.x(), avatar->position.y(), avatar->position.z(), 1.0);
@@ -193,6 +191,7 @@ CyborgAI::AIState CyborgAI::dying(float deltaT)
 	return AIState::Planning;
 }
 
+//in planning we decide what is the next state 
 CyborgAI::AIState CyborgAI::planning(float deltaT)
 {
 	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);

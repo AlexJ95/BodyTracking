@@ -24,7 +24,8 @@ AnimatedEntity::AnimatedEntity(MeshObject* meshReference, Kore::vec3 initialPosi
 	initializeEndeffectors();
 }
 
-void AnimatedEntity::hit()				//vielleicht verschiedene Attacken einbauen
+//triggered if a collision was detected
+void AnimatedEntity::hit()				
 {
 	currentHeight -= 100.0 * strength;
 }

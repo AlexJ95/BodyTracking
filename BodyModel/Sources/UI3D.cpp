@@ -8,6 +8,7 @@ void UIshutDown()
 }
 
 //https://stackoverflow.com/questions/31648180/c-changing-hwnd-window-procedure-in-runtime
+//will be called out of ImGui
 WNDPROC prevwnd;
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProc2(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -28,7 +29,7 @@ UI3D::~UI3D(){}
 
 void UI3D::initUI()
 {
-	//chnge the wndProc for the ImGUI
+	//use the pointer of the current window for the instantation of ImGui
 	HWND hwnd = this->window->_data.handle;
 	prevwnd = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC,(LONG_PTR)WndProc2);
 
@@ -40,6 +41,7 @@ void UI3D::initUI()
 }
 
 //https://www.youtube.com/watch?v=Btx_tujnyB4&list=PLcacUGyBsOIBlGyQQWzp6D1Xn6ZENx9Y2&index=35
+//preperation for the rendering of the gui builded in the class Form (MainForm)
 void UI3D::drawUI(Form *form)
 {
 	ImGui_ImplDX11_NewFrame();
@@ -53,11 +55,13 @@ void UI3D::drawUI(Form *form)
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
+//check whether any gui is shown
 bool UI3D::isUIshown()
 {
 	return isFormShown;
 }
 
+//check whether a gui is hovered
 bool UI3D::lockBackground()
 {
 	return ImGui::IsAnyWindowHovered();

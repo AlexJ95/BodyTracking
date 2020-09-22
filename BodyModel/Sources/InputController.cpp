@@ -110,6 +110,7 @@ void mouseMove(int windowId, int x, int y, int movementX, int movementY)
 
 void InputController::mouseMove(int windowId, int x, int y, int movementX, int movementY)
 {
+	//lockBackground lock the moving in the world if the gui is hovered
 	if (rotate & !ui->lockBackground()) math->rotateCamera(movementX, movementY);
 }
 
@@ -121,6 +122,7 @@ void mousePress(int windowId, int button, int x, int y)
 
 void InputController::mousePress(int windowId, int button, int x, int y)
 {
+	//lock the moving in the world if the gui still shown
 	if (!ui->isUIshown())
 		rotate = true;
 }

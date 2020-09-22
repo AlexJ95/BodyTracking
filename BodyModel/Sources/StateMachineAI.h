@@ -20,7 +20,6 @@ protected:
 
 public:
 	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
-	//virtual ~StateMachineAI() = 0;
 
 	//the different states of the AI state machine
 	enum class AIState;
@@ -43,19 +42,21 @@ public:
 class CyborgAI : public StateMachineAI
 {
 private:
-	float radians = Kore::pi;	//orientation bezween player and nonPlayerCharacter
+	float radians = Kore::pi;	//orientation between player and nonPlayerCharacter
 	bool attack = false;
 public:
 	float dRot = 0.3;
 	float dRotCol = 0.08;
 	float dTrans = 0.02;
 	float maxDistanceToPlayer = 1.0f;
+	//limitate the pathfinding to the area of the train in x-direction
 	float limitPosX = 1.5;
 	float fallinVelocity = 10.0;
 	bool died;
 	static int numberOfVictories;
 	enum class AIState { Attacking, Pursueing, Planning, Dying, Falling, Landing};
 	
+	//states:
 	AIState attacking	(float deltaT);
 	AIState pursueing	(float deltaT);
 	AIState planning	(float deltaT);
@@ -65,5 +66,5 @@ public:
 
 	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
 	
-	//~CyborgAI();
+
 };

@@ -1,7 +1,8 @@
 #include "MainForm.h"
 
 
-
+//Here we build the Gui. ImGui is an immediate mode API, that means we use boolean variables to show some windows and to hide others. 
+//The whole Gui will drawn together with the rest of the scene at the same time. We use many if-conditions to go through the states.
 MainForm::MainForm() {
 	levels.push_back("Level 0");
 	levels.push_back("Level 1");
@@ -15,7 +16,6 @@ void MainForm::drawForm()
 	ImVec2 contentSize = io.DisplaySize;
 	ImGui::SetNextWindowBgAlpha(alpha);
 	
-	///////First Window//////////////////
 	//ImGui Flags in imgui.h
 	if (show_main_menu & !show_setting_window & !show_level_window & !show_loading_bar)
 	{
@@ -72,7 +72,6 @@ void MainForm::drawForm()
 		}
 	}
 
-	///////Second Window End//////////////
 	if (show_setting_window)
 	{
 		ImGui::Begin("Setting", &show_setting_window, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
@@ -151,7 +150,7 @@ void MainForm::drawForm()
 			showingForm = false;
 			progress = 0;
 		}
-		//only for testing
+
 		progress += 0.01;
 		ImGui::End();
 	}else if (show_CountDown)
@@ -162,7 +161,7 @@ void MainForm::drawForm()
 		ImGui::SetWindowPos(wPos);
 		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f - ImGui::GetWindowSize().x * 0.01);
 		ImGui::SetCursorPosY(ImGui::GetWindowSize().y * 0.5f - ImGui::GetWindowSize().y * 0.1f);
-		//ImGui::Text((char*)countDown);
+
 		if (nanoSeconds > (maxNanoSeconds * (2.0 / 4.0)) && nanoSeconds <= (maxNanoSeconds * (3.0 / 4.0)) && !switchCountDown)
 		{
 			countDown--;
@@ -202,7 +201,6 @@ void MainForm::drawForm()
 		ImVec2 wPos(contentSize.x - ImGui::GetWindowWidth() - 20, ImGui::GetWindowHeight());
 		ImGui::SetWindowPos(wPos);
 		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f - ImGui::GetWindowSize().x * 0.01);
-		//ImGui::SetCursorPosY(ImGui::GetWindowSize().y * 0.5f - ImGui::GetWindowSize().y * 0.1f);
 
 		std::string s = std::to_string(highScore);
 		ImGui::Text(s.c_str());
@@ -236,8 +234,6 @@ void MainForm::drawForm()
 
 		ImGui::End();
 	}
-
-	////////////////////////////////////////////////////////////
 }
 void MainForm::displayLoading()
 {
@@ -252,7 +248,7 @@ void MainForm::displayLoading()
 		showingForm = false;
 		show_CountDown = true;
 	}
-	//only for testing
+
 	progress += 0.01;
 
 	if (nanoSeconds <= 0)

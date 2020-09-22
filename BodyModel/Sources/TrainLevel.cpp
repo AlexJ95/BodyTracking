@@ -205,6 +205,7 @@ void TrainLevel::updateFPS(double deltaT) {
 		time = 0;
 	}
 }
+
 void TrainLevel::updatePoints() {
 		switch (currentEnemy) {
 		case 0:
@@ -239,8 +240,8 @@ void TrainLevel::updatePoints() {
 
 		}
 }
+
 void TrainLevel::updateAudio(double deltaT) {
-	//log(Kore::Info, "%d " ,audio->getSound("traindriveingsound")->size);
 		audio->play("traindrivingsound",deltaT);
 }
 
@@ -251,6 +252,7 @@ void TrainLevel::runCalibrationRoom() {
 			object->object->activated = true;
 		}
 }
+
 void TrainLevel::deleteRoom() {
 	for (ALevelObject* object : environment)
 		if (object->object->tag == "room")
@@ -290,6 +292,8 @@ void TrainLevel::loadEnemies(float deltaT, int carriage) {
 
 	
 }
+
+//set the various game elements in the scene
 void TrainLevel::loadEnemyRandom(float deltaT, int carriage) {
 
 	Kore::log(Kore::Info, "make enemy");
@@ -346,13 +350,12 @@ void TrainLevel::setPosition(ALevelObject* alo ,float x, float y, float z) {
 	alo->object->position = Kore::vec3(x, y, z);
 }
 
-//////////////////////////////interaction Methods
+//checkStation check if an station with the enemies was completed. An station is complete if all enemies are beated. 
 void TrainLevel::checkStation(double deltaT){
 	if (!stationComplete & currentEnemyCount < maxEnemyCount)// & airPlanePos.x() <= Kore::abs(avatar->entity->position.y() - stationLength))
 	{
 		spawn(deltaT);//, AirPlanePos);		
 	}
-
 	if (StateMachineAI::beatedEnemyCount >= maxEnemyCount & !stationComplete)
 	{
 		stationComplete = true;
@@ -378,6 +381,8 @@ void TrainLevel::checkStation(double deltaT){
 	}
 	countDown += deltaT;
 }
+
+//Activate the enemies and insert in the scene. The startposition bases on the position of the last beated enemy and the stationLength. 
 void TrainLevel::spawn(double deltaT){
 	if (countDown > maxWaitingTime | (stationStarted & countDown > maxWaitingTime / 100.0))
 	{
@@ -406,6 +411,8 @@ void TrainLevel::spawn(double deltaT){
 		}
 	}
 }
+
+//This an simple implementation of the collision detection. We check wehther an endeffektor (left/right hand or left/right foot) enters in the bounding box. If it is about a certain height, the method hit() will be called. 
 void TrainLevel::checkHittingAvatar(){
 	for (NonPlayerCharacter* enemy : enemies)
 	{
@@ -453,6 +460,8 @@ void TrainLevel::checkHittingAvatar(){
 
 	}
 }
+
+//Show the next attack in the gui based on the color of the enemy.
 void TrainLevel::showAttackInUI(string colorTag){
 	MainForm* mainForm = (MainForm*)form;
 
@@ -469,6 +478,7 @@ void TrainLevel::showAttackInUI(string colorTag){
 	else
 		mainForm->kindOfAttacking = NULL;
 }
+
 void TrainLevel::checkingMoving(){
 	if (avatar->entity->lastMovement == Avatar::Jogging && !avatar->entity->movementExpired)
 	{
@@ -476,6 +486,10 @@ void TrainLevel::checkingMoving(){
 		cameraPos += dir * camVelocity;
 	}
 }
+
+//We use here the same prenceple as in checkHittingAvatar().
+//In this case we increase the highscore if the motion recognition recognizes any attack-motion of the player. 
+//If the right motion was recohnized the player get an bonus point.
 void TrainLevel::checkHittingEnemy(){
 	float crossValue = 100000;
 	float distance = 100000;
@@ -597,6 +611,8 @@ void TrainLevel::checkHittingEnemy(){
 	if(colorTag != "")
 		showAttackInUI(colorTag);
 }
+
+//checking the collision between the enemies
 void TrainLevel::checkEnemyCollision(){
 	for (int i=0; i< maxEnemyCount; i++)
 	{
