@@ -10,7 +10,7 @@ Level::Level()
 void Level::update(double deltaT)
 {	
 	renderer->form = form;
-	animator->rigVrPose(avatar->entity);
+	if (avatar->entity->calibrated) animator->rigVrPose(avatar->entity);
 	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT);
 }
 

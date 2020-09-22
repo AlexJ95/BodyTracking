@@ -119,7 +119,7 @@ void Renderer::update(float deltaT)
 #ifdef KORE_STEAMVR
 	Kore::VrInterface::begin();
 
-	math->hmdMode = true;
+	hmdMode = true;
 	// Render for both eyes
 	SensorState state;
 	for (int j = 0; j < 2; ++j) {
@@ -139,18 +139,19 @@ void Renderer::update(float deltaT)
 
 		Kore::VrInterface::endRender(j);
 	}
-	math->hmdMode = false;
+	hmdMode = false;
 
 	Kore::VrInterface::warpSwap();
 
 	Kore::Graphics4::restoreRenderTarget();
 	Kore::Graphics4::clear(Kore::Graphics4::ClearColorFlag | Kore::Graphics4::ClearDepthFlag, Kore::Graphics1::Color::Black, 1.0f, 0);
 #endif
+	
 	if (!ui->isUIshown())
 	{
-			// Render on monitor
-	renderEntities();
-	if (renderRoom) renderEnvironment();
+		// Render on monitor
+		renderEntities();
+		if (renderRoom) renderEnvironment();
 	}
     	// Render ui
 	if(form != NULL)

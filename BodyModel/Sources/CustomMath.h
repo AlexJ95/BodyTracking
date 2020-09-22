@@ -19,6 +19,8 @@ public:
 
 	CustomMath();
 
+	Kore::Quaternion toQuaternion(Kore::vec3 vector3D);
+
 	Kore::mat4 getMirrorMatrix(); // Esed to mirror avatar in demo
 
 	void setProjectionAndViewMatrices(Kore::mat4 projectionMatrix, Kore::mat4 viewMatrix);

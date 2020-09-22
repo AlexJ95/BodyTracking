@@ -77,17 +77,16 @@ namespace {
 		countTime += deltaT;
 		double diff = 1 / fps;
 
+		inputController->update(deltaT);
+		currentLevel->update(deltaT);
 		currentLevel->renderer->update(deltaT);
-
-		if (countTime > diff) {
-		countTime = countTime - diff;
-		inputController->update(diff);
-		Kore::vec3 currentPos = cameraPos;
-		Kore::vec4 currentForward = camForward;
-		double anyT = lastTime;
-		currentLevel->update(diff);
 		
-		}
+		/*
+		if (countTime > diff) {
+			countTime = countTime - diff;
+			inputController->update(diff);
+			currentLevel->update(diff);
+		}*/
 	}
 }
 

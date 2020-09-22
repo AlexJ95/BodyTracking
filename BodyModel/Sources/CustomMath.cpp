@@ -16,6 +16,25 @@ CustomMath* CustomMath::getInstance()
 
 CustomMath::CustomMath() { }
 
+Kore::Quaternion CustomMath::toQuaternion(Kore::vec3 vector3D)
+{
+	double cosinusYaw =		Kore::cos(vector3D.z() * 0.5);
+	double sinusYaw =		Kore::sin(vector3D.z() * 0.5);
+	double cosinusPitch =	Kore::cos(vector3D.y() * 0.5);
+	double sinusPitch =		Kore::sin(vector3D.y() * 0.5);
+	double cosinusRoll =	Kore::cos(vector3D.x() * 0.5);
+	double sinusRoll =		Kore::sin(vector3D.x() * 0.5);
+
+	Kore::Quaternion quaternion;
+
+	quaternion.w = cosinusYaw * cosinusPitch * cosinusRoll + sinusYaw * sinusPitch * sinusRoll;
+	quaternion.x = cosinusYaw * cosinusPitch * sinusRoll - sinusYaw * sinusPitch * cosinusRoll;
+	quaternion.y = sinusYaw * cosinusPitch * sinusRoll + cosinusYaw * sinusPitch * cosinusRoll;
+	quaternion.z = sinusYaw * cosinusPitch * cosinusRoll - cosinusYaw * sinusPitch * sinusRoll;
+
+	return quaternion;
+}
+
 Kore::mat4 CustomMath::getMirrorMatrix()
 {
 	Kore::Quaternion rot(0, 0, 0, 1);

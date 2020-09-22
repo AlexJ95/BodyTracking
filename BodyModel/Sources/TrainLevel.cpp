@@ -32,6 +32,20 @@ void TrainLevel::graphicsSetup() {
 	const Kore::Graphics4::VertexStructure& entitySructure = renderer->entityGraphics->structure;
 	const Kore::Graphics4::VertexStructure& environmentSructure = renderer->environmentGraphics->structure;
 
+
+	
+
+	//Load Avatar
+	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
+
+	//animator = new Animator(avatar->entity);
+
+	//Load Enemy
+	createEnemy(entitySructure);
+
+
+	//Environment
+
 	//Load Calibration
 	roomInit(environmentSructure);
 
@@ -40,12 +54,6 @@ void TrainLevel::graphicsSetup() {
 
 	//Load Train
 	trainInit(environmentSructure, 3);
-
-	//Load Avatar
-	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
-
-	//Load Enemy
-	createEnemy(entitySructure);
 
 	//Load Ground
 	groundInit(environmentSructure);
@@ -80,8 +88,8 @@ void TrainLevel::update(double deltaT){
 	else if (!loaded)
 		loadTrainLevel();
 
-	Kore::vec3 pos = CustomMath::getInstance()->getCameraPos();
-	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
+	//Kore::vec3 pos = CustomMath::getInstance()->getCameraPos();
+	//avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
 
 
 
@@ -90,6 +98,7 @@ void TrainLevel::update(double deltaT){
 		gamePlay(deltaT);
 	}
 }
+
 void TrainLevel::gamePlay(double deltaT) {
 
 	updateAudio(deltaT);
@@ -108,6 +117,7 @@ void TrainLevel::gamePlay(double deltaT) {
 	if (!enemyExist && currentCarriage == 11)
 		loadEnding();
 }
+
 void TrainLevel::updateBuilding(double deltaT, double speed)
 {
 	if (!form->isFormShown())
@@ -189,8 +199,8 @@ void TrainLevel::updateBuilding(double deltaT, double speed)
 					else setPosition(object, 454, object->object->position.y(), object->object->position.z());
 				}
 	}
-
 }
+
 void TrainLevel::updateFPS(double deltaT) {
 	fps++;
 	time += deltaT;
@@ -203,6 +213,7 @@ void TrainLevel::updateFPS(double deltaT) {
 		time = 0;
 	}
 }
+
 void TrainLevel::updatePoints() {
 		switch (currentEnemy) {
 		case 0:

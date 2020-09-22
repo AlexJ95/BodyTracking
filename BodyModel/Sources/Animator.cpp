@@ -1,7 +1,7 @@
 #include "Animator.h"
 
 Animator::Animator(Avatar* avatar) {
-	math = CustomMath::getInstance();
+	math = math->getInstance();
 	motionRecognizer = new MachineLearningMotionRecognition(avatar);
 }
 
@@ -87,13 +87,13 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 		// Transform desired position/rotation to the character local coordinate system
 		if (isnan(locRotInv.x))
 		{
-			desPosition = CustomMath::getInstance()->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
-			desRotation = CustomMath::getInstance()->initRotInv.rotated(desRotation);
+			desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+			desRotation = math->initRotInv.rotated(desRotation);
 		}
 		else
 		{
-			desPosition = locTransInv * CustomMath::getInstance()->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
-			desRotation = locRotInv.rotated(CustomMath::getInstance()->initRotInv.rotated(desRotation));
+			desPosition = locTransInv * math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+			desRotation = locRotInv.rotated(math->initRotInv.rotated(desRotation));
 		}
 
 
@@ -131,18 +131,18 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 			VrPoseState sensorState;
 			// retrieve sensor or HMD state (data is the same, retrieval is slightly different)
 			if (endEffectorID == head) {
-				sensorState = VrInterface::getSensorState(0).pose;
+				sensorState = Kore::VrInterface::getSensorState(0).pose;
 			}
 			else {
-				sensorState = VrInterface::getController(endEffector[endEffectorID]->getDeviceIndex());
+				sensorState = Kore::VrInterface::getController(entity->endEffector[endEffectorID]->getDeviceIndex());
 			}
 
 			// collect data
 			rawLinVel = sensorState.linearVelocity;
 			rawAngVel = sensorState.angularVelocity;
-			desLinVel = initTransInv * vec4(rawLinVel.x(), rawLinVel.y(), rawLinVel.z(), 1);
-			Kore::Quaternion rawAngVelQuat = toQuaternion(rawAngVel);
-			desAngVel = initRotInv.rotated(rawAngVelQuat);
+			desLinVel = math->initTransInv * Kore::vec4(rawLinVel.x(), rawLinVel.y(), rawLinVel.z(), 1);
+			Kore::Quaternion rawAngVelQuat = math->toQuaternion(rawAngVel);
+			desAngVel = math->initRotInv.rotated(rawAngVelQuat);
 			rawPosition = sensorState.vrPose.position;
 			rawRotation = sensorState.vrPose.orientation;
 
@@ -217,15 +217,15 @@ void Animator::resetPositionAndRotation(AnimatedEntity* entity) {
 
 void Animator::calibrate(AnimatedEntity* entity, BoneNode* bones[numOfEndEffectors])
 {
-	CustomMath::getInstance()->initTransAndRot();
+	math->initTransAndRot();
 
 	for (int i = 0; i < numOfEndEffectors; ++i) {
 		Kore::vec3 desPosition = entity->endEffector[i]->getDesPosition();
 		Kore::Quaternion desRotation = entity->endEffector[i]->getDesRotation();
 
 		// Transform desired position/rotation to the character local coordinate system
-		desPosition = CustomMath::getInstance()->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
-		desRotation = CustomMath::getInstance()->initRotInv.rotated(desRotation);
+		desPosition = math->initTransInv * Kore::vec4(desPosition.x(), desPosition.y(), desPosition.z(), 1);
+		desRotation = math->initRotInv.rotated(desRotation);
 
 		// Get actual position/rotation of the character skeleton
 		//BoneNode* bone = animator->getBoneWithIndex(avatar, avatar->endEffector[i]->getBoneIndex());
@@ -324,7 +324,7 @@ void Animator::assignControllerAndTracker(Avatar* avatar)
 void Animator::resetAvatarPose(Avatar* avatar)
 {
 	avatar->calibrated = false;
-	CustomMath::getInstance()->initTransAndRot();
+	math->initTransAndRot();
 	resetPositionAndRotation(avatar);
 	setSize(avatar);
 }
