@@ -101,6 +101,7 @@ void Renderer::loadEntityShader(String vertexShaderFile, String fragmentShaderFi
 
 void Renderer::renderEnvironment() {
 	for (LevelObject* object : levelObjects) if (object->activated) render(object, false);
+	if (mirror) for (LevelObject* object : levelObjects) if (object->activated) render(object, true);
 }
 
 void Renderer::renderEntities() {
@@ -132,11 +133,10 @@ void Renderer::update(float deltaT)
 		math->setProjectionAndViewMatrices(state.pose.vrPose.projection, state.pose.vrPose.eye);
 
 		if (!ui->isUIshown())
-	{
-	renderEntities();
-	if (renderRoom) renderEnvironment();
-	}
-
+		{
+			renderEntities();
+			if (renderRoom) renderEnvironment();
+		}
 		Kore::VrInterface::endRender(j);
 	}
 	hmdMode = false;
@@ -300,7 +300,13 @@ void Renderer::animate(AnimatedEntity* entity)
 //Subroutines specifically for the Avatar
 void Renderer::animate(Avatar* avatar)
 {
-	//animate((AnimatedEntity*) avatar);
+	animate((AnimatedEntity*) avatar);
+	if (mirror) {
+		Kore::mat4 temp = math->initTrans;
+		math->initTrans = math->getMirrorMatrix() * math->initTrans;
+		animate((AnimatedEntity*)avatar);
+		math->initTrans = temp;
+	}
 	if (avatar->renderTrackerAndControllers) renderAllVRDevices(avatar);
 	if (avatar->renderAxisForEndEffectors) renderCSForEndEffector(avatar);
 }
@@ -349,18 +355,18 @@ void Renderer::renderControllerAndTracker(Avatar* avatar, int tracker, Kore::vec
 	if (tracker) {
 		// Render a tracker for both feet and back
 		renderVRDevice(avatar, 0, W);
-		//renderVRDevice(0, M);
+		if (mirror) renderVRDevice(avatar, 0, M);
 	}
 	else {
 		// Render a controller for both hands
 		renderVRDevice(avatar, 1, W);
-		//renderVRDevice(1, M);
+		if (mirror) renderVRDevice(avatar, 1, M);
 	}
 
 	// Render a local coordinate system only if the avatar is not calibrated
 	if (!avatar->calibrated) {
 		renderVRDevice(avatar, 2, W);
-		//renderVRDevice(2, M);
+		if (mirror) renderVRDevice(avatar, 2, M);
 	}
 }
 

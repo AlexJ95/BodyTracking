@@ -37,7 +37,6 @@ namespace {
 	const int numOfEndEffectors = 8;
 
 	bool firstPersonMonitor = false;
-
 	bool hmdMode = false;
 
 	double startTime;
@@ -45,8 +44,10 @@ namespace {
 	double countTime;
 	float fps = 144;
 
+	float movementSpeed = 6.f;
+
 	//Camera related stuff
-	float cameraMoveSpeed = 50.0f;
+	float cameraMoveSpeed = 6.0f;
 	Kore::vec3 cameraPos = Kore::vec3(0, 0, 0);
 	Kore::vec4 camUp = Kore::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	Kore::vec4 camForward = Kore::vec4(0.0f, 0.0f, -1.0f, 0.0f);
@@ -54,5 +55,4 @@ namespace {
 
 	Kore::mat4 vrProjectionMatrix;
 	Kore::mat4 vrViewMatrix;
-
 }

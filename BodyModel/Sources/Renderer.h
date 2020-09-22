@@ -70,6 +70,7 @@ public:
 
 	void renderCSForEndEffector(Avatar* avatar); //renders stuff, not sure what though
 
+	bool mirror = true;
 	CustomMath* math;
 	Animator* animator;
 	Form* form = NULL;

@@ -34,17 +34,20 @@ namespace {
 		
 		if (!logRawData /*&& !motionRecognizer->isActive()*/) {
 			audio->play("startRecordingSound");
-			logger->startLogger("logData");
+			//logger->startLogger("logData");
 		}
 		else if (logRawData /*&& !motionRecognizer->isActive()*/) {
 			audio->play("stopRecordingSound");
-			logger->endLogger();
+			//logger->endLogger();
 		}
 	}
 
 	void x()	{ currentLevel->x(); }
 
 	void init() {
+#ifdef KORE_STEAMVR
+		Kore::VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
+#endif
 		logger = new Logger;
 		math = math->getInstance();
 
@@ -64,10 +67,6 @@ namespace {
 		currentLevel = new TrainLevel();
 		currentLevel->init();
 		currentLevel->setUI(ui);
-
-#ifdef KORE_STEAMVR
-		Kore::VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
-#endif
 	}
 
 	void update() {

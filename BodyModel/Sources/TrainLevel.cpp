@@ -38,7 +38,7 @@ void TrainLevel::graphicsSetup() {
 	//Load Avatar
 	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
 
-	//animator = new Animator(avatar->entity);
+	animator = new Animator(avatar->entity);
 
 	//Load Enemy
 	createEnemy(entitySructure);
@@ -261,10 +261,10 @@ void TrainLevel::updateAudio(double deltaT) {
 
 // Scene change
 void TrainLevel::runCalibrationRoom() {
+	renderer->mirror = true;
 	for (ALevelObject* object : environment)
-		if (object->object->tag == "room") {
+		if (object->object->tag == "room")
 			object->object->activated = true;
-		}
 }
 void TrainLevel::deleteRoom() {
 	for (ALevelObject* object : environment)
@@ -283,6 +283,7 @@ void TrainLevel::loadTrainLevel() {
 			if (object->object->tag != "tunnelS" && object->object->tag != "airplane" && object->object->tag != "signr" && object->object->tag != "tunnell" && object->object->tag != "signl" && object->object->tag != "signr" && object->object->tag != "room")
 				object->object->activated = true;
 		}
+		renderer->mirror = false;
 }
 
 // Load Assets
@@ -685,13 +686,20 @@ Level::ALevelObject* TrainLevel::createObjectCopy(ALevelObject* object, Kore::ve
 }
 
 void TrainLevel::roomInit(Kore::Graphics4::VertexStructure environmentSructure) {
-	ALevelObject* room = createNewObject("sherlock_living_room/sherlock_living_room.ogex", "sherlock_living_room/", environmentSructure, 1, Kore::vec3(4, 0, 0), Kore::Quaternion(1, 2, 1, 0));
+	ALevelObject* room = createNewObject("sherlock_living_room/sherlock_living_room.ogex", "sherlock_living_room/", environmentSructure, 1, Kore::vec3(0, 0, 0), Kore::Quaternion(-1, 0, 1, 0));
 	renderer->setLights(*room->object, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
 	room->object->tag = "room";
 	room->object->moveable = false;
-	ALevelObject* object = createObjectCopy(room, Kore::vec3(-2, 0, 0), Kore::Quaternion(1, 2, 3, 0));
-	renderer->setLights(*object->object, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
-
+	Kore::Quaternion livingRoomRot = Kore::Quaternion(0, 0, 0, 1);
+	livingRoomRot.rotate(Kore::Quaternion(Kore::vec3(1, 0, 0), -Kore::pi / 2.0));
+	livingRoomRot.rotate(Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi / 2.0));
+	livingRoomRot.rotate(Kore::Quaternion(Kore::vec3(0, 0, 1), Kore::pi));
+	Kore::mat4 mirrorMatrix = Kore::mat4::Identity();
+	mirrorMatrix.Set(2, 2, -1);
+	Kore::vec3 mirrorOver(6.057f, 0.0f, 0.04f);
+	room->object->meshObject->Mmirror = mirrorMatrix * Kore::mat4::Translation(mirrorOver.x(), mirrorOver.y(), mirrorOver.z()) * livingRoomRot.matrix().Transpose();
+	//ALevelObject* object = createObjectCopy(room, Kore::vec3(-2, 0, 0), Kore::Quaternion(1, 2, 3, 0));
+	//renderer->setLights(*object->object, renderer->environmentGraphics->lightCount, renderer->environmentGraphics->lightPosLocation);
 }
 void TrainLevel::skyInit(Kore::Graphics4::VertexStructure environmentSructure) {
 	ALevelObject* sky = createNewObject("skybox/skybox.ogex", "skybox/", environmentSructure, 1, Kore::vec3(0, 0, -75), Kore::Quaternion(3, 0, 1, 0));

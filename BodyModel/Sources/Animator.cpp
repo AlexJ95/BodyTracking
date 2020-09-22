@@ -26,7 +26,6 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 		BoneNode* bones[numOfEndEffectors];
 		for (int i = 0; i < numOfEndEffectors; i++) bones[i] = getBoneWithIndex(entity, entity->endEffector[i]->getBoneIndex());
 		calibrate(entity, bones);
-		entity->calibrated = true;
 	}
 	
 	for (int i = 0; i < numOfEndEffectors; ++i) executeMovement(entity, i);
@@ -235,6 +234,7 @@ void Animator::calibrate(AnimatedEntity* entity, BoneNode* bones[numOfEndEffecto
 		entity->endEffector[i]->setOffsetPosition((Kore::mat4::Translation(desPosition.x(), desPosition.y(), desPosition.z()) * targetRot.matrix().Transpose()).Invert() * Kore::mat4::Translation(targetPos.x(), targetPos.y(), targetPos.z()) * Kore::vec4(0, 0, 0, 1));
 		entity->endEffector[i]->setOffsetRotation((desRotation.invert()).rotated(targetRot));
 	}
+	entity->calibrated = true;
 }
 
 #ifdef KORE_STEAMVR
