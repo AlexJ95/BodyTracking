@@ -86,8 +86,8 @@ void TrainLevel::update(double deltaT){
 	else if (!loaded)
 		loadTrainLevel();
 
-	Kore::vec3 pos = math->getCameraPos();
-	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
+	//Kore::vec3 pos = math->getCameraPos();
+	//avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);	
@@ -261,6 +261,8 @@ void TrainLevel::deleteRoom() {
 	for (ALevelObject* object : environment)
 		if (object->object->tag == "room")
 		{
+			avatar->entity->renderAxisForEndEffectors = false;
+			avatar->entity->renderTrackerAndControllers = false;
 			object->object->activated = false;
 			object->del = true;
 		}

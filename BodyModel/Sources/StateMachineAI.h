@@ -51,7 +51,8 @@ public:
 	float maxDistanceToPlayer = 1.0f;
 	//limitate the pathfinding to the area of the train in x-direction
 	float limitPosX = 1.5;
-	float fallinVelocity = 10.0;
+	float fallingVelocity = 1.0;
+	float fallingAcceleration = 3.0;
 	bool died;
 	static int numberOfVictories;
 	enum class AIState { Attacking, Pursueing, Planning, Dying, Falling, Landing};

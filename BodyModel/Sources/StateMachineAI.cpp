@@ -42,10 +42,10 @@ int CyborgAI::numberOfVictories = 0;
 
 CyborgAI::AIState CyborgAI::falling(float deltaT)
 {
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);		
-	
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);
 
-	entity->position.z() -= fallinVelocity * deltaT;
+	entity->position.z() -= fallingVelocity * deltaT;
+	fallingVelocity += fallingAcceleration * deltaT;
 
 	//if the current enemy lands at the train, it begins the pathfinding
 	
@@ -57,7 +57,7 @@ CyborgAI::AIState CyborgAI::falling(float deltaT)
 	{
 		entity->position.z() = 0.f;
 		inAnimation = false;
-		return AIState::Planning;
+		return AIState::Landing;
 	}
 }
 
