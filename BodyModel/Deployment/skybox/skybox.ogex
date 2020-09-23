@@ -1351,7 +1351,7 @@ Material $material2
 
 	Texture (attrib = "diffuse")
 	{
-		string {"//floor.png"}
+		string {"//floor.jpg"}
 	}
 }
 
