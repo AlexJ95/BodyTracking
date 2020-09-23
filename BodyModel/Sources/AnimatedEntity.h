@@ -44,7 +44,11 @@ public:
 
 class Avatar : public AnimatedEntity
 {
+	static Avatar* instance;
+	
+
 public:
+	static Avatar* getInstance();
 	// Motion Recognition logic
 	enum PlayerMovement {Jogging, Kick, KickPunch, LateralBounding, Lunges, Punch, Sitting, Squats, Standing, Walking};
 	PlayerMovement lastMovement = Standing;

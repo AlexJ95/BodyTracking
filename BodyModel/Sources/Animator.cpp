@@ -1,8 +1,8 @@
 #include "Animator.h"
 
-Animator::Animator(Avatar* avatar) {
+Animator::Animator() {
 	math = math->getInstance();
-	motionRecognizer = new MachineLearningMotionRecognition(avatar);
+	motionRecognizer = motionRecognizer->getInstance();
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
