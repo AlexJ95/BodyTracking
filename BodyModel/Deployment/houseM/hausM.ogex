@@ -75,6 +75,6 @@ Material $material1
 	
 	Texture (attrib = "diffuse")
 	{
-		string {"//apartments7.png"}
+		string {"//apartments7.jpg"}
 	}
 }

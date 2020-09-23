@@ -75,6 +75,6 @@ Material $material1
 
 	Texture (attrib = "diffuse")
 	{
-		string {"//textures/Two_lane_road_clean_01_3K_Base_Color.png"}
+		string {"//textures/Two_lane_road_clean_01_3K_Base_Color.jpg"}
 	}
 }
