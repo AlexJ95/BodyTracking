@@ -57,7 +57,6 @@ CyborgAI::AIState CyborgAI::falling(float deltaT)
 	{
 		entity->position.z() = 0.f;
 		inAnimation = false;
-		logger->fileReadClose();
 		return AIState::Planning;
 	}
 }

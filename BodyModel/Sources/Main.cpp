@@ -27,7 +27,6 @@ namespace {
 	Level* currentLevel;
 	UI3D* ui;
 	Kore::Window* window;
-	
 	MachineLearningMotionRecognition* motionRecognizer;
 
 	void record() {
@@ -61,14 +60,14 @@ namespace {
 		inputController->setUI(ui);
 
 		// Sound initiation
-		Kore::Sound* wav = new Kore::Sound("sound/maintitle.wav");
-		wav->length = 183.0f;
-		wav->setVolume(0.005f);
+		//Kore::Sound* wav = new Kore::Sound("sound/maintitle.wav");
+		//wav->length = 183.0f;
+		//wav->setVolume(0.005f);
 
 		audio = audio->getInstanceAndAppend({
 				{"startRecordingSound",	new Kore::Sound("sound/start.wav")},
 				{"stopRecordingSound",	new Kore::Sound("sound/stop.wav")},
-				{"titleSong",wav}
+				//{"titleSong",wav}
 			});
 
 		currentLevel = new TrainLevel();

@@ -86,8 +86,8 @@ void TrainLevel::update(double deltaT){
 	else if (!loaded)
 		loadTrainLevel();
 
-	//Kore::vec3 pos = math->getCameraPos();
-	//avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
+	Kore::vec3 pos = math->getCameraPos();
+	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);	
@@ -658,7 +658,7 @@ void TrainLevel::reIteratorVector() {
 // Graphic Init 
 void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure) {
 	AnAnimatedEntity* reference;
-	for (int i = 0; i < poolSize; i++) {
+	for (int i = 0; i < 5; i++) {
 		switch (i) {
 		case 4:reference = new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaM"; break;
 		case 1:reference = new AnAnimatedEntity("enemy/avatar_maleR.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaR"; break;
