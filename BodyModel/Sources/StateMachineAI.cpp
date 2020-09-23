@@ -159,7 +159,7 @@ CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 		}
 	}
 
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Walking"), logger);
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Running"), logger);
 
 	if (inAnimation & !entity->isDead())
 	{
@@ -239,7 +239,7 @@ CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Ava
 		{"VerticalChop",	files[7]},
 		{"Kicking",			files[8]},
 		{"HorizontalSweep",	files[9]},
-		{"Walking",			files[1]},
+		{"Running",			files[14]},
 		{"Dying1",			files[12]},
 		{"Dying2",			files[13]},
 		{"Landing",			files[11]},
