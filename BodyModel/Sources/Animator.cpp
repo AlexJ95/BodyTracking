@@ -1,6 +1,6 @@
 #include "Animator.h"
 
-Animator::Animator(Avatar* avatar) {
+Animator::Animator() {
 	math = math->getInstance();
 	//motionRecognizer = new MachineLearningMotionRecognition(avatar);
 }

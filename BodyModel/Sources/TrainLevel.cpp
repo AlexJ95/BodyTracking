@@ -2,6 +2,8 @@
 #include "MainForm.h"
 
 void TrainLevel::init() {
+	animator = new Animator();
+
 	controlsSetup();
 	audioSetup();
 	graphicsSetup();
@@ -36,8 +38,6 @@ void TrainLevel::graphicsSetup() {
 
 	//Load Avatar
 	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
-
-	animator = new Animator(avatar->entity);
 
 	//Load Enemy
 	createEnemy(entitySructure);

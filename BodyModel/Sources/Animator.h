@@ -27,7 +27,7 @@ class Animator
 	MachineLearningMotionRecognition* motionRecognizer;
 
 public:
-	Animator(Avatar* avatar);
+	Animator();
 
 	bool executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger);
 

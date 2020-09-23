@@ -98,11 +98,13 @@ private:
 	// and load and initialize the Java class we need to interact with
 	void initializeJavaNativeInterface();
 
+	static MachineLearningMotionRecognition* instance;
 
 public:
 
+	static MachineLearningMotionRecognition* getInstance();
 	// Create and initialize
-	MachineLearningMotionRecognition(Avatar* avatar);
+	MachineLearningMotionRecognition();
 
 	// Forward key presses to allow local handling of inputs
 	// E.g., trigger recording of a specific task, or start recognition

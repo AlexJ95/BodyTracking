@@ -67,6 +67,15 @@ float* AnimatedEntity::getTimeIteration() const {
 	return invKin->getTimeIteration();
 }
 
+Avatar* Avatar::instance;
+
+Avatar* Avatar::getInstance()
+{
+		if (!instance)
+			instance = NULL;
+		return instance;	
+}
+
 Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation, bool renderTrackerAndController, bool renderAxisForEndEffector)
 	: AnimatedEntity(meshFile, textureFile, structure, scale, initialPosition, initialRotation) {
 	renderTrackerAndControllers = renderTrackerAndController;

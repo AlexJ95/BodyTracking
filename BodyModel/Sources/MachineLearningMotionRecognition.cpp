@@ -54,10 +54,17 @@ namespace {
 	jmethodID java_addDataPointToClassifier;	// The Java function we want to call
 }
 
+MachineLearningMotionRecognition* MachineLearningMotionRecognition::instance;
 
-MachineLearningMotionRecognition::MachineLearningMotionRecognition(Avatar* avatarReference) {
-	avatar = avatarReference;
-	//logger = new Logger();
+MachineLearningMotionRecognition* MachineLearningMotionRecognition::getInstance()
+{
+	if (!instance)
+		instance = new MachineLearningMotionRecognition();
+	return instance;
+}
+
+MachineLearningMotionRecognition::MachineLearningMotionRecognition() {
+		//logger = new Logger();
 
 	// Sound initiation
 	audio = audio->getInstanceAndAppend(
@@ -92,6 +99,7 @@ MachineLearningMotionRecognition::MachineLearningMotionRecognition(Avatar* avata
 // Called from the Java environment, to inform us of the Weka exercise prediction
 void outputClassifierResultFromWeka(JNIEnv*env, jobject o, jstring jStringResult) {
 
+	avatar = avatar->getInstance();
 	// convert and print result string
 	const char* charResult = (*env).GetStringUTFChars(jStringResult, 0);
 	Kore::log(Kore::LogLevel::Info, "%s", charResult);
@@ -159,6 +167,8 @@ void MachineLearningMotionRecognition::initializeJavaNativeInterface() {
 	// name the folder for single class files, name the jar (including .jar) for classes within a jar
 	options[0].optionString =
 		"-Djava.class.path=../../MachineLearningMotionRecognition/Weka/WekaMotionRecognitionForCpp-1.0-jar-with-dependencies.jar";
+	//options[1].optionString = "-Xms1024m";
+	//options[2].optionString = "-Xmx2048m";
 	vm_args.version = JNI_VERSION_1_6;             // minimum Java version
 	vm_args.nOptions = 1;                          // number of options
 	vm_args.options = options;

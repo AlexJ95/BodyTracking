@@ -27,7 +27,7 @@ namespace {
 	Level* currentLevel;
 	UI3D* ui;
 	Kore::Window* window;
-	
+	MachineLearningMotionRecognition* motionRecognizer;
 
 	void record() {
 		logRawData = !logRawData;
@@ -49,6 +49,7 @@ namespace {
 		Kore::VrInterface::init(nullptr, nullptr, nullptr); // TODO: Remove
 #endif
 		logger = new Logger;
+		motionRecognizer = motionRecognizer->getInstance();
 		math = math->getInstance();
 
 		inputController = inputController->getInstanceAndAppend({
