@@ -31,7 +31,8 @@ private:
 	////////////////////////////////////////////////////////////////////
 
 
-	// use this setting to disable the MotionRecognizer 
+	// use this setting to disable the 
+
 	// or to switch between recording and recognizing movements
 	enum MotionRecognitionMode { RecordMovements, RecognizeMovements, Off };
 	const MotionRecognitionMode operatingMode = RecognizeMovements;

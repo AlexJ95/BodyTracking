@@ -2,7 +2,7 @@
 
 Animator::Animator() {
 	math = math->getInstance();
-	motionRecognizer = motionRecognizer->getInstance();
+	//motionRecognizer = motionRecognizer->getInstance();
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)

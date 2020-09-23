@@ -10,8 +10,8 @@ Level::Level()
 void Level::update(double deltaT)
 {	
 	renderer->form = form;
-	if (form->isFormShown())
-		audio->play("titleSong");
+	//if (form->isFormShown())
+//		audio->play("titleSong");
 
 	if (avatar->entity->calibrated) animator->rigVrPose(avatar->entity);
 	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT);
