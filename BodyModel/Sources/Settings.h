@@ -44,7 +44,7 @@ namespace {
 	double countTime;
 	float fps = 144;
 
-	float movementSpeed = 6.f;
+	float movementSpeed = 0.2f;
 
 	//Camera related stuff
 	float cameraMoveSpeed = 6.0f;

@@ -129,9 +129,9 @@ void Renderer::update(float deltaT)
 		Kore::Graphics4::clear(Kore::Graphics4::ClearColorFlag | Kore::Graphics4::ClearDepthFlag, Kore::Graphics1::Color::Black, 1.0f, 0);
 
 		state = Kore::VrInterface::getSensorState(j);
-
+		state.pose.vrPose.position += avatar->position;
 		math->setProjectionAndViewMatrices(state.pose.vrPose.projection, state.pose.vrPose.eye);
-
+		//  Kore::mat4::Identity() * Kore::mat4::Translation(avatar->position.x(), avatar->position.y(), avatar->position.z()) +
 		if (!ui->isUIshown())
 		{
 			renderEntities();

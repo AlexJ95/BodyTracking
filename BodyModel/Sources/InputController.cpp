@@ -154,7 +154,8 @@ void InputController::gamepadButton(int buttonNr, float value)
 	if (buttonNr == 1 && value == 1) animator->calibrateAvatar(avatar);
 
 	// Trigger button => move forward
-	if (buttonNr == 33 && value == 1) avatar->position += Kore::vec3(1, 0, 0) * movementSpeed;
+	if (buttonNr == 33 && value == 1)
+		avatar->triggerMovement();
 }
 #endif
 
@@ -195,7 +196,5 @@ void InputController::update(float deltaT)
 {
 	if (!ui->isUIshown()) math->moveCamera(W, A, S, D, deltaT);
 
-	if(!ui->isUIshown() && (avatar->lastMovement == 9)) math->moveCamera(true, false, false, false, deltaT);
 	if (!ui->isUIshown() && (avatar->lastMovement == 9)) math->moveCamera(true, false, false, false, deltaT);
-	
 }

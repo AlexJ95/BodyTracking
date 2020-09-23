@@ -34,8 +34,6 @@ void TrainLevel::graphicsSetup() {
 	const Kore::Graphics4::VertexStructure& environmentSructure = renderer->environmentGraphics->structure;
 
 
-	
-
 	//Load Avatar
 	avatar = new TheAvatar("avatar/avatar_male.ogex", "avatar/", entitySructure, 1.0f, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 0, 0), true, false);
 
@@ -83,16 +81,13 @@ void TrainLevel::update(double deltaT){
 	//write level-specific runtime logic here
 	Level::update(deltaT);
 	
-
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
 	else if (!loaded)
 		loadTrainLevel();
 
-	Kore::vec3 pos = math->getCameraPos();
-	avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
-
-
+	//Kore::vec3 pos = math->getCameraPos();
+	//avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);	
@@ -680,8 +675,8 @@ void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure) {
 
 }
 
-Level::ALevelObject* TrainLevel::createNewObject(String pfad, String pfad2, VertexStructure vstruct,float scale, Kore::vec3 pos, Kore::Quaternion rot) {
-	ALevelObject* object = new ALevelObject(pfad, pfad2, vstruct,scale,pos,rot);
+Level::ALevelObject* TrainLevel::createNewObject(String pfad, String pfad2, VertexStructure vstruct, float scale, Kore::vec3 pos, Kore::Quaternion rot) {
+	ALevelObject* object = new ALevelObject(pfad, pfad2, vstruct, scale, pos, rot);
 	object->initPosition = pos;
 	object->object->iterator = environment.size();
 	environment.emplace_back(object);

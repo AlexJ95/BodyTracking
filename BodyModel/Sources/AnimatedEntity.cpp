@@ -86,6 +86,12 @@ void Avatar::update(float deltaT)
 {
 	if (movementExpiration > 0) movementExpiration -= deltaT;
 	else movementExpired = true;
+	if (moveForward) position = position + Kore::vec3(1, 0, 0) * movementSpeed;
+}
+
+void Avatar::triggerMovement()
+{
+	moveForward = !moveForward;
 }
 
 void Avatar::recognizedMotion(PlayerMovement currentMovement)

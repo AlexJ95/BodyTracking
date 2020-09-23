@@ -51,6 +51,7 @@ public:
 	bool movementExpired = true;
 	float movementExpiration = 0;
 
+	bool moveForward = false;
 
 	std::vector<MeshObject*> viveObjects;
 	bool renderTrackerAndControllers;
@@ -59,6 +60,8 @@ public:
 	Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation, bool renderTrackerAndController, bool renderAxisForEndEffector);
 	
 	void update(float deltaT);
+
+	void triggerMovement();
 
 	void recognizedMotion(PlayerMovement currentMovement); //this will be called from the MotionRecognitionClass whenever it recognizes a new motion
 };

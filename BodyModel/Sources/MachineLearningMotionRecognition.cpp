@@ -383,7 +383,7 @@ void MachineLearningMotionRecognition::processMovementData(
 					(jdouble)1, (jdouble)time);
 			}
 		}
-	}*/
+	}
 }
 
 bool MachineLearningMotionRecognition::isActive()

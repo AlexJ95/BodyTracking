@@ -2,7 +2,7 @@
 
 Animator::Animator(Avatar* avatar) {
 	math = math->getInstance();
-	motionRecognizer = new MachineLearningMotionRecognition(avatar);
+	//motionRecognizer = new MachineLearningMotionRecognition(avatar);
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
@@ -37,7 +37,7 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 void Animator::rigVrPose(Avatar* avatar)
 {
 #ifdef KORE_STEAMVR
-	Kore::VrInterface::begin();
+	//Kore::VrInterface::begin();
 
 	VrPoseState vrDevice;
 	for (int i = 0; i < numOfEndEffectors; ++i) {
@@ -112,7 +112,7 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 		else if (endEffectorID == leftHand || endEffectorID == rightHand) {
 			setFixedOrientation(entity, entity->endEffector[endEffectorID]->getBoneIndex(), finalRot);
 		}
-
+		/*
 		if (motionRecognizer->isProcessingMovementData() && !static_cast<Avatar*>(entity))
 		{
 			// if we are not using actual VR sensors, we cannot retrieve the velocity values and have to use defaults
@@ -164,7 +164,7 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 				rawAngVel, desAngVel,
 				rawLinVel, desLinVel,
 				entity->meshObject->scale, lastTime);
-		}
+		}*/
 	}
 }
 

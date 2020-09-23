@@ -15,6 +15,7 @@ void Level::update(double deltaT)
 
 	if (avatar->entity->calibrated) animator->rigVrPose(avatar->entity);
 	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT);
+	avatar->entity->update(deltaT);
 }
 
 void Level::init()
