@@ -70,7 +70,7 @@ void TrainLevel::graphicsSetup() {
 	tunnelInit(environmentSructure);
 
 	//Load Signs
-	signInit(environmentSructure);
+	//signInit(environmentSructure);
 }
 
 // updates

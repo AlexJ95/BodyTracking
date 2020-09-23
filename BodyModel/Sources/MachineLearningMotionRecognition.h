@@ -80,8 +80,7 @@ private:
 	// Stop recording incoming movement data
 	void stopRecording();
 
-	// Start to use incoming movement data for motion recognition
-	void startRecognition();
+	
 	// Stop using incoming movement data for motion recognition
 	void stopRecognition();
 	// Switch between using incoming movement data for motion recognition, or not
@@ -102,6 +101,8 @@ private:
 	static MachineLearningMotionRecognition* instance;
 
 public:
+	// Start to use incoming movement data for motion recognition
+	void startRecognition();
 
 	static MachineLearningMotionRecognition* getInstance();
 	// Create and initialize

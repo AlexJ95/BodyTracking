@@ -80,6 +80,7 @@ Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphi
 	: AnimatedEntity(meshFile, textureFile, structure, scale, initialPosition, initialRotation) {
 	renderTrackerAndControllers = renderTrackerAndController;
 	renderAxisForEndEffectors = renderAxisForEndEffector;
+	colorTag = "Avatar";
 	
 	if (renderTrackerAndController) {
 		viveObjects.emplace_back(new MeshObject("vivemodels/vivetracker.ogex", "vivemodels/", structure, 1));

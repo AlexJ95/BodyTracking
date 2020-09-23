@@ -216,9 +216,11 @@ CyborgAI::AIState CyborgAI::planning(float deltaT)
 	return AIState::Planning;
 }
 
-CyborgAI::AIState CyborgAI::landing(float deltaT) {
-
-	return AIState::Landing;
+CyborgAI::AIState CyborgAI::landing(float deltaT)
+{
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Landing"), logger);
+	if (inAnimation) return AIState::Landing;
+	return AIState::Planning;
 }
 
 CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference) : StateMachineAI(enemyEntity, animatorReference, avatarReference)

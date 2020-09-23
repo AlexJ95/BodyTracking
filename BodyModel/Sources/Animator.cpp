@@ -2,7 +2,7 @@
 
 Animator::Animator() {
 	math = math->getInstance();
-	//motionRecognizer = motionRecognizer->getInstance();
+	motionRecognizer = motionRecognizer->getInstance();
 }
 
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
@@ -12,7 +12,7 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 	Kore::Quaternion desRotation[numOfEndEffectors];
 	bool inAnimation = logger->readData(numOfEndEffectors, filename, desPosition, desRotation, scaleFactor);
 
-	for (int i = 0; i < numOfEndEffectors; ++i) 
+	for (int i = 0; i < numOfEndEffectors; ++i)
 	{
 		entity->endEffector[i]->setDesPosition(desPosition[i]);
 		entity->endEffector[i]->setDesRotation(desRotation[i]);
@@ -112,8 +112,8 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 		else if (endEffectorID == leftHand || endEffectorID == rightHand) {
 			setFixedOrientation(entity, entity->endEffector[endEffectorID]->getBoneIndex(), finalRot);
 		}
-		/*
-		if (motionRecognizer->isProcessingMovementData() && !static_cast<Avatar*>(entity))
+		
+		if (entity->colorTag == "Avatar")
 		{
 			// if we are not using actual VR sensors, we cannot retrieve the velocity values and have to use defaults
 						// if we do use VR sensors, the actual velocity can be used
@@ -164,7 +164,7 @@ void Animator::executeMovement(AnimatedEntity* entity, int endEffectorID)
 				rawAngVel, desAngVel,
 				rawLinVel, desLinVel,
 				entity->meshObject->scale, lastTime);
-		}*/
+		}
 	}
 }
 
@@ -336,6 +336,7 @@ void Animator::calibrateAvatar(Avatar* avatar)
 	for (int i = 0; i < numOfEndEffectors; i++) bones[i] = getBoneWithIndex(avatar, avatar->endEffector[i]->getBoneIndex());
 	calibrate(avatar, bones);
 	avatar->calibrated = true;
+	motionRecognizer->startRecognition();
 	//log(Info, "Calibrate avatar");
 }
 
