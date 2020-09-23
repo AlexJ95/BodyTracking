@@ -9,17 +9,18 @@ public:
     void update(double deltaT);
     void updatePoints();
     void updateAudio(double deltaT);
-    void updateAudio();
     void runCalibrationRoom();
     void deleteRoom();
     void loadTrainLevel();
     void gamePlay(double deltaT);
+    void updateAnimatedEntity(double deltaT);
     void loadEnemies(float deltaT, int carriage);
     void loadEnemyRandom(float deltaT, int carriage);
     void loadTunnel(int range);
     void loadAirplane();
     void loadSign();
     void loadEnemy(int range, Kore::vec3 pos);
+    bool enemySpawn(Kore::vec3 pos);
     void loadEnding();
     void updateFPS(double deltaT);
     void updateBuilding(double deltaT, double speed);
@@ -31,17 +32,17 @@ public:
     void audioSetup();
     void graphicsSetup();
 
-    void checkHittingAvatar();
-    void checkHittingEnemy();
+    //void checkHittingAvatar();
+    //void checkHittingEnemy();
 
-    Level::ALevelObject* objects[1];
+    NonPlayerCharacter* currentEnemy;
     bool stationStarted = true;
     bool loaded = false;
     bool gameStart;
     int currentCarriage = 1;
-    bool enemySpawn = false;
     bool enemyExist = false;
-    int currentEnemy = 0;
+    bool prepareforSpawn = false;
+    int currentEnemyNumber = 0;
 
     //time between activating two enemies
     double maxWaitingTime = 5.0;
@@ -66,7 +67,7 @@ public:
 	bool tunnelActivated;
 	int tunnelCounter;
 
-    void spawn(double deltaT);// , Kore::vec3 AirPlanePos);
+   // void spawn(double deltaT);// , Kore::vec3 AirPlanePos);
 
 //  Stashed changes
     int stationNr = 1;
@@ -74,14 +75,14 @@ public:
     bool stationComplete = false; 
     int maxEnemyCount = 1;  //sollte 1 sein 2 nur zum testen
     int currentEnemyCount = 0;
-    void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
+   // void checkStation(double deltaT);// , Kore::vec3 AirPlanePos);
     
     //airplane stuff
     Kore::vec3 airPlanePos;
     bool airplaneAtTheHeight = false;
-    void checkEnemyCollision(); 
+   // void checkEnemyCollision(); 
     void showAttackInUI(string colorTag);
-    void checkingMoving();
+    //void checkingMoving();
     float minAttackingDistance = 3.0;
     float camVelocity = 0.1;
 

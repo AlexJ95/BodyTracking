@@ -2,8 +2,7 @@
 
 Level::Level()
 {
-	renderer = new Renderer();
-	
+	renderer = new Renderer();	
 	math = math->getInstance();
 }
 
@@ -14,7 +13,6 @@ void Level::update(double deltaT)
 //		audio->play("titleSong");
 
 	if (avatar->entity->calibrated) animator->rigVrPose(avatar->entity);
-	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT);
 	avatar->entity->update(deltaT);
 }
 

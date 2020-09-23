@@ -3,15 +3,12 @@
 
 void TrainLevel::init() {
 	animator = new Animator();
-
 	controlsSetup();
 	audioSetup();
 	graphicsSetup();
 	Level::init();
 	form = new MainForm();
-	offsets = 1;
-	gameStart = false;
-	tunnelCounter = 8;
+;	gameStart = false;
 }
 void TrainLevel::controlsSetup()
 {
@@ -41,8 +38,6 @@ void TrainLevel::graphicsSetup() {
 
 	//Load Enemy
 	createEnemy(entitySructure);
-
-
 	//Environment
 
 	//Load Calibration
@@ -70,24 +65,28 @@ void TrainLevel::graphicsSetup() {
 	tunnelInit(environmentSructure);
 
 	//Load Signs
-	//signInit(environmentSructure);
+	signInit(environmentSructure);
 }
 
 // updates
 void TrainLevel::update(double deltaT){
 
 	freeMemory();
-	//updateFPS(deltaT);
+	updateFPS(deltaT);
 	//write level-specific runtime logic here
 	Level::update(deltaT);
+
+	updateAnimatedEntity(deltaT);
 	
+	//avatar->entity->calibrated = true;
+
 	if (!avatar->entity->calibrated)
 		runCalibrationRoom();
 	else if (!loaded)
 		loadTrainLevel();
 
 	//Kore::vec3 pos = math->getCameraPos();
-	//avatar->entity->position = locToGlob.Invert() * Kore::vec4(pos.x(), pos.y(), pos.z(), 1.0);
+	avatar->entity->position = math->getCameraPos();
 
 	if (gameStart) {
 		updateBuilding(deltaT, 20);	
@@ -97,21 +96,38 @@ void TrainLevel::update(double deltaT){
 
 void TrainLevel::gamePlay(double deltaT) {
 
-	updateAudio(deltaT);
+		updateAudio(deltaT);
 
-	if (avatar->entity->position.y() < -16.0f * currentCarriage && !enemyExist)
+	if (avatar->entity->position.x() > 16.0f * currentCarriage && !enemyExist && !prepareforSpawn)
 		loadEnemies(deltaT, currentCarriage++);
-	if (form->gameStarted() && enemySpawn)
+	else if (enemyExist && currentEnemy != NULL)
 	{
+		if (!currentEnemy->entity->activated) {
+			prepareforSpawn = false;
+			enemyExist = false;
+				currentEnemy = NULL;
+		}
+	}
 		updatePoints();
+
+	if (!enemyExist && currentCarriage == 11)
+		loadEnding();
+
+	/*
+	if (form->gameStarted())
+	{
 		checkStation(deltaT);
 		checkEnemyCollision();
 		checkHittingAvatar();
 		checkHittingEnemy();
 		checkingMoving();
-	}
-	if (!enemyExist && currentCarriage == 11)
-		loadEnding();
+		
+	}*/
+	
+}
+
+void TrainLevel::updateAnimatedEntity(double deltaT) {
+	for (NonPlayerCharacter* entity : enemies) entity->ai->update(deltaT);
 }
 
 void TrainLevel::updateBuilding(double deltaT, double speed)
@@ -138,16 +154,23 @@ void TrainLevel::updateBuilding(double deltaT, double speed)
 						object->object->position.z() -= deltaT * speed * 0.02f;
 						if (object->object->position.x() < 0)
 							enemyExist = false;
+						prepareforSpawn = false;
+						 
 					}
 					else if (object->object->tag == "airplane") {
 						object->object->position.x() -= deltaT * speed * 6;
-						airPlanePos = object->object->position;
+						if (!enemyExist && object->object->position.x() - avatar->entity->position.x() < 15) {
+							enemyExist = true;
+							enemySpawn(object->object->position);
+						}
 					}
 					else if (object->object->tag == "signl" || object->object->tag == "signr") {
 						object->object->position.x() -= deltaT * speed * 2;
 						object->object->position.z() -= deltaT * speed * 0.0075f * 2;
 						if (object->object->position.x() < 0)
 							enemyExist = false;
+						prepareforSpawn = false;
+
 					}
 					else {
 						object->object->position.x() -= deltaT * speed;
@@ -203,7 +226,7 @@ void TrainLevel::updateFPS(double deltaT) {
 
 	if (time > 1.0f)
 	{
-		Kore::log(Kore::Info, "%d", fps);
+		//Kore::log(Kore::Info, "%d", fps);
 		Kore::log(Kore::Info, "Player Position is %f %f %f", avatar->entity->position.x(), avatar->entity->position.y(), avatar->entity->position.z());
 		fps = 0;
 		time = 0;
@@ -211,7 +234,7 @@ void TrainLevel::updateFPS(double deltaT) {
 }
 
 void TrainLevel::updatePoints() {
-		switch (currentEnemy) {
+		switch (currentEnemyNumber) {
 		case 0:
 			if ((avatar->entity->lastMovement == 5|| avatar->entity->lastMovement == 1 || avatar->entity->lastMovement == 2) && true)
 				form->addHighScore(2);
@@ -283,6 +306,8 @@ void TrainLevel::loadTrainLevel() {
 void TrainLevel::loadEnemies(float deltaT, int carriage) {
 
 	loaded = true;
+	prepareforSpawn = true;
+
 	Kore::log(Kore::Info, "make enemy %d", carriage);
 	switch (carriage) {
 	case 1: loadEnemy(0, avatar->entity->position);	break; 
@@ -298,6 +323,7 @@ void TrainLevel::loadEnemies(float deltaT, int carriage) {
 	}
 
 	
+	
 }
 
 //set the various game elements in the scene
@@ -307,9 +333,9 @@ void TrainLevel::loadEnemyRandom(float deltaT, int carriage) {
 	int num = 1;
 
 	switch (num) {
-	case 0: checkStation(deltaT); break;
+	case 0: break;
 	case 1: loadTunnel(carriage); break;
-	default: checkStation(deltaT);
+	default: break;
 	}
 }
 void TrainLevel::loadTunnel(int range) {
@@ -343,8 +369,20 @@ void TrainLevel::loadSign() {
 void TrainLevel::loadEnemy(int range,Kore::vec3 pos) {
 	Kore::log(Kore::Info, "call the enemy");
 	loadAirplane();
-	enemySpawn = true;
-	currentEnemy = range;
+	currentEnemyNumber = range;
+}
+bool TrainLevel::enemySpawn(Kore::vec3 pos) {
+	int i = 0;
+	for (NonPlayerCharacter* enemy : enemies) {
+		if (i == currentEnemyNumber) {
+			currentEnemy = enemy;
+			enemy->ai->setEntityPos(pos);
+			enemy->entity->activated = true;
+			return true;
+		}
+		i++;
+	}
+	return false;
 }
 void TrainLevel::loadEnding() {
 	Kore::log(Kore::Info, "Game End");
@@ -356,7 +394,7 @@ void TrainLevel::loadEnding() {
 void TrainLevel::setPosition(ALevelObject* alo ,float x, float y, float z) {
 	alo->object->position = Kore::vec3(x, y, z);
 }
-
+/*
 //checkStation check if an station with the enemies was completed. An station is complete if all enemies are beated. 
 void TrainLevel::checkStation(double deltaT){
 	if (!stationComplete & currentEnemyCount < maxEnemyCount)// & airPlanePos.x() <= Kore::abs(avatar->entity->position.y() - stationLength))
@@ -467,7 +505,7 @@ void TrainLevel::checkHittingAvatar(){
 
 	}
 }
-
+*/
 //Show the next attack in the gui based on the color of the enemy.
 void TrainLevel::showAttackInUI(string colorTag){
 	MainForm* mainForm = (MainForm*)form;
@@ -486,6 +524,7 @@ void TrainLevel::showAttackInUI(string colorTag){
 		mainForm->kindOfAttacking = NULL;
 }
 
+/*
 void TrainLevel::checkingMoving(){
 	if (avatar->entity->lastMovement == Avatar::Jogging && !avatar->entity->movementExpired)
 	{
@@ -635,6 +674,7 @@ void TrainLevel::checkEnemyCollision(){
 		}
 	}
 }
+*/
 ///////////////////////////////////////////////////////////////////
 
 // For Delete
@@ -662,14 +702,14 @@ void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure) {
 	AnAnimatedEntity* reference;
 	for (int i = 0; i < 5; i++) {
 		switch (i) {
-		case 4:reference = new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaM"; break;
-		case 1:reference = new AnAnimatedEntity("enemy/avatar_maleR.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaR"; break;
-		case 2:reference = new AnAnimatedEntity("enemy/avatar_maleB.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaB"; break;
-		case 3:reference = new AnAnimatedEntity("enemy/avatar_maleY.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaY"; break;
-		case 0:reference = new AnAnimatedEntity("enemy/avatar_maleW.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaW"; break;
-		default:reference = new AnAnimatedEntity("enemy/avatar_maleW.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaM"; break;
+		case 4:reference = new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -5, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaM"; break;
+		case 1:reference = new AnAnimatedEntity("enemy/avatar_maleR.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -4, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaR"; break;
+		case 2:reference = new AnAnimatedEntity("enemy/avatar_maleB.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -3, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaB"; break;
+		case 3:reference = new AnAnimatedEntity("enemy/avatar_maleY.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -2, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaY"; break;
+		case 0:reference = new AnAnimatedEntity("enemy/avatar_maleW.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -1, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaW"; break;
+		default: break;
 		}
-		NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, -1000), Kore::Quaternion(0, 0, 0, 0));
+		NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 2, 0));
 		enemy->ai = new CyborgAI(enemy->entity, animator, avatar->entity);
 		enemy->entity->activated = false;
 		enemies.emplace_back(enemy);

@@ -5,7 +5,22 @@
 
 namespace {
 	const int numFiles = 16;
-    const char* files[numFiles] = {"walking.csv", "lunges.csv", "squats.csv", "kicks.csv", "yoga1.csv", "yoga2.csv", "yoga3.csv", "verticalChop.csv", "kick.csv", "horizontalSweep.csv", "falling.csv", "landing.csv", "dying1.csv", "dying2.csv", "running1.csv", "running2.csv" };
+    const char* files[numFiles] = {"walking.csv", 
+									"lunges.csv", 
+									"squats.csv", 
+									"kicks.csv", 
+									"yoga1.csv", 
+									"yoga2.csv", 
+									"yoga3.csv", 
+									"verticalChop.csv",
+									"kick.csv", 
+									"horizontalSweep.csv", 
+									"falling.csv", 
+									"landing.csv", 
+									"dying1.csv", 
+									"dying2.csv", 
+									"running1.csv", 
+									"running2.csv" };
 	int currentFile = 0;
 	
 	const float nearNull = 0.0001f;

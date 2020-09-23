@@ -3,8 +3,63 @@
 //Implementation of the abstract AI and it's statemachine functionality
 void StateMachineAI::update(float deltaT)
 {
-	if(entity->activated)
+	if (entity->activated) {
 		currentState = (this->*stateToAction.at(currentState))(deltaT);
+		continueMovement(deltaT);
+		Kore::log(Kore::Info, "Ninja %s", entity->colorTag.c_str());
+		Kore::log(Kore::Info, " Enemy Position is Y %f Z %f X %f", entity->position.y(), entity->position.z(),entity->position.x());
+		Kore::log(Kore::Info, " posToMove Position is %f %f %f", posToMove.x(), posToMove.y(), posToMove.z());
+		Kore::log(Kore::Info, " Enemy Position is %f %f %f", avatar->position.x(), avatar->position.y(), avatar->position.z());
+	}
+}
+
+bool StateMachineAI::continueMovement(double deltaT) {
+
+	bool changed = false;
+
+	if (entity->position != toInvertPos(posToMove));
+	{
+		//Kore::log(Kore::Info, "X %f -%f ", entity->position.x(), posToMove.z());
+
+		if ((unsigned)entity->position.y() - (unsigned)posToMove.x() > 0.1f)
+		{
+			if (entity->position.y() > -1 * posToMove.x())
+				entity->position.y() -= deltaT * speed;
+			else entity->position.y() += deltaT * speed;
+
+			changed = true;
+		}
+
+		//Kore::log(Kore::Info, "Y %f -%f ", entity->position.y(), posToMove.x());
+
+		if (entity->position.z() - posToMove.y() > 0.1f)
+		{
+			if (entity->position.z() > posToMove.y())
+				entity->position.z() -= deltaT * speed * 6;
+			else entity->position.z() += deltaT * speed * 6;
+			changed = true;
+		}
+		//Kore::log(Kore::Info, "Z %f -%f ", entity->position.z(), posToMove.y());
+		if ((unsigned)entity->position.x() - (unsigned)posToMove.z() > 0.1f)
+		{
+			if (entity->position.x() > -1 * posToMove.z())
+				entity->position.x() -= deltaT * speed;
+			else entity->position.x() += deltaT * speed;
+			changed = true;
+		}
+	}
+	return changed;
+		//entity->position.x() = -1 * avatar->position.z();
+		//entity->position.y() = -1 * avatar->position.x() + 2;
+		//entity->position.z() = -1 * avatar->position.y();
+		
+}
+
+Kore::vec3 StateMachineAI::toInvertPos(Kore::vec3 pos) { return Kore::vec3(-1 * pos.z(), -1 * pos.x(), pos.y()); }
+Kore::vec3 StateMachineAI::toOriginPos(Kore::vec3 pos) {return Kore::vec3(-1 *pos.y(), pos.z(), -1 * pos.x());
+}
+
+void StateMachineAI::setEntityPos(Kore::vec3 pos) {	entity->position = toInvertPos(pos);
 }
 
 StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference)
@@ -14,56 +69,31 @@ StateMachineAI::StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorRe
 	avatar = avatarReference;
 	logger = new Logger();
 	inAnimation = false;
+	posToMove = Kore::vec3(0, 0, 0);
 }
-
-void StateMachineAI::spawn()
-{
-	//set the start height 
-	entity->position.z() = 50;
-	entity->activated = true;
-	currentState = (StateMachineAI::AIState) CyborgAI::AIState::Falling;
-}
-
-//check for collision between the current enemy and the other enemies 
-void StateMachineAI::checkCollision(Kore::vec3 posOtherEnemy)
-{
-	float distanceBetweeenEnemys = (entity->position - posOtherEnemy).getLength();
-	if (distanceBetweeenEnemys < maxDistanceToEnemy)
-	{
-		tooClose = true;
-		currentPosOtherEnemy = posOtherEnemy;
-	}
-}
-
-
-int StateMachineAI::beatedEnemyCount = 0;
-float StateMachineAI::lastDeadPos = 0.0;
-int CyborgAI::numberOfVictories = 0;
 
 CyborgAI::AIState CyborgAI::falling(float deltaT)
 {
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Falling"), logger);
+	//if(continueMovement(0))
+		inAnimation = animator->executeAnimation(entity, animationLibrary.at("Running"), logger);
 
-	entity->position.z() -= fallingVelocity * deltaT;
-	fallingVelocity += fallingAcceleration * deltaT;
-
-	//if the current enemy lands at the train, it begins the pathfinding
-	
-	if (entity->position.z() > 0)
+	if (inAnimation || entity->position.z() > 0.1)
 	{
+		Kore::log(Kore::Info, "stay zu Falling %d", currentState);
 		return AIState::Falling;
+		lastState = currentState;
 	}
 	else
 	{
-		entity->position.z() = 0.f;
-		inAnimation = false;
+		Kore::log(Kore::Info, "Jump zu Landing %d", currentState);
+		entity->position.z() = 0;
 		return AIState::Landing;
 	}
 }
 
 CyborgAI::AIState CyborgAI::attacking(float deltaT)
 {
-	if (!inAnimation) 
+	if (!inAnimation) {
 		switch (rand() % 3) {
 		case 0:
 			currentAnimation = "VerticalChop"; break;
@@ -73,23 +103,28 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 			currentAnimation = "Kicking"; break;
 		default:
 			currentAnimation = "VerticalChop"; break;
-		}
 
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
+		}
+		dead--;
+	}
+
+	if (inAnimation || dead > 0)
+		inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
 
 	if (avatar->movementExpired || (avatar->lastMovement != Avatar::LateralBounding)) avatar->hit(); //Example of movement recognition-implementation
 
 
-	if (inAnimation && !entity->isDead())
+	if (inAnimation)
 	{
+		Kore::log(Kore::Info, "Stay in Attacking %d", currentState);
 		return AIState::Attacking;
 	}
-	else if (entity->isDead())
+	else if (entity->isDead()|| dead <= 0)
 	{
-		inAnimation = false;
+		Kore::log(Kore::Info, " Jump to Dying %d", currentState);
 		return AIState::Dying;
 	}
-
+	Kore::log(Kore::Info, " Jump to Planning %d", currentState);
 	return AIState::Planning;
 }
 
@@ -97,130 +132,71 @@ CyborgAI::AIState CyborgAI::attacking(float deltaT)
 //With these direction vectors we calculate the radians  based on tha scalar products. With the cross product we decide which direction the rotation has. 
 CyborgAI::AIState CyborgAI::pursueing(float deltaT)
 {
-	Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->position.x(), avatar->position.y(), avatar->position.z(), 1.0);
-	avatarPosGlob.y() = 0;
-	Kore::vec3 dirBetweenEnemys = entity->position - currentPosOtherEnemy;
-	Kore::vec3 dirBetweenEnemysGlob = locToGlob * Kore::vec4(dirBetweenEnemys.x(), dirBetweenEnemys.y(), dirBetweenEnemys.z(), 1.0);
-	dirBetweenEnemysGlob.y() = 0;
-	dirBetweenEnemysGlob.normalize();
-	
 
-	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
-	entityPosGlob.y() = 0;
-	Kore::vec3 entToPlayerDir = (avatarPosGlob - entityPosGlob);
-	float currentDistance = entToPlayerDir.getLength();
-	entToPlayerDir.normalize();
+		inAnimation = animator->executeAnimation(entity, animationLibrary.at("Running"), logger);
 
-	Kore::vec3 prevDir = locToGlob * (entity->rotation.matrix() * Kore::vec4(0, -1, 0, 1));
-	prevDir.y() = 0;
-	prevDir.normalize();
-
-	if (!tooClose  && Kore::abs(entToPlayerDir * prevDir) < 0.999)
+	if (inAnimation)
 	{
-		float sign = entToPlayerDir.cross(prevDir).y();
-
-
-		if (sign > 0)
-			radians += dRot * Kore::acos(entToPlayerDir * prevDir);
-		else
-			radians -= dRot * Kore::acos(entToPlayerDir * prevDir);
-
-
-		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
-	}
-	else if (tooClose && dirBetweenEnemys.getLength() < maxDistanceToEnemy * 3.5 && Kore::abs(dirBetweenEnemysGlob * prevDir) < 0.999)
-	{
-		float sign = entToPlayerDir.cross(dirBetweenEnemysGlob).y();
-
-		if (sign > 0)
-			radians -= dRotCol * Kore::acos(dirBetweenEnemysGlob * prevDir);
-		else
-			radians += dRotCol * Kore::acos(dirBetweenEnemysGlob * prevDir);
-		
-
-		entity->rotation = Kore::Quaternion(Kore::vec3(0, 0, 1), radians);
-	}
-	else if(dirBetweenEnemys.getLength() > maxDistanceToEnemy * 1.5)
-		tooClose = false;
-
-	if (currentDistance > maxDistanceToPlayer || tooClose)
-	{
-		
-		entity->position += dTrans * (locToGlob.Invert() * Kore::vec4(prevDir.x(), prevDir.y(), prevDir.z(), 1.0));
-
-		if (entity->position.x() > limitPosX)
-		{
-			entity->position.x() = limitPosX;
-		}
-		else if (entity->position.x() < -limitPosX)
-		{
-			entity->position.x() = -limitPosX;
-		}
-	}
-
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Running"), logger);
-
-	if (inAnimation & !entity->isDead())
-	{
+		Kore::log(Kore::Info, "stay in Pursuing %d", currentState);
 		return AIState::Pursueing;
 	}
 	else if (entity->isDead())
 	{
-		inAnimation = false;
+		Kore::log(Kore::Info, "jump to Dying %d", currentState);
 		return AIState::Dying;
 	}
+	Kore::log(Kore::Info, " jump to Planning %d", currentState);
 	return AIState::Planning;
 }
 
 CyborgAI::AIState CyborgAI::dying(float deltaT)
 {
-	lastDeadPos = entity->position.y();
-	if (!inAnimation) currentAnimation = rand() % 2 == 1? "Dying1" : "Dying2";
+	(rand() % 2 == 1) ? currentAnimation = "Dying1" : currentAnimation = "Dying2";
+
 	inAnimation = animator->executeAnimation(entity, animationLibrary.at(currentAnimation), logger);
 
 	if (inAnimation)
 	{
+		Kore::log(Kore::Info, "stay in Dying %d", currentState);
 		return AIState::Dying;
 	}
 	else
 	{
 		entity->activated = false;
-		entity->beated = true;
-		beatedEnemyCount++;
-		numberOfVictories++;
 	}
-	return AIState::Planning;
 }
 
 //in planning we decide what is the next state 
 CyborgAI::AIState CyborgAI::planning(float deltaT)
-{
-	Kore::vec3 entityPosGlob = locToGlob * Kore::vec4(entity->position.x(), entity->position.y(), entity->position.z(), 1.0);
-	Kore::vec3 avatarPosGlob = locToGlob * Kore::vec4(avatar->position.x(), avatar->position.y(), avatar->position.z(), 1.0);
-	Kore::vec3 entToPlayerDir = (avatarPosGlob - entityPosGlob);
-	Kore::vec3 prevDir = locToGlob * (entity->rotation.matrix() * Kore::vec4(0, -1, 0, 1));
+{	
+	if (entity->position.z() > 0.1) {
+		posToMove = Kore::vec3(entity->position.y(), 0, entity->position.x());
+		Kore::log(Kore::Info, "Jump zu Falling %d", currentState);
+		return AIState::Falling;
+	}
 
-	entToPlayerDir.y() = 0;
-	prevDir.y() = 0;
-	float currentDistance = entToPlayerDir.getLength();
-	float crossValue = entToPlayerDir.cross(prevDir).getLength();
-
-	if (currentDistance <= maxDistanceToPlayer & crossValue < 0.1)
-	{
+	if (toOriginPos(entity->position).x() - avatar->position.x() <= 2) {
+		Kore::log(Kore::Info, "Jump zu Attacking %d", currentState);
 		return AIState::Attacking;
 	}
-	else
-	{
+
+	if (toOriginPos(entity->position).x() - avatar->position.x() >= 2) {
+		posToMove = Kore::vec3(avatar->position.x() + 2, entity->position.z(), avatar->position.z());
+		Kore::log(Kore::Info, "Jump zu Pursueing %d", currentState);
 		return AIState::Pursueing;
 	}
-	return AIState::Planning;
 }
 
 CyborgAI::AIState CyborgAI::landing(float deltaT)
 {
-	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Landing"), logger);
-	if (inAnimation) return AIState::Landing;
-	return AIState::Planning;
+	inAnimation = animator->executeAnimation(entity, animationLibrary.at("Running"), logger);
+	if (inAnimation) {
+		Kore::log(Kore::Info, "stay zu Falling %d", currentState);
+		return AIState::Landing;	
+	}
+	else {
+		Kore::log(Kore::Info, "Jump zu Planning %d", currentState);
+			return AIState::Planning; }
 }
 
 CyborgAI::CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference) : StateMachineAI(enemyEntity, animatorReference, avatarReference)

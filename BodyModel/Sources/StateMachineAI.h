@@ -12,11 +12,9 @@ protected:
 	Logger* logger;
 	string currentAnimation;
 	bool inAnimation;
-	Kore::mat4 locToGlob = Kore::mat4::RotationY(0.5 * Kore::pi) * Kore::mat4::RotationX(-0.5 * Kore::pi);
-
-	float maxDistanceToEnemy = 0.8f;
-	Kore::vec3 currentPosOtherEnemy;
-	bool tooClose = false;
+	Kore::vec3 posToMove;
+	float speed = 4.0f;
+	int dead = 3;
 
 public:
 	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
@@ -24,6 +22,7 @@ public:
 	//the different states of the AI state machine
 	enum class AIState;
 	StateMachineAI::AIState currentState;
+	StateMachineAI::AIState lastState;
 
 
 	std::map <StateMachineAI::AIState, StateMachineAI::AIState(StateMachineAI::*)(float deltaT)> stateToAction;
@@ -32,29 +31,22 @@ public:
 	std::map <string, const char*> animationLibrary;
 
 	void update(float deltaT);
-	void spawn();
-	void checkCollision(Kore::vec3 posOtherEnemy);
-	static int beatedEnemyCount;
-	static float lastDeadPos;
-	
+	bool continueMovement(double deltaT);
+
+	Kore::vec3 toInvertPos(Kore::vec3 pos);
+
+	Kore::vec3 toOriginPos(Kore::vec3 pos);
+
+	void setEntityPos(Kore::vec3 pos);
+
 };
 
 class CyborgAI : public StateMachineAI
 {
 private:
-	float radians = Kore::pi;	//orientation between player and nonPlayerCharacter
-	bool attack = false;
+
 public:
-	float dRot = 0.3;
-	float dRotCol = 0.08;
-	float dTrans = 0.02;
-	float maxDistanceToPlayer = 1.0f;
-	//limitate the pathfinding to the area of the train in x-direction
-	float limitPosX = 1.5;
-	float fallingVelocity = 1.0;
-	float fallingAcceleration = 3.0;
-	bool died;
-	static int numberOfVictories;
+
 	enum class AIState { Attacking, Pursueing, Planning, Dying, Falling, Landing};
 	
 	//states:
