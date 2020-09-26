@@ -1,12 +1,29 @@
 #include "StateMachineAI.h"
 
+enum class AIState { Attacking, Pursueing, Planning, Dying, Falling, Landing };
+
+inline const char* ToString(int v)
+{
+	switch (v)
+	{
+	case 0:   return "Attacking";
+	case 1:   return "Pursueing";
+	case 2:   return "Planning";
+	case 3:   return "Dying";
+	case 4:   return "Falling";
+	case 5:   return "Landing";
+	default:      return "[Unknown Case]";
+	}
+}
+
 //Implementation of the abstract AI and it's statemachine functionality
 void StateMachineAI::update(double deltaT)
 {
 	if (entity->activated) {
 		currentState = (this->*stateToAction.at(currentState))(deltaT);
 		continueMovement(deltaT);
-		Kore::log(Kore::Info, "Ninja %s %d", entity->colorTag.c_str(), currentState);
+
+		Kore::log(Kore::Info, "Ninja %s %s", entity->colorTag.c_str(), ToString(static_cast<int>(currentState)));
 		//Kore::log(Kore::Info, " Enemy Position is Y %f Z %f X %f", entity->position.y(), entity->position.z(),entity->position.x());
 		//Kore::log(Kore::Info, " posToMove Position is %f %f %f", posToMove.x(), posToMove.y(), posToMove.z());
 		//Kore::log(Kore::Info, " Enemy Position is %f %f %f", avatar->position.x(), avatar->position.y(), avatar->position.z());

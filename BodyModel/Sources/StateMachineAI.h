@@ -14,7 +14,7 @@ protected:
 	bool inAnimation;
 	Kore::vec3 posToMove;
 	float speed = 4.0f;
-	int dead = 10;
+	int dead = 3;
 
 public:
 	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);

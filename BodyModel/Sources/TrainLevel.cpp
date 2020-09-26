@@ -109,7 +109,7 @@ void TrainLevel::gamePlay(double deltaT) {
 	}
 		updatePoints();
 
-	if (!enemyExist && currentCarriage == 11)
+	if (!enemyExist && currentCarriage == 8)
 		loadEnding();
 
 	/*
@@ -310,14 +310,12 @@ void TrainLevel::loadEnemies(double deltaT, int carriage) {
 	Kore::log(Kore::Info, "make enemy %d", carriage);
 	switch (carriage) {
 	case 1: loadEnemy(0, avatar->entity->position);	break; 
-	case 2: loadSign(); break;
-	case 3: loadEnemy(1, avatar->entity->position);	break;
-	case 4: loadTunnel(carriage);	break;
-	case 5: loadEnemy(2, avatar->entity->position);	break;
+	case 2: loadEnemy(1, avatar->entity->position);	break; 
+	case 3: loadEnemy(2, avatar->entity->position);	break;	
+	case 4: loadEnemy(3, avatar->entity->position);	break;	
+	case 5: loadEnemy(4, avatar->entity->position);	break;
 	case 6: loadSign();  break;
-	case 7: loadEnemy(3, avatar->entity->position);	break;
-	case 8: loadTunnel(carriage);	break;
-	case 9: loadEnemy(4, avatar->entity->position);	break;
+	case 7: loadTunnel(carriage);	break;
 	default: break;
 	}
 
