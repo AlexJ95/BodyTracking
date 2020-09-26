@@ -23,6 +23,7 @@ public:
 	//strength controls the highest value substracted of currentHeight by calling hit()
 	float strength = 1.0;	
 	MeshObject* meshObject;
+	AnimatedEntity() = default;
 	AnimatedEntity(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
 	AnimatedEntity(MeshObject* meshReference, Kore::vec3 initialPosition, Kore::Quaternion initialRotation);
 	void initializeEndeffectors();
@@ -63,7 +64,7 @@ public:
 
 	Avatar(const char* meshFile, const char* textureFile, const Kore::Graphics4::VertexStructure& structure, float scale, Kore::vec3 position, Kore::Quaternion rotation, bool renderTrackerAndController, bool renderAxisForEndEffector);
 	
-	void update(float deltaT);
+	void update(double deltaT);
 
 	void triggerMovement();
 

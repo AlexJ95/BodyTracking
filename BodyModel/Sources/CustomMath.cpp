@@ -90,7 +90,7 @@ void CustomMath::rotateCamera(int movementX, int movementY)
 	camForward = mat * camForward;
 }
 
-void CustomMath::moveCamera(bool w, bool a, bool s, bool d, float deltaT)
+void CustomMath::moveCamera(bool w, bool a, bool s, bool d, double deltaT)
 {
 	// Move position of camera based on WASD keys
 	if (s) cameraPos -= camForward * (float)deltaT * cameraMoveSpeed;

@@ -96,5 +96,5 @@ public:
 	void renderEnvironment(); //as the name implies
 	void renderEntities(); //as the name implies
 
-	void update(float deltaT);
+	void update(double deltaT);
 };

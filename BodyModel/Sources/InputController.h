@@ -50,5 +50,5 @@ public:
 
 	void init();
 	
-	void update(float deltaT);
+	void update(double deltaT);
 };

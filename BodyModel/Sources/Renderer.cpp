@@ -111,7 +111,7 @@ void Renderer::renderEntities() {
 	animate(avatar);
 }
 
-void Renderer::update(float deltaT)
+void Renderer::update(double deltaT)
 {
 	Kore::Graphics4::begin();
 	Kore::Graphics4::clear(Kore::Graphics4::ClearColorFlag | Kore::Graphics4::ClearDepthFlag, Kore::Graphics1::Color::Black, 1.0f, 0);

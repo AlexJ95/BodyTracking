@@ -82,16 +82,16 @@ namespace {
 		countTime += deltaT;
 		double diff = 1 / fps;
 
-		inputController->update(deltaT);
-		currentLevel->update(deltaT);
+		//inputController->update(deltaT);
+		//currentLevel->update(deltaT);
 		currentLevel->renderer->update(deltaT);
 		
-		/*
+		
 		if (countTime > diff) {
 			countTime = countTime - diff;
 			inputController->update(diff);
 			currentLevel->update(diff);
-		}*/
+		}
 	}
 }
 

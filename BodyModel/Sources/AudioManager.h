@@ -17,8 +17,8 @@ class AudioManager
 	struct Wav
 	{
 		bool isPlayed;
-		float soundLength;
-		float currentSoundLength;
+		double soundLength;
+		double currentSoundLength;
 		Wav(float musicLength);
 	};
 
@@ -37,8 +37,6 @@ public:
 	AudioManager(std::map<std::string, Kore::Sound*> sounds);
 
 	void play(std::string soundName, double deltaT);
-
-	void waitEnd(std::string soundName, float deltaT);
 
 	void waitEnd(std::string soundName, double deltaT);
 

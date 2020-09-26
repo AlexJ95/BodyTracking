@@ -5,20 +5,30 @@ Animator::Animator() {
 	motionRecognizer = motionRecognizer->getInstance();
 }
 
+void Animator::update(double deltaT)
+{
+	if (inAnimation) { executeAnimation(animatedentity, animatedfilename, animatedlogger); }
+}
+
 bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger)
 {
+	animatedentity = entity;
+	animatedfilename = filename;
+	animatedlogger = logger;
+
 	float scaleFactor;
 	Kore::vec3 desPosition[numOfEndEffectors];
 	Kore::Quaternion desRotation[numOfEndEffectors];
-	bool inAnimation = logger->readData(numOfEndEffectors, filename, desPosition, desRotation, scaleFactor);
+	inAnimation = logger->readData(numOfEndEffectors, filename, desPosition, desRotation, scaleFactor);
 
-	for (int i = 0; i < numOfEndEffectors; ++i)
+	for (int i = 0; i < numOfEndEffectors; i++)
 	{
 		entity->endEffector[i]->setDesPosition(desPosition[i]);
 		entity->endEffector[i]->setDesRotation(desRotation[i]);
 	}
 
 	
+
 	if (!entity->calibrated) 
 	{
 		resetPositionAndRotation(entity);
@@ -28,7 +38,7 @@ bool Animator::executeAnimation(AnimatedEntity* entity, const char* filename, Lo
 		calibrate(entity, bones);
 	}
 	
-	for (int i = 0; i < numOfEndEffectors; ++i) executeMovement(entity, i);
+	for (int i = 0; i < numOfEndEffectors; i++) executeMovement(entity, i);
 
 	entity->calibrated = inAnimation;
 	return inAnimation;

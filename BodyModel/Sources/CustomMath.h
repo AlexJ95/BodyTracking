@@ -33,7 +33,7 @@ public:
 
 	void rotateCamera(int movementX, int movementY);
 
-	void moveCamera(bool w, bool a, bool s, bool d, float deltaT);
+	void moveCamera(bool w, bool a, bool s, bool d, double deltaT);
 
 	Kore::vec3 getCameraPos();
 

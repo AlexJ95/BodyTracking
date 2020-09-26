@@ -192,7 +192,7 @@ void InputController::init()
 	initialized = true;
 }
 
-void InputController::update(float deltaT)
+void InputController::update(double deltaT)
 {
 	if (!ui->isUIshown()) math->moveCamera(W, A, S, D, deltaT);
 

@@ -43,7 +43,7 @@ void AudioManager::play(std::string soundName, double deltaT)
 	
 }
 
-void AudioManager::waitEnd(std::string soundName, float deltaT) {
+void AudioManager::waitEnd(std::string soundName, double deltaT) {
 	Wav* wav = isPlaying.find(soundName)->second;
 	if (wav->currentSoundLength < wav->soundLength) { wav->currentSoundLength += deltaT; }
 	else {

@@ -14,8 +14,8 @@ public:
     void loadTrainLevel();
     void gamePlay(double deltaT);
     void updateAnimatedEntity(double deltaT);
-    void loadEnemies(float deltaT, int carriage);
-    void loadEnemyRandom(float deltaT, int carriage);
+    void loadEnemies(double deltaT, int carriage);
+    void loadEnemyRandom(double deltaT, int carriage);
     void loadTunnel(int range);
     void loadAirplane();
     void loadSign();

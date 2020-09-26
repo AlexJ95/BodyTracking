@@ -8,7 +8,7 @@ Level::Level()
 
 void Level::update(double deltaT)
 {	
-	renderer->form = form;
+	//renderer->form = form;
 	//if (form->isFormShown())
 //		audio->play("titleSong");
 

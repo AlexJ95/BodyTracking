@@ -14,7 +14,7 @@ protected:
 	bool inAnimation;
 	Kore::vec3 posToMove;
 	float speed = 4.0f;
-	int dead = 3;
+	int dead = 10;
 
 public:
 	StateMachineAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
@@ -25,12 +25,12 @@ public:
 	StateMachineAI::AIState lastState;
 
 
-	std::map <StateMachineAI::AIState, StateMachineAI::AIState(StateMachineAI::*)(float deltaT)> stateToAction;
-	typedef AIState(StateMachineAI::* action)(float deltaT);
+	std::map <StateMachineAI::AIState, StateMachineAI::AIState(StateMachineAI::*)(double deltaT)> stateToAction;
+	typedef AIState(StateMachineAI::* action)(double deltaT);
 	
 	std::map <string, const char*> animationLibrary;
 
-	void update(float deltaT);
+	void update(double deltaT);
 	bool continueMovement(double deltaT);
 
 	Kore::vec3 toInvertPos(Kore::vec3 pos);
@@ -50,12 +50,12 @@ public:
 	enum class AIState { Attacking, Pursueing, Planning, Dying, Falling, Landing};
 	
 	//states:
-	AIState attacking	(float deltaT);
-	AIState pursueing	(float deltaT);
-	AIState planning	(float deltaT);
-	AIState dying		(float deltaT);
-	AIState falling		(float deltaT);
-	AIState landing		(float deltaT);
+	AIState attacking	(double deltaT);
+	AIState pursueing	(double deltaT);
+	AIState planning	(double deltaT);
+	AIState dying		(double deltaT);
+	AIState falling		(double deltaT);
+	AIState landing		(double deltaT);
 
 	CyborgAI(AnimatedEntity* enemyEntity, Animator* animatorReference, Avatar* avatarReference);
 	

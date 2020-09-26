@@ -25,9 +25,17 @@ class Animator
 
 	CustomMath* math;
 	MachineLearningMotionRecognition* motionRecognizer;
+	
+	AnimatedEntity* animatedentity;
+	const char* animatedfilename; 
+	Logger* animatedlogger;
 
 public:
+	bool inAnimation = false;
+
 	Animator();
+
+	void update(double deltaT);
 
 	bool executeAnimation(AnimatedEntity* entity, const char* filename, Logger* logger);
 

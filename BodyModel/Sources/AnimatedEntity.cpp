@@ -37,7 +37,9 @@ void AnimatedEntity::resetCurrentHeight()
 
 bool AnimatedEntity::isDead()
 {
-	return (currentHeight <= 0.0);
+	if (currentHeight < 0.0f)
+		return true;
+	else return false;
 }
 
 float AnimatedEntity::getReached() const {
@@ -92,7 +94,7 @@ Avatar::Avatar(const char* meshFile, const char* textureFile, const Kore::Graphi
 	}
 }
 
-void Avatar::update(float deltaT)
+void Avatar::update(double deltaT)
 {
 	if (movementExpiration > 0) movementExpiration -= deltaT;
 	else movementExpired = true;

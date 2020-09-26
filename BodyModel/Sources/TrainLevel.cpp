@@ -2,7 +2,6 @@
 #include "MainForm.h"
 
 void TrainLevel::init() {
-	animator = new Animator();
 	controlsSetup();
 	audioSetup();
 	graphicsSetup();
@@ -17,8 +16,8 @@ void TrainLevel::controlsSetup()
 void TrainLevel::audioSetup()
 {
 	Kore::Sound* sound = new Kore::Sound("sound/train.wav");
-	sound->setVolume(0.05f);
-	sound->length = 4.8f;
+	sound->setVolume(0.05);
+	sound->length = 4.8;
 	audio = audio->getInstanceAndAppend({
 		{"traindrivingsound", sound}
 		});
@@ -72,7 +71,7 @@ void TrainLevel::graphicsSetup() {
 void TrainLevel::update(double deltaT){
 
 	freeMemory();
-	updateFPS(deltaT);
+	//updateFPS(deltaT);
 	//write level-specific runtime logic here
 	Level::update(deltaT);
 
@@ -303,7 +302,7 @@ void TrainLevel::loadTrainLevel() {
 }
 
 // Load Assets
-void TrainLevel::loadEnemies(float deltaT, int carriage) {
+void TrainLevel::loadEnemies(double deltaT, int carriage) {
 
 	loaded = true;
 	prepareforSpawn = true;
@@ -327,7 +326,7 @@ void TrainLevel::loadEnemies(float deltaT, int carriage) {
 }
 
 //set the various game elements in the scene
-void TrainLevel::loadEnemyRandom(float deltaT, int carriage) {
+void TrainLevel::loadEnemyRandom(double deltaT, int carriage) {
 
 	Kore::log(Kore::Info, "make enemy");
 	int num = 1;
@@ -379,6 +378,7 @@ bool TrainLevel::enemySpawn(Kore::vec3 pos) {
 			enemy->ai->setEntityPos(pos);
 			enemy->entity->activated = true;
 			return true;
+
 		}
 		i++;
 	}
@@ -702,14 +702,15 @@ void TrainLevel::createEnemy(Kore::Graphics4::VertexStructure entitySructure) {
 	AnAnimatedEntity* reference;
 	for (int i = 0; i < 5; i++) {
 		switch (i) {
-		case 4:reference = new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -5, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaM"; break;
-		case 1:reference = new AnAnimatedEntity("enemy/avatar_maleR.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -4, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaR"; break;
-		case 2:reference = new AnAnimatedEntity("enemy/avatar_maleB.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -3, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaB"; break;
-		case 3:reference = new AnAnimatedEntity("enemy/avatar_maleY.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -2, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaY"; break;
-		case 0:reference = new AnAnimatedEntity("enemy/avatar_maleW.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, -1, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaW"; break;
+		case 4:reference = new AnAnimatedEntity("enemy/avatar_male.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 1, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaM"; break;
+		case 1:reference = new AnAnimatedEntity("enemy/avatar_maleR.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 2, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaR"; break;
+		case 2:reference = new AnAnimatedEntity("enemy/avatar_maleB.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 3, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaB"; break;
+		case 3:reference = new AnAnimatedEntity("enemy/avatar_maleY.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 4, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaY"; break;
+		case 0:reference = new AnAnimatedEntity("enemy/avatar_maleW.ogex", "enemy/", entitySructure, 1.0f, Kore::vec3(0, 5, 50), Kore::Quaternion(0, 0, 0, 0)); reference->tag = "NinjaW"; break;
 		default: break;
 		}
 		NonPlayerCharacter* enemy = new NonPlayerCharacter(reference, Kore::vec3(0, 0, 0), Kore::Quaternion(0, 0, 2, 0));
+		animator = new Animator();
 		enemy->ai = new CyborgAI(enemy->entity, animator, avatar->entity);
 		enemy->entity->activated = false;
 		enemies.emplace_back(enemy);
